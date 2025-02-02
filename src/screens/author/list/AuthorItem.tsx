@@ -32,8 +32,8 @@ export function AuthorItem({ author }: Props) {
       />
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.name}>{author.nameInKor}</Text>
-          <Text style={styles.originalName}>{author.name}</Text>
+          <Text style={styles.name}>{author.nameInKor?.trim()}</Text>
+          <Text style={styles.originalName}>{author.name?.trim()}</Text>
         </View>
         <Text style={styles.description} numberOfLines={2}>
           {author.description}
