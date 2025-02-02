@@ -14,16 +14,13 @@ interface Props {
 export function BookItem({ book }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  const handlePress = () => {
+    navigation.push('BookDetail', { bookId: book.id });
+  };
+
   return (
-    <Pressable
-      style={styles.container}
-      onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}
-    >
-      <Image
-        source={{ uri: book.imageUrl ?? undefined }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+    <Pressable style={styles.container} onPress={handlePress}>
+      <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.image} resizeMode="cover" />
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={2}>
           {book.title}
@@ -77,4 +74,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.gray[500],
   },
-}); 
+});
