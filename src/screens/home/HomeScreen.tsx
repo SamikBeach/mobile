@@ -1,24 +1,18 @@
 import React from 'react';
-import { View, Text, SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { FeedList } from '@/components/Feed/FeedList';
 
-export default function HomeScreen() {
+export const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text>홈 화면</Text>
-      </View>
+      <FeedList />
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F3F3F3',
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-}); 
+});
