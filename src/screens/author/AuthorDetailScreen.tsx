@@ -3,9 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { AuthorStackParamList } from '@/navigation/types';
-import { AuthorDetailInfo } from './AuthorDetailInfo';
-import { AuthorBooks } from './AuthorBooks';
-import { ReviewList } from './ReviewList';
+import { AuthorDetailInfo } from './detail/AuthorDetailInfo';
+import { AuthorBooks } from './detail/AuthorBooks';
+import { ReviewList } from './detail/ReviewList';
 import { colors } from '@/styles/theme';
 
 type AuthorDetailScreenRouteProp = RouteProp<AuthorStackParamList, 'AuthorDetail'>;

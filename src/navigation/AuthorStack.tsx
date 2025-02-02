@@ -1,8 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthorScreen from '@/screens/author/list/AuthorScreen';
-import AuthorDetailScreen from '@/screens/author/detail/AuthorDetailScreen';
 import type { AuthorStackParamList } from './types';
+import AuthorDetailScreen from '@/screens/author/AuthorDetailScreen';
 
 const Stack = createNativeStackNavigator<AuthorStackParamList>();
 
