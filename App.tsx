@@ -6,9 +6,10 @@
  */
 
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { RootStack } from '@/navigation/RootStack';
+import { NavigationContainer } from '@react-navigation/native';
+
 export default function App() {
   return (
     <QueryProvider>
