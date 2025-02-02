@@ -39,7 +39,7 @@ export function ReviewList({ bookId }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.titleSection}>
+        <View style={styles.titleRow}>
           <Text style={styles.title}>리뷰</Text>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{book?.reviewCount ?? 0}</Text>
@@ -47,16 +47,18 @@ export function ReviewList({ bookId }: Props) {
         </View>
         <View style={styles.checkboxContainer}>
           <Checkbox checked={includeOtherTranslations} onChange={setIncludeOtherTranslations} />
-          <Text style={styles.checkboxLabel}>다른 번역서의 리뷰도 함께 보기</Text>
+          <Text style={styles.checkboxLabel}>다른 번역본의 리뷰도 함께 보기</Text>
         </View>
       </View>
 
       {reviews.length === 0 ? (
-        <Empty
-          icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
-          message="아직 리뷰가 없어요."
-          description="첫 번째 리뷰를 작성해보세요."
-        />
+        <View style={styles.emptyContainer}>
+          <Empty
+            icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
+            message="아직 리뷰가 없어요"
+            description="첫 번째 리뷰를 작성해보세요"
+          />
+        </View>
       ) : (
         <FlatList
           data={reviews}
@@ -69,6 +71,7 @@ export function ReviewList({ bookId }: Props) {
           keyExtractor={item => item.id.toString()}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           scrollEnabled={false}
+          contentContainerStyle={styles.reviewList}
         />
       )}
     </View>
@@ -82,13 +85,13 @@ const styles = StyleSheet.create({
   header: {
     gap: spacing.md,
   },
-  titleSection: {
+  titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
   },
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.gray[600],
   },
@@ -107,10 +110,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   checkboxLabel: {
     fontSize: 14,
     color: colors.gray[600],
+  },
+  emptyContainer: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
+  },
+  reviewList: {
+    gap: spacing.md,
   },
   separator: {
     height: spacing.md,

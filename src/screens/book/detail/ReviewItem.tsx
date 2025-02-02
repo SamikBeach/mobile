@@ -17,9 +17,14 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{review.title}</Text>
+        <View style={styles.userInfo}>
+          <View style={styles.avatar} />
+          <Text style={styles.username}>{review.user.nickname}</Text>
+          <Text style={styles.date}>{format(new Date(review.createdAt), 'yyyy.MM.dd')}</Text>
+        </View>
         {showBookInfo && (
           <Pressable style={styles.bookInfo}>
+            <Icon name="book-open" size={14} color={colors.gray[500]} />
             <Text style={styles.bookTitle} numberOfLines={1}>
               {review.book.title}
             </Text>
@@ -27,30 +32,31 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         )}
       </View>
 
-      <View style={styles.userInfo}>
-        <View style={styles.avatar} />
-        <Text style={styles.date}>{format(new Date(review.createdAt), 'yyyy.MM.dd')}</Text>
-      </View>
+      <Text style={styles.title}>{review.title}</Text>
 
       <Pressable onPress={() => setIsExpanded(!isExpanded)}>
         <Text style={styles.content} numberOfLines={isExpanded ? undefined : 3}>
           {review.content}
         </Text>
-        {!isExpanded && <Text style={styles.more}>더보기</Text>}
+        {!isExpanded && review.content.length > 100 && <Text style={styles.more}>더보기</Text>}
       </Pressable>
 
-      <View style={styles.actions}>
-        <View style={styles.actionButton}>
-          <Icon
-            name="heart"
-            size={14}
-            color={review.isLiked ? colors.primary[600] : colors.gray[500]}
-          />
-          <Text style={styles.actionText}>{review.likeCount}</Text>
-        </View>
-        <View style={styles.actionButton}>
-          <Icon name="message-circle" size={14} color={colors.gray[500]} />
-          <Text style={styles.actionText}>{review.commentCount}</Text>
+      <View style={styles.footer}>
+        <View style={styles.actions}>
+          <Pressable style={styles.actionButton}>
+            <Icon
+              name="heart"
+              size={16}
+              color={review.isLiked ? colors.primary[500] : colors.gray[400]}
+            />
+            <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
+              {review.likeCount}
+            </Text>
+          </Pressable>
+          <Pressable style={styles.actionButton}>
+            <Icon name="message-circle" size={16} color={colors.gray[400]} />
+            <Text style={styles.actionText}>{review.commentCount}</Text>
+          </Pressable>
         </View>
       </View>
     </View>
@@ -62,26 +68,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
-    gap: spacing.sm,
+    gap: spacing.md,
     ...shadows.sm,
   },
   header: {
-    gap: spacing.xs,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.gray[900],
-  },
-  bookInfo: {
-    backgroundColor: colors.gray[50],
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.md,
-  },
-  bookTitle: {
-    fontSize: 13,
-    color: colors.gray[700],
+    gap: spacing.sm,
   },
   userInfo: {
     flexDirection: 'row',
@@ -89,14 +80,38 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: colors.gray[200],
   },
+  username: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.gray[900],
+  },
   date: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.gray[500],
+  },
+  bookInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.gray[50],
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    borderRadius: borderRadius.md,
+    alignSelf: 'flex-start',
+  },
+  bookTitle: {
+    fontSize: 13,
+    color: colors.gray[700],
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.gray[900],
   },
   content: {
     fontSize: 15,
@@ -105,7 +120,10 @@ const styles = StyleSheet.create({
   },
   more: {
     fontSize: 14,
-    color: colors.primary[600],
+    color: colors.primary[500],
+    marginTop: spacing.xs,
+  },
+  footer: {
     marginTop: spacing.xs,
   },
   actions: {
@@ -116,9 +134,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
+    paddingVertical: spacing.xs,
   },
   actionText: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.gray[500],
+  },
+  activeActionText: {
+    color: colors.primary[500],
   },
 });

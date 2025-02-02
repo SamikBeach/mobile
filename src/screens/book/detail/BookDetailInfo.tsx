@@ -25,14 +25,14 @@ export function BookDetailInfo({ book }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={handleBookClick}>
+        <Pressable onPress={handleBookClick} style={styles.imageContainer}>
           <Image
             source={{ uri: book.imageUrl ?? undefined }}
             style={styles.image}
             resizeMode="cover"
           />
         </Pressable>
-        
+
         <View style={styles.info}>
           <View style={styles.titleSection}>
             <Text style={styles.title}>{book.title}</Text>
@@ -46,38 +46,45 @@ export function BookDetailInfo({ book }: Props) {
             </Text>
           </View>
 
-          <View style={styles.actions}>
-            <View style={styles.stats}>
-              <Button variant="outline" style={styles.statButton}>
-                <Icon name="heart" size={16} color={colors.gray[500]} />
-                <Text style={styles.statText}>{book.likeCount}</Text>
-              </Button>
-              <Button variant="outline" style={styles.statButton}>
-                <Icon name="message-circle" size={16} color={colors.gray[500]} />
-                <Text style={styles.statText}>{book.reviewCount}</Text>
-              </Button>
-            </View>
-            <Button style={styles.writeButton}>
-              <Icon name="edit-2" size={16} color={colors.white} />
-              <Text style={styles.writeButtonText}>리뷰 쓰기</Text>
-            </Button>
+          <View style={styles.statsContainer}>
+            <Pressable style={styles.statButton}>
+              <View style={styles.statIconWrapper}>
+                <Icon name="heart" size={16} color={colors.gray[600]} />
+              </View>
+              <Text style={styles.statValue}>{book.likeCount}</Text>
+            </Pressable>
+            <View style={styles.statDivider} />
+            <Pressable style={styles.statButton}>
+              <View style={styles.statIconWrapper}>
+                <Icon name="message-circle" size={16} color={colors.gray[600]} />
+              </View>
+              <Text style={styles.statValue}>{book.reviewCount}</Text>
+            </Pressable>
           </View>
         </View>
       </View>
+
+      <Button variant="outline" style={styles.writeButton}>
+        <View style={styles.writeButtonContent}>
+          <Icon name="edit-2" size={16} color={colors.gray[700]} />
+          <Text style={styles.writeButtonText}>리뷰 작성하기</Text>
+        </View>
+      </Button>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
-    padding: spacing.lg,
-    ...shadows.sm,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.lg,
   },
   header: {
     flexDirection: 'row',
     gap: spacing.lg,
+  },
+  imageContainer: {
+    ...shadows.md,
   },
   image: {
     width: 120,
@@ -93,43 +100,67 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '600',
     color: colors.gray[900],
+    lineHeight: 30,
   },
   author: {
-    fontSize: 15,
+    fontSize: 16,
     color: colors.gray[700],
   },
   publisher: {
     fontSize: 14,
     color: colors.gray[500],
+    marginTop: spacing.xs,
   },
-  actions: {
-    gap: spacing.sm,
-  },
-  stats: {
+  statsContainer: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    backgroundColor: colors.gray[50],
+    borderRadius: borderRadius.lg,
+    padding: spacing.sm,
   },
   statButton: {
+    flex: 1,
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: spacing.xs,
-    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
   },
-  statText: {
-    fontSize: 14,
+  statIconWrapper: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.sm,
+  },
+  statDivider: {
+    width: 1,
+    height: '50%',
+    alignSelf: 'center',
+    backgroundColor: colors.gray[200],
+  },
+  statValue: {
+    fontSize: 15,
+    fontWeight: '600',
     color: colors.gray[700],
   },
   writeButton: {
+    paddingVertical: spacing.md,
+    backgroundColor: colors.white,
+    borderColor: colors.gray[200],
+  },
+  writeButtonContent: {
     flexDirection: 'row',
-    gap: spacing.xs,
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: spacing.sm,
   },
   writeButtonText: {
-    fontSize: 14,
-    color: colors.white,
-    fontWeight: '500',
+    fontSize: 15,
+    color: colors.gray[700],
+    fontWeight: '600',
   },
-}); 
+});

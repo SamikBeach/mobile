@@ -6,7 +6,7 @@ import { bookApi } from '@/apis/book';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import { format } from 'date-fns';
 
 interface Props {
@@ -29,7 +29,7 @@ export function RelativeBooks({ bookId }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>이 책의 다른 번역서</Text>
+        <Text style={styles.title}>다른 번역본</Text>
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{books.length}</Text>
         </View>
@@ -46,11 +46,13 @@ export function RelativeBooks({ bookId }: Props) {
             style={styles.bookItem}
             onPress={() => navigation.push('BookDetail', { bookId: book.id })}
           >
-            <Image
-              source={{ uri: book.imageUrl ?? undefined }}
-              style={styles.bookImage}
-              resizeMode="cover"
-            />
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: book.imageUrl ?? undefined }}
+                style={styles.bookImage}
+                resizeMode="cover"
+              />
+            </View>
             <View style={styles.bookInfo}>
               <Text style={styles.bookTitle} numberOfLines={2}>
                 {book.title}
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
   },
@@ -93,20 +95,26 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.gray[600],
   },
   scrollContent: {
     gap: spacing.md,
+    paddingVertical: spacing.xs,
     paddingRight: spacing.lg,
   },
   bookItem: {
-    width: 110,
+    width: 130,
+  },
+  imageContainer: {
+    ...shadows.sm,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.white,
   },
   bookImage: {
-    width: 110,
-    height: 160,
+    width: 130,
+    height: 190,
     borderRadius: borderRadius.md,
     backgroundColor: colors.gray[100],
   },
@@ -115,9 +123,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   bookTitle: {
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: '500',
     color: colors.gray[900],
-    lineHeight: 18,
+    lineHeight: 20,
   },
   bookPublisher: {
     fontSize: 12,
