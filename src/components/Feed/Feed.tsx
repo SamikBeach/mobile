@@ -9,6 +9,7 @@ import { formatDate } from '@/utils/date';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
 import { UserAvatar } from '@/components/common/UserAvatar';
+import { FeedContent } from './FeedContent';
 
 interface FeedProps {
   review: Review;
@@ -33,17 +34,14 @@ export function Feed({ review, user, book }: FeedProps) {
       <View style={styles.mainContent}>
         {/* 왼쪽: 책 정보 */}
         <View style={styles.bookSection}>
-          <Image
-            source={{ uri: book.imageUrl ?? undefined }}
-            style={styles.bookImage}
-          />
+          <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.bookImage} />
           <View style={styles.bookInfo}>
             <Text style={styles.bookTitle} numberOfLines={2}>
               {book.title}
             </Text>
             <Text style={styles.bookAuthor} numberOfLines={2}>
-              {book.authorBooks.map(author => author.author.nameInKor).join(', ')}{' '}
-              · {book.publisher} · {formattedPublicationDate}
+              {book.authorBooks.map(author => author.author.nameInKor).join(', ')} ·{' '}
+              {book.publisher} · {formattedPublicationDate}
             </Text>
           </View>
         </View>
@@ -52,9 +50,9 @@ export function Feed({ review, user, book }: FeedProps) {
         <View style={styles.reviewSection}>
           <View style={styles.reviewContent}>
             <Text style={styles.reviewTitle}>{review.title}</Text>
-            <Text style={styles.reviewText} numberOfLines={8}>
-              {review.content}
-            </Text>
+            <View style={styles.reviewTextContainer}>
+              <FeedContent content={review.content} />
+            </View>
           </View>
 
           <View style={styles.actions}>
@@ -134,16 +132,21 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     color: '#111827',
   },
-  reviewText: {
-    fontSize: 14,
-    color: '#4B5563',
-    lineHeight: 20,
+  reviewTextContainer: {
+    position: 'relative',
   },
   actions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 8,
     marginTop: 16,
+  },
+  moreButton: {
+    marginTop: 4,
+  },
+  moreButtonText: {
+    fontSize: 14,
+    color: '#3B82F6',
   },
 });
 // End of Selection

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface CommentButtonProps {
   commentCount: number;
@@ -9,11 +9,7 @@ interface CommentButtonProps {
 export function CommentButton({ commentCount }: CommentButtonProps) {
   return (
     <TouchableOpacity style={styles.button}>
-      <MaterialCommunityIcons
-        name="comment-outline"
-        size={16}
-        color="#71717a"
-      />
+      <Icon name="comment-outline" size={16} color="#71717a" />
       <Text style={styles.text}>{commentCount}</Text>
     </TouchableOpacity>
   );
