@@ -1,6 +1,6 @@
 import { Book } from './book';
 import { BaseEntity, PaginationQuery } from './common';
-import { Genre } from './genre';
+import { Genre, GenreEntity } from './genre';
 import type { Era } from './era';
 
 export interface Author extends BaseEntity {
@@ -17,7 +17,7 @@ export interface Author extends BaseEntity {
   likeCount: number;
   reviewCount: number;
   bookCount: number;
-  genre: Genre;
+  genre: GenreEntity;
   authorBooks: {
     book: Book;
   }[];

@@ -22,7 +22,7 @@ export const authorApi = {
   },
 
   searchAuthors(params: SearchAuthorsParams) {
-    return axios.get<PaginatedResponse<Author>>('/authors/search', {
+    return axios.get<PaginatedResponse<Author>>('/author/search', {
       params,
     });
   },

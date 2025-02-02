@@ -24,9 +24,13 @@ export function AuthorList() {
   const sortMode = useAtomValue(authorSortModeAtom);
   const selectedEraId = useAtomValue(eraIdAtom);
 
-  const { data: response, isLoading } = useQuery({
+  const {
+    data: response,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['authors', searchKeyword, sortMode, selectedEraId, genre],
-    queryFn: () => {
+    queryFn: async () => {
       const sortBy = (() => {
         switch (sortMode) {
           case 'popular':
@@ -40,7 +44,9 @@ export function AuthorList() {
         }
       })();
 
-      return authorApi.searchAuthors({
+      const result = await authorApi.searchAuthors({
+        page: 1,
+        limit: 20,
         ...(searchKeyword && {
           search: searchKeyword,
           searchBy: ['nameInKor'],
@@ -51,6 +57,7 @@ export function AuthorList() {
           eraId: selectedEraId ? Number(selectedEraId) : undefined,
         },
       });
+      return result;
     },
   });
 
@@ -58,6 +65,16 @@ export function AuthorList() {
 
   if (isLoading) {
     return <AuthorListSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <Empty
+        icon={<Icon name="alert-circle" size={48} color={colors.gray[400]} />}
+        message="오류가 발생했어요"
+        description="작가 목록을 불러오는 중에 문제가 발생했어요."
+      />
+    );
   }
 
   if (authors.length === 0 && (searchKeyword || selectedEraId)) {
@@ -90,6 +107,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   separator: {
-    height: spacing.md,
+    height: spacing.lg,
   },
 });
