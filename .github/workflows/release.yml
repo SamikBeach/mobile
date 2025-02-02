@@ -17,10 +17,7 @@ jobs:
         with:
           node-version: '23.x'
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Semantic Release
-        run: npm run semantic-release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
