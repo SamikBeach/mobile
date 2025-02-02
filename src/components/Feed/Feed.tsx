@@ -1,6 +1,9 @@
+// Start of Selection
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { Review, User, Book } from '@/types';
+import { Review } from '@/types/review';
+import { User } from '@/types/user';
+import { Book } from '@/types/book';
 
 interface FeedProps {
   review: Review;
@@ -13,20 +16,20 @@ export const Feed = ({ review, user, book }: FeedProps) => {
     <TouchableOpacity style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
-          <Image source={{ uri: user.profileImage }} style={styles.avatar} />
+          <Image source={{ uri: user.imageUrl ?? '' }} style={styles.avatar} />
           <Text style={styles.date}>{review.createdAt}</Text>
         </View>
       </View>
 
       <View style={styles.content}>
         <View style={styles.bookInfo}>
-          <Image source={{ uri: book.imageUrl }} style={styles.bookImage} />
+          <Image source={{ uri: book.imageUrl ?? '' }} style={styles.bookImage} />
           <View style={styles.bookDetails}>
             <Text style={styles.bookTitle} numberOfLines={2}>
               {book.title}
             </Text>
             <Text style={styles.bookAuthor} numberOfLines={1}>
-              {book.author}
+              {book.authorBooks[0].author.name}
             </Text>
           </View>
         </View>
@@ -125,3 +128,6 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
+// End of Selection
+
+// 커밋 메시지: 이미지 URL 관련 타입 에러 수정됨

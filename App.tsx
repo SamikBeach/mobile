@@ -6,10 +6,15 @@
  */
 
 import React from 'react';
+import { QueryProvider } from '@/providers/QueryProvider';
 import { HomeScreen } from './src/screens/HomeScreen';
 
 function App(): React.JSX.Element {
-  return <HomeScreen />;
+  return (
+    <QueryProvider>
+      <HomeScreen />
+    </QueryProvider>
+  );
 }
 
 export default App;
