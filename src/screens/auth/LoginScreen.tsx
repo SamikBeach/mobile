@@ -74,20 +74,14 @@ export default function LoginScreen({ navigation }: Props) {
         <Controller
           control={control}
           name="password"
-          rules={{
-            required: '비밀번호를 입력해주세요',
-            minLength: {
-              value: 6,
-              message: '비밀번호는 최소 6자 이상이어야 합니다',
-            },
-          }}
+          rules={{ required: '비밀번호를 입력해주세요' }}
           render={({ field: { onChange, value } }) => (
             <Input
               placeholder="비밀번호"
               value={value}
               onChangeText={onChange}
-              secureTextEntry
               error={errors.password?.message}
+              secureTextEntry
             />
           )}
         />
@@ -98,16 +92,25 @@ export default function LoginScreen({ navigation }: Props) {
           </Text>
         )}
 
-        <Button onPress={handleSubmit(onSubmit)} loading={isPending}>
+        <Button onPress={handleSubmit(data => mutate(data))} loading={isPending}>
           로그인
         </Button>
 
         <View style={styles.links}>
-          <Button variant="text" onPress={() => navigation.navigate('ResetPassword')}>
-            비밀번호를 잊으셨나요?
+          <Button 
+            variant="text" 
+            onPress={() => navigation.navigate('ResetPassword')}
+            style={styles.linkButton}
+          >
+            <Text style={styles.linkText}>비밀번호를 잊으셨나요?</Text>
           </Button>
-          <Button variant="text" onPress={() => navigation.navigate('SignUp')}>
-            회원가입
+          <View style={styles.divider} />
+          <Button 
+            variant="text" 
+            onPress={() => navigation.navigate('SignUp')}
+            style={styles.linkButton}
+          >
+            <Text style={styles.linkText}>회원가입</Text>
           </Button>
         </View>
       </View>
@@ -133,11 +136,27 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   links: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    marginTop: 8,
+  },
+  linkButton: {
+    height: 32,
+  },
+  linkText: {
+    fontSize: 13,
+    color: '#6B7280',
+    fontWeight: '400',
+  },
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: '#E5E7EB',
+    marginHorizontal: 12,
   },
   errorText: {
-    color: 'red',
-    fontSize: 12,
+    color: '#EF4444',
+    fontSize: 13,
   },
 });

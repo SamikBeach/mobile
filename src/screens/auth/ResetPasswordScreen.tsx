@@ -63,13 +63,19 @@ export default function ResetPasswordScreen({ navigation }: Props) {
           </Text>
         )}
 
-        <Button onPress={handleSubmit(data => mutate(data.email))} loading={isPending}>
+        <Button onPress={handleSubmit(data => mutate(data))} loading={isPending}>
           이메일 보내기
         </Button>
 
-        <Button variant="text" onPress={() => navigation.navigate('Login')}>
-          로그인으로 돌아가기
-        </Button>
+        <View style={styles.links}>
+          <Button 
+            variant="text" 
+            onPress={() => navigation.navigate('Login')}
+            style={styles.linkButton}
+          >
+            <Text style={styles.linkText}>로그인으로 돌아가기</Text>
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -99,8 +105,22 @@ const styles = StyleSheet.create({
   form: {
     gap: 16,
   },
+  links: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  linkButton: {
+    height: 32,
+  },
+  linkText: {
+    fontSize: 13,
+    color: '#6B7280',
+    fontWeight: '400',
+  },
   errorText: {
-    color: 'red',
-    fontSize: 12,
+    color: '#EF4444',
+    fontSize: 13,
   },
 }); 

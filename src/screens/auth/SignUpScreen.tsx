@@ -61,12 +61,19 @@ export default function SignUpScreen({ navigation }: Props) {
         )}
 
         <Button onPress={handleSubmit(data => mutate(data))} loading={isPending}>
-          다음
+          회원가입
         </Button>
 
-        <Button variant="text" onPress={() => navigation.navigate('Login')}>
-          이미 계정이 있으신가요? 로그인
-        </Button>
+        <View style={styles.links}>
+          <Text style={styles.linkText}>이미 계정이 있으신가요?</Text>
+          <Button 
+            variant="text" 
+            onPress={() => navigation.navigate('Login')}
+            style={styles.linkButton}
+          >
+            <Text style={[styles.linkText, styles.linkButton]}>로그인</Text>
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -89,8 +96,26 @@ const styles = StyleSheet.create({
   form: {
     gap: 16,
   },
+  links: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    gap: 4,
+  },
+  linkButton: {
+    height: 32,
+  },
+  linkText: {
+    fontSize: 13,
+    color: '#6B7280',
+    fontWeight: '400',
+  },
+  linkButtonText: {
+    color: '#111827',
+  },
   errorText: {
-    color: 'red',
-    fontSize: 12,
+    color: '#EF4444',
+    fontSize: 13,
   },
 }); 
