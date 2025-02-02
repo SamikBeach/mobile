@@ -14,9 +14,21 @@ const Stack = createNativeStackNavigator<HomeStackParamList>();
 
 export default function HomeStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Review" component={ReviewScreen} />
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen
+        name="Review"
+        component={ReviewScreen}
+        options={{
+          headerTitle: '리뷰',
+          headerBackTitle: '뒤로', // iOS에서 뒤로가기 텍스트
+          headerTitleAlign: 'center',
+        }}
+      />
     </Stack.Navigator>
   );
 }
