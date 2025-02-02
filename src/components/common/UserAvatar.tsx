@@ -32,17 +32,10 @@ export function UserAvatar({ user, size = 'md', showNickname = true }: Props) {
   return (
     <TouchableOpacity style={styles.container} onPress={() => {}}>
       {user.imageUrl ? (
-        <Image
-          source={{ uri: user.imageUrl }}
-          style={[styles.avatar, sizeStyle]}
-        />
+        <Image source={{ uri: user.imageUrl }} style={[styles.avatar, sizeStyle]} />
       ) : (
         <View style={[styles.placeholderAvatar, sizeStyle]}>
-          <Icon
-            name="user"
-            size={sizeStyle.width * 0.5}
-            color="#9CA3AF"
-          />
+          <Icon name="user" size={sizeStyle.width * 0.5} color="#9CA3AF" />
         </View>
       )}
       {showNickname && (
@@ -72,4 +65,4 @@ const styles = StyleSheet.create({
   nickname: {
     fontWeight: '500',
   },
-}); 
+});

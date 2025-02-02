@@ -1,8 +1,17 @@
 import React from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet, Animated, ViewStyle } from 'react-native';
+
+interface SkeletonProps {
+  style: ViewStyle | ViewStyle[];
+  opacity: Animated.AnimatedInterpolation<number>;
+}
+
+const Skeleton = ({ style, opacity }: SkeletonProps) => (
+  <Animated.View style={[styles.skeleton, style, { opacity }]} />
+);
 
 export function FeedSkeleton() {
-  const animatedValue = new Animated.Value(0);
+  const animatedValue = React.useMemo(() => new Animated.Value(0), []);
 
   React.useEffect(() => {
     Animated.loop(
@@ -17,27 +26,23 @@ export function FeedSkeleton() {
           duration: 1000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
-  }, []);
+  }, [animatedValue]);
 
   const opacity = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [0.3, 0.7],
   });
 
-  const Skeleton = ({ style }) => (
-    <Animated.View style={[styles.skeleton, style, { opacity }]} />
-  );
-
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.userInfo}>
-          <Skeleton style={styles.avatar} />
-          <Skeleton style={styles.nickname} />
-          <Skeleton style={styles.date} />
+          <Skeleton style={styles.avatar} opacity={opacity} />
+          <Skeleton style={styles.nickname} opacity={opacity} />
+          <Skeleton style={styles.date} opacity={opacity} />
         </View>
       </View>
 
@@ -45,27 +50,27 @@ export function FeedSkeleton() {
       <View style={styles.mainContent}>
         {/* Left: Book Section */}
         <View style={styles.bookSection}>
-          <Skeleton style={styles.bookImage} />
+          <Skeleton style={styles.bookImage} opacity={opacity} />
           <View style={styles.bookInfo}>
-            <Skeleton style={styles.bookTitle} />
-            <Skeleton style={[styles.bookTitle, { width: '80%' }]} />
-            <Skeleton style={styles.bookAuthor} />
+            <Skeleton style={styles.bookTitle} opacity={opacity} />
+            <Skeleton style={styles.bookTitleShort} opacity={opacity} />
+            <Skeleton style={styles.bookAuthor} opacity={opacity} />
           </View>
         </View>
 
         {/* Right: Review Section */}
         <View style={styles.reviewSection}>
           <View style={styles.reviewContent}>
-            <Skeleton style={styles.reviewTitle} />
-            <Skeleton style={styles.reviewText} />
-            <Skeleton style={styles.reviewText} />
-            <Skeleton style={styles.reviewText} />
-            <Skeleton style={[styles.reviewText, { width: '75%' }]} />
+            <Skeleton style={styles.reviewTitle} opacity={opacity} />
+            <Skeleton style={styles.reviewText} opacity={opacity} />
+            <Skeleton style={styles.reviewText} opacity={opacity} />
+            <Skeleton style={styles.reviewText} opacity={opacity} />
+            <Skeleton style={styles.reviewTextShort} opacity={opacity} />
           </View>
 
           <View style={styles.actions}>
-            <Skeleton style={styles.actionButton} />
-            <Skeleton style={styles.actionButton} />
+            <Skeleton style={styles.actionButton} opacity={opacity} />
+            <Skeleton style={styles.actionButton} opacity={opacity} />
           </View>
         </View>
       </View>
@@ -132,6 +137,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     width: '100%',
   },
+  bookTitleShort: {
+    height: 16,
+    marginBottom: 4,
+    width: '80%',
+  },
   bookAuthor: {
     height: 14,
     width: '90%',
@@ -152,6 +162,10 @@ const styles = StyleSheet.create({
   reviewText: {
     height: 16,
     width: '100%',
+  },
+  reviewTextShort: {
+    height: 16,
+    width: '75%',
   },
   actions: {
     flexDirection: 'row',
