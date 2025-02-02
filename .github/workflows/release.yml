@@ -17,7 +17,10 @@ jobs:
         with:
           node-version: '23.x'
 
+      - name: Npm install
+        run: npm install
+
       - name: Semantic Release
-        run: npx semantic-release
+        run: npm run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
