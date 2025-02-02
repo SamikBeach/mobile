@@ -1,4 +1,4 @@
-const { getDefaultConfig } = require('metro-config');
+const { getDefaultConfig } = require('@react-native/metro-config');
 
 /**
  * Metro configuration
@@ -7,16 +7,18 @@ const { getDefaultConfig } = require('metro-config');
  * @type {import('@react-native/metro-config').MetroConfig}
  */
 module.exports = (async () => {
-  const {
-    resolver: { sourceExts, assetExts },
-  } = await getDefaultConfig();
+  const config = await getDefaultConfig(__dirname);
+
   return {
-    transformer: {
-      babelTransformerPath: require.resolve('react-native-svg-transformer'),
-    },
+    ...config,
     resolver: {
-      assetExts: assetExts.filter(ext => ext !== 'svg'),
-      sourceExts: [...sourceExts, 'svg'],
+      ...config.resolver,
+      // 이미지 확장자 명시적 추가
+      assetExts: [...config.resolver.assetExts, 'png', 'jpg', 'jpeg', 'gif'],
+      // 기본 소스 확장자 유지
+      sourceExts: [...config.resolver.sourceExts],
+      // React Navigation 에셋 경로 추가
+      assets: ['./node_modules/@react-navigation/elements/src/assets'],
     },
   };
 })();
