@@ -1,4 +1,4 @@
-import { NavigatorScreenParams } from '@react-navigation/native';
+import type { NavigatorScreenParams } from '@react-navigation/native';
 import { AuthStackParamList } from '@/navigation/AuthStack';
 
 export type RootStackParamList = {
@@ -8,9 +8,9 @@ export type RootStackParamList = {
 
 export type TabParamList = {
   HomeTab: NavigatorScreenParams<HomeStackParamList>;
-  BookTab: NavigatorScreenParams<BookStackParamList>;
-  AuthorTab: NavigatorScreenParams<AuthorStackParamList>;
-  AuthTab?: NavigatorScreenParams<AuthStackParamList>;
+  BookTab: undefined;
+  AuthorTab: undefined;
+  AuthTab?: undefined;
 };
 
 export type HomeStackParamList = {

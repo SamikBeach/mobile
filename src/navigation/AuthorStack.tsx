@@ -10,4 +10,4 @@ export default function AuthorStack() {
       <Stack.Screen name="Author" component={AuthorScreen} />
     </Stack.Navigator>
   );
-} 
+}

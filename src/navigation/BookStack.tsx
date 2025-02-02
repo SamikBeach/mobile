@@ -10,4 +10,4 @@ export default function BookStack() {
       <Stack.Screen name="Book" component={BookScreen} />
     </Stack.Navigator>
   );
-} 
+}

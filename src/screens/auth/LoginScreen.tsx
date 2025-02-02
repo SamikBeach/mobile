@@ -97,19 +97,17 @@ export default function LoginScreen({ navigation }: Props) {
         </Button>
 
         <View style={styles.links}>
-          <Button 
-            variant="text" 
+          <Button
+            variant="text"
             onPress={() => navigation.navigate('ResetPassword')}
-            style={styles.linkButton}
-          >
+            style={styles.linkButton}>
             <Text style={styles.linkText}>비밀번호를 잊으셨나요?</Text>
           </Button>
           <View style={styles.divider} />
-          <Button 
-            variant="text" 
+          <Button
+            variant="text"
             onPress={() => navigation.navigate('SignUp')}
-            style={styles.linkButton}
-          >
+            style={styles.linkButton}>
             <Text style={styles.linkText}>회원가입</Text>
           </Button>
         </View>
