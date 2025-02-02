@@ -1,6 +1,14 @@
 // Start of Selection
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  NativeSyntheticEvent,
+  TextLayoutEventData,
+} from 'react-native';
 import { format } from 'date-fns';
 import { Review } from '@/types/review';
 import { UserBase } from '@/types/user';
@@ -18,9 +26,24 @@ interface FeedProps {
 }
 
 export function Feed({ review, user, book }: FeedProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+
   const formattedPublicationDate = book.publicationDate
     ? format(new Date(book.publicationDate), 'yyyy년 M월 d일')
     : '';
+
+  const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
+    if (!isExpanded) {
+      const { lines } = event.nativeEvent;
+      // 8줄 이상일 때 더보기 버튼 표시
+      if (lines.length >= 8) {
+        setIsTruncated(true);
+      } else {
+        setIsTruncated(false);
+      }
+    }
+  };
 
   return (
     <TouchableOpacity style={styles.container}>
@@ -51,7 +74,21 @@ export function Feed({ review, user, book }: FeedProps) {
           <View style={styles.reviewContent}>
             <Text style={styles.reviewTitle}>{review.title}</Text>
             <View style={styles.reviewTextContainer}>
-              <FeedContent content={review.content} />
+              <Text
+                style={styles.reviewText}
+                numberOfLines={isExpanded ? undefined : 8}
+                ellipsizeMode="tail"
+                onTextLayout={onTextLayout}>
+                <FeedContent content={review.content} isExpanded={isExpanded} />
+              </Text>
+              {isTruncated && !isExpanded && (
+                <TouchableOpacity
+                  style={styles.moreButton}
+                  onPress={() => setIsExpanded(true)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                  <Text style={styles.moreButtonText}>더보기</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
 
@@ -132,6 +169,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     color: '#111827',
   },
+  reviewText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#4B5563',
+  },
   reviewTextContainer: {
     position: 'relative',
   },
@@ -142,11 +184,13 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   moreButton: {
-    marginTop: 4,
+    marginTop: 8,
+    paddingVertical: 4,
   },
   moreButtonText: {
     fontSize: 14,
     color: '#3B82F6',
+    fontWeight: '500',
   },
 });
 // End of Selection
