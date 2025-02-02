@@ -1,26 +1,37 @@
 import axios from '@/lib/axios';
-import type { Book } from '@/types/book';
+import type { Author } from '@/types/author';
 import type { PaginatedResponse, PaginationQuery } from '@/types/common';
-import type { Review } from '@/types/review';
-import type { Author, AuthorDetail, AuthorSearchQuery } from '@/types/author';
+
+interface SearchAuthorsParams extends PaginationQuery {
+  search?: string;
+  searchBy?: string[];
+  sortBy?: string;
+  filter?: {
+    genre_id?: number;
+    eraId?: number;
+  };
+}
 
 export const authorApi = {
-  searchAuthors: (params: AuthorSearchQuery) =>
-    axios.get<PaginatedResponse<Author>>('/author/search', {
+  getAllAuthors() {
+    return axios.get<Author[]>('/authors');
+  },
+
+  getAuthorDetail(authorId: number) {
+    return axios.get<Author>(`/authors/${authorId}`);
+  },
+
+  searchAuthors(params: SearchAuthorsParams) {
+    return axios.get<PaginatedResponse<Author>>('/authors/search', {
       params,
-    }),
+    });
+  },
 
-  getAllAuthors: () => axios.get<Author[]>('/author'),
+  likeAuthor(authorId: number) {
+    return axios.post(`/authors/${authorId}/like`);
+  },
 
-  getAuthorDetail: (authorId: number) => axios.get<AuthorDetail>(`/author/${authorId}`),
-
-  toggleAuthorLike: (authorId: number) =>
-    axios.post<{ liked: boolean }>(`/author/${authorId}/like`),
-
-  getAllAuthorBooks: (authorId: number) => axios.get<Book[]>(`/author/${authorId}/books`),
-
-  getAuthorReviews: (authorId: number, params: PaginationQuery) =>
-    axios.get<PaginatedResponse<Review>>(`/author/${authorId}/reviews`, {
-      params,
-    }),
+  unlikeAuthor(authorId: number) {
+    return axios.delete(`/authors/${authorId}/like`);
+  },
 };

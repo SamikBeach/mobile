@@ -1,5 +1,6 @@
-export interface Era {
-  id: number;
-  era: string;
+import type { BaseEntity } from './common';
+
+export interface Era extends BaseEntity {
   eraInKor: string;
+  era: string;
 }
