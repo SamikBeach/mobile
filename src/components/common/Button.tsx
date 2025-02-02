@@ -9,13 +9,13 @@ import {
 
 interface Props extends TouchableOpacityProps {
   children: React.ReactNode;
-  variant?: 'contained' | 'text';
+  variant?: 'solid' | 'outline' | 'text';
   loading?: boolean;
 }
 
 export function Button({ 
   children, 
-  variant = 'contained',
+  variant = 'solid',
   loading,
   style,
   disabled,
@@ -25,6 +25,8 @@ export function Button({
     <TouchableOpacity
       style={[
         styles.button,
+        variant === 'solid' && styles.solidButton,
+        variant === 'outline' && styles.outlineButton,
         variant === 'text' && styles.textButton,
         disabled && styles.disabled,
         style
@@ -33,11 +35,13 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'contained' ? 'white' : '#666'} />
+        <ActivityIndicator color={variant === 'solid' ? 'white' : '#111827'} />
       ) : (
         <Text style={[
           styles.text,
-          variant === 'text' && styles.textVariant,
+          variant === 'solid' && styles.solidText,
+          variant === 'outline' && styles.outlineText,
+          variant === 'text' && styles.textButtonText,
           disabled && styles.disabledText
         ]}>
           {children}
@@ -49,26 +53,37 @@ export function Button({
 
 const styles = StyleSheet.create({
   button: {
-    padding: 12,
+    height: 48,
     borderRadius: 8,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  solidButton: {
+    backgroundColor: '#111827',
+  },
+  outlineButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#111827',
   },
   textButton: {
     backgroundColor: 'transparent',
-    padding: 4,
   },
   disabled: {
     backgroundColor: '#ccc',
   },
   text: {
-    color: 'white',
     fontSize: 16,
     fontWeight: '600',
   },
-  textVariant: {
-    color: '#666',
+  solidText: {
+    color: 'white',
+  },
+  outlineText: {
+    color: '#111827',
+  },
+  textButtonText: {
+    color: '#111827',
   },
   disabledText: {
     color: '#666',
