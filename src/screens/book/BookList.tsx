@@ -11,6 +11,7 @@ import { bookGenreAtom, bookSearchKeywordAtom, bookSortModeAtom, authorIdAtom } 
 import { GENRE_IDS } from '@/constants/genre';
 import type { Book } from '@/types/book';
 import { BookListSkeleton } from '@/components/common/Skeleton/BookListSkeleton';
+import { spacing } from '@/styles/theme';
 
 export function BookList() {
   const genre = useAtomValue(bookGenreAtom);
@@ -83,9 +84,9 @@ export function BookList() {
 
 const styles = StyleSheet.create({
   list: {
-    padding: 16,
+    padding: spacing.lg,
   },
   separator: {
-    height: 16,
+    height: spacing.md,
   },
 });

@@ -10,27 +10,17 @@ export function GenreButtons() {
   const [genre, setGenre] = useAtom(bookGenreAtom);
 
   return (
-    <ScrollView 
-      horizontal 
-      showsHorizontalScrollIndicator={false} 
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
       style={styles.container}
-      contentContainerStyle={styles.content}
-    >
+      contentContainerStyle={styles.content}>
       {(Object.entries(GENRE_LABELS) as Array<[Genre, string]>).map(([value, label]) => (
         <TouchableOpacity
           key={value}
           onPress={() => setGenre(value)}
-          style={[
-            styles.button,
-            genre === value && styles.activeButton,
-          ]}
-        >
-          <Text style={[
-            styles.text,
-            genre === value && styles.activeText,
-          ]}>
-            {label}
-          </Text>
+          style={[styles.button, genre === value && styles.activeButton]}>
+          <Text style={[styles.text, genre === value && styles.activeText]}>{label}</Text>
         </TouchableOpacity>
       ))}
     </ScrollView>
