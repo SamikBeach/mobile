@@ -1,5 +1,4 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
-const path = require('path');
+const { getDefaultConfig } = require('@react-native/metro-config');
 
 /**
  * Metro configuration
@@ -7,14 +6,19 @@ const path = require('path');
  *
  * @type {import('@react-native/metro-config').MetroConfig}
  */
-const config = {
-  resolver: {
-    sourceExts: ['jsx', 'js', 'ts', 'tsx', 'json'],
-    extraNodeModules: {
-      '@': path.resolve(__dirname, 'src'),
-    },
-  },
-  watchFolders: [path.resolve(__dirname, 'src')],
-};
+module.exports = (async () => {
+  const config = await getDefaultConfig(__dirname);
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+  return {
+    ...config,
+    resolver: {
+      ...config.resolver,
+      // 이미지 확장자 명시적 추가
+      assetExts: [...config.resolver.assetExts, 'png', 'jpg', 'jpeg', 'gif'],
+      // 기본 소스 확장자 유지
+      sourceExts: [...config.resolver.sourceExts],
+      // React Navigation 에셋 경로 추가
+      assets: ['./node_modules/@react-navigation/elements/src/assets'],
+    },
+  };
+})();

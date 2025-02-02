@@ -1,18 +1,20 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { FeedList } from '../components/Feed/FeedList';
+import { BookList } from './BookList';
+import { BookListHeader } from './BookListHeader';
 
-export const HomeScreen = () => {
+export default function BookScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <FeedList />
+      <BookListHeader />
+      <BookList />
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F3F3',
+    backgroundColor: 'white',
   },
 });

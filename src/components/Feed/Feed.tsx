@@ -8,6 +8,7 @@ import {
   StyleSheet,
   NativeSyntheticEvent,
   TextLayoutEventData,
+  Pressable,
 } from 'react-native';
 import { format } from 'date-fns';
 import { Review } from '@/types/review';
@@ -22,13 +23,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
 
-interface FeedProps {
+interface Props {
   review: Review;
   user: UserBase;
   book: Book;
+  expanded?: boolean;
 }
 
-export function Feed({ review, user, book }: FeedProps) {
+export function Feed({ review, user, book, expanded }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -54,7 +56,9 @@ export function Feed({ review, user, book }: FeedProps) {
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
+    <Pressable
+      style={styles.container}
+      onPress={() => !expanded && navigation.navigate('Review', { reviewId: review.id })}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={user} showNickname={true} />
@@ -110,7 +114,7 @@ export function Feed({ review, user, book }: FeedProps) {
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

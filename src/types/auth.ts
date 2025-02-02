@@ -7,18 +7,22 @@ export interface LoginDto {
 
 export interface RegisterDto {
   email: string;
-  password: string;
   nickname: string;
+  password: string;
 }
 
 export interface RegisterCompleteDto {
   email: string;
-  verificationCode: string;
+  code: string;
 }
 
 export interface AuthResponse {
   accessToken: string;
-  user: UserBase;
+  user: {
+    id: string;
+    email: string;
+    nickname: string;
+  };
 }
 
 export interface EmailVerificationDto {
@@ -45,5 +49,4 @@ export interface LogoutResponse {
 
 export interface TokenRefreshResponse {
   accessToken: string;
-  user: UserBase;
 }

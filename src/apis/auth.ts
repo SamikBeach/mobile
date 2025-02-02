@@ -9,8 +9,31 @@ import type {
   VerifyEmailDto,
 } from '@/types/auth';
 
+interface LoginResponse {
+  accessToken: string;
+  user: {
+    id: string;
+    email: string;
+    nickname: string;
+  };
+}
+
 export const authApi = {
-  login: (data: LoginDto) => axios.post<AuthResponse>('/auth/login/email', data),
+  login: async (data: { email: string; password: string }): Promise<LoginResponse> => {
+    // TODO: 실제 API 구현
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve({
+          accessToken: 'dummy_token',
+          user: {
+            id: '1',
+            email: data.email,
+            nickname: 'User',
+          },
+        });
+      }, 1000);
+    });
+  },
 
   logout: () => axios.post<void>('/auth/logout'),
 
