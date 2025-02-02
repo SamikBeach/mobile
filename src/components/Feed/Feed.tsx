@@ -18,6 +18,9 @@ import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import { FeedContent } from './FeedContent';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/navigation/types';
 
 interface FeedProps {
   review: Review;
@@ -26,6 +29,7 @@ interface FeedProps {
 }
 
 export function Feed({ review, user, book }: FeedProps) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -45,8 +49,12 @@ export function Feed({ review, user, book }: FeedProps) {
     }
   };
 
+  const handlePress = () => {
+    navigation.navigate('Review', { reviewId: review.id });
+  };
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handlePress}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={user} showNickname={true} />

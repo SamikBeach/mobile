@@ -6,15 +6,15 @@
  */
 
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { QueryProvider } from '@/providers/QueryProvider';
-import { HomeScreen } from './src/screens/HomeScreen';
-
-function App(): React.JSX.Element {
+import { RootStack } from '@/navigation/RootStack';
+export default function App() {
   return (
     <QueryProvider>
-      <HomeScreen />
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
     </QueryProvider>
   );
 }
-
-export default App;
