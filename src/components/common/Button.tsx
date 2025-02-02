@@ -4,13 +4,16 @@ import {
   Text, 
   StyleSheet, 
   ActivityIndicator,
-  TouchableOpacityProps 
+  TouchableOpacityProps,
+  StyleProp,
+  TextStyle
 } from 'react-native';
 
 interface Props extends TouchableOpacityProps {
   children: React.ReactNode;
   variant?: 'solid' | 'outline' | 'text';
   loading?: boolean;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export function Button({ 
@@ -19,6 +22,7 @@ export function Button({
   loading,
   style,
   disabled,
+  textStyle,
   ...props 
 }: Props) {
   return (
@@ -42,7 +46,8 @@ export function Button({
           variant === 'solid' && styles.solidText,
           variant === 'outline' && styles.outlineText,
           variant === 'text' && styles.textButtonText,
-          disabled && styles.disabledText
+          disabled && styles.disabledText,
+          textStyle
         ]}>
           {children}
         </Text>
