@@ -6,16 +6,21 @@
  */
 
 import React from 'react';
-import { QueryProvider } from '@/providers/QueryProvider';
-import { RootStack } from '@/navigation/RootStack';
-import { NavigationContainer } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Provider as JotaiProvider } from 'jotai';
+import RootNavigator from '@/navigation/RootNavigator';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <QueryProvider>
-      <NavigationContainer>
-        <RootStack />
-      </NavigationContainer>
-    </QueryProvider>
+    <QueryClientProvider client={queryClient}>
+      <JotaiProvider>
+        <SafeAreaProvider>
+          <RootNavigator />
+        </SafeAreaProvider>
+      </JotaiProvider>
+    </QueryClientProvider>
   );
 }
