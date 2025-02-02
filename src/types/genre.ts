@@ -5,4 +5,4 @@ export interface GenreEntity extends BaseEntity {
   genreInKor: string;
 }
 
-export type Genre = 'all' | 'literature' | 'philosophy' | 'history' | 'science' | 'economics';
+export type Genre = 'all' | 'philosophy';

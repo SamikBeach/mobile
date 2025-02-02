@@ -12,7 +12,7 @@ export function BookListSkeleton() {
           <View style={styles.content}>
             <View style={styles.titleContainer}>
               <Skeleton style={styles.titleLine} />
-              <Skeleton style={[styles.titleLine, { width: '60%' }]} />
+              <Skeleton style={{ ...styles.titleLine, width: '60%' }} />
             </View>
             <View style={styles.meta}>
               <Skeleton style={styles.author} />
@@ -67,4 +67,4 @@ const styles = StyleSheet.create({
     width: '40%',
     borderRadius: borderRadius.sm,
   },
-}); 
+});

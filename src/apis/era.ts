@@ -1,8 +1,12 @@
 import axios from '@/lib/axios';
-import { Era } from '@/types/era';
+import type { Era } from '@/types/era';
 
 export const eraApi = {
-  getAllEras: () => {
-    return axios.get<Era[]>('/era');
+  getAllEras() {
+    return axios.get<Era[]>('/eras');
+  },
+
+  getEraDetail(eraId: number) {
+    return axios.get<Era>(`/eras/${eraId}`);
   },
 };

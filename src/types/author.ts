@@ -1,10 +1,13 @@
 import { Book } from './book';
 import { BaseEntity, PaginationQuery } from './common';
-import { Genre } from './genre';
+import { Genre, GenreEntity } from './genre';
+import type { Era } from './era';
 
 export interface Author extends BaseEntity {
   name: string;
   nameInKor: string;
+  nameInEng: string | null;
+  description: string;
   imageUrl: string | null;
   bornDate: string | null;
   bornDateIsBc: boolean | null;
@@ -14,7 +17,7 @@ export interface Author extends BaseEntity {
   likeCount: number;
   reviewCount: number;
   bookCount: number;
-  genre: Genre;
+  genre: GenreEntity;
   authorBooks: {
     book: Book;
   }[];
@@ -28,6 +31,8 @@ export interface Author extends BaseEntity {
   }[];
   createdAt: string;
   updatedAt: string;
+  isLiked: boolean;
+  era: Era;
 }
 
 export interface AuthorDetail extends Author {

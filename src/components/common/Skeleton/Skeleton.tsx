@@ -23,7 +23,7 @@ export function Skeleton({ style }: Props) {
           easing: Easing.ease,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [animatedValue]);
 
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E7EB',
     borderRadius: 4,
   },
-}); 
+});
