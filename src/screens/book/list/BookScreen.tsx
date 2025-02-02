@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { BookList } from './list/BookList';
-import { BookListHeader } from './list/BookListHeader';
+import { BookList } from './BookList';
+import { BookListHeader } from './BookListHeader';
 
 export default function BookScreen() {
   return (

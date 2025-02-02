@@ -2,10 +2,10 @@ import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
-import { BookDetailInfo } from './BookDetailInfo';
+import { BookDetailInfo } from './detail/BookDetailInfo';
 import { colors, spacing } from '@/styles/theme';
-import { RelativeBooks } from './RelativeBooks';
-import { ReviewList } from './ReviewList';
+import { RelativeBooks } from './detail/RelativeBooks';
+import { ReviewList } from './detail/ReviewList';
 import { BookDetailSkeleton } from '@/components/common/Skeleton/BookDetailSkeleton';
 import type { RootStackScreenProps } from '@/navigation/types';
 
