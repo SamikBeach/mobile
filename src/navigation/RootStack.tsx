@@ -1,26 +1,26 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { RootStackParamList } from './types';
-import { HomeScreen } from '@/screens/home/HomeScreen';
-import { ReviewScreen } from '@/screens/review/ReviewScreen';
+import { RootStackParamList } from '@/types/navigation';
+import TabNavigator from './TabNavigator';
+import AuthStack from './AuthStack';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator initialRouteName="Main">
       <Stack.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Main"
+        component={TabNavigator}
         options={{
-          title: '홈',
+          headerShown: false,
         }}
       />
       <Stack.Screen
-        name="Review"
-        component={ReviewScreen}
+        name="Auth"
+        component={AuthStack}
         options={{
-          title: '리뷰',
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

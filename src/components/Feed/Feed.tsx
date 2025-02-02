@@ -56,10 +56,9 @@ export function Feed({ review, user, book, expanded }: Props) {
   };
 
   return (
-    <Pressable 
-      style={styles.container} 
-      onPress={() => !expanded && navigation.navigate('Review', { reviewId: review.id })}
-    >
+    <Pressable
+      style={styles.container}
+      onPress={() => !expanded && navigation.navigate('Review', { reviewId: review.id })}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={user} showNickname={true} />
