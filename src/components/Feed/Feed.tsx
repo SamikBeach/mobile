@@ -1,35 +1,44 @@
 // Start of Selection
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { format } from 'date-fns';
 import { Review } from '@/types/review';
-import { User } from '@/types/user';
+import { UserBase } from '@/types/user';
 import { Book } from '@/types/book';
+import { formatDate } from '@/utils/date';
+import { LikeButton } from '@/components/common/LikeButton';
+import { CommentButton } from '@/components/common/CommentButton';
 
 interface FeedProps {
   review: Review;
-  user: User;
+  user: UserBase;
   book: Book;
 }
 
-export const Feed = ({ review, user, book }: FeedProps) => {
+export function Feed({ review, user, book }: FeedProps) {
+  const formattedPublicationDate = book.publicationDate
+    ? format(new Date(book.publicationDate), 'yyyy년 M월 d일')
+    : '';
+
   return (
     <TouchableOpacity style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
-          <Image source={{ uri: user.imageUrl ?? '' }} style={styles.avatar} />
-          <Text style={styles.date}>{review.createdAt}</Text>
+          <Image source={{ uri: user.imageUrl ?? undefined }} style={styles.avatar} />
+          <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
         </View>
       </View>
 
       <View style={styles.content}>
         <View style={styles.bookInfo}>
-          <Image source={{ uri: book.imageUrl ?? '' }} style={styles.bookImage} />
+          <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.bookImage} />
           <View style={styles.bookDetails}>
             <Text style={styles.bookTitle} numberOfLines={2}>
               {book.title}
             </Text>
             <Text style={styles.bookAuthor} numberOfLines={1}>
-              {book.authorBooks[0].author.name}
+              {book.authorBooks[0]?.author.nameInKor} · {book.publisher} ·{' '}
+              {formattedPublicationDate}
             </Text>
           </View>
         </View>
@@ -42,25 +51,30 @@ export const Feed = ({ review, user, book }: FeedProps) => {
         </View>
 
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Text>좋아요 {review.likeCount}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Text>댓글 {review.commentCount}</Text>
-          </TouchableOpacity>
+          <LikeButton
+            isLiked={review.isLiked ?? false}
+            likeCount={review.likeCount}
+            onPress={() => {}}
+          />
+          <CommentButton commentCount={review.commentCount} />
         </View>
       </View>
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    padding: 16,
+    backgroundColor: 'white',
     marginHorizontal: 16,
     marginVertical: 8,
     borderRadius: 12,
-    padding: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   header: {
     flexDirection: 'row',
@@ -122,10 +136,7 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-  },
-  actionButton: {
-    marginLeft: 16,
-    padding: 8,
+    gap: 16,
   },
 });
 // End of Selection

@@ -2,36 +2,36 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface TabProps {
-  tabs: Array<{ key: string; title: string }>;
-  activeTab: string;
-  onChangeTab: (tab: string) => void;
+  tabs: Array<{ value: string; label: string }>;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export const Tab = ({ tabs, activeTab, onChangeTab }: TabProps) => {
+export function Tab({ tabs, value, onChange }: TabProps) {
   return (
     <View style={styles.container}>
       {tabs.map(tab => (
         <TouchableOpacity
-          key={tab.key}
-          style={[styles.tab, activeTab === tab.key && styles.activeTab]}
-          onPress={() => onChangeTab(tab.key)}>
-          <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>
-            {tab.title}
+          key={tab.value}
+          style={[styles.tab, value === tab.value && styles.activeTab]}
+          onPress={() => onChange(tab.value)}>
+          <Text style={[styles.tabText, value === tab.value && styles.activeTabText]}>
+            {tab.label}
           </Text>
         </TouchableOpacity>
       ))}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    backgroundColor: '#f4f4f5',
+    padding: 4,
+    borderRadius: 8,
     marginHorizontal: 16,
     marginVertical: 8,
-    backgroundColor: '#F3F3F3',
-    borderRadius: 8,
-    padding: 4,
   },
   tab: {
     flex: 1,
@@ -40,14 +40,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   activeTab: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#fff',
   },
   tabText: {
     fontSize: 14,
-    color: '#666666',
+    color: '#71717a',
   },
   activeTabText: {
-    color: '#000000',
+    color: '#18181b',
     fontWeight: '600',
   },
 });

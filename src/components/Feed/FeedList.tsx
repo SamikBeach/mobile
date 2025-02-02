@@ -1,56 +1,86 @@
-import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import { Tab } from '../common/Tab';
+import React, { useMemo, useState } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { Tab } from '@/components/common/Tab';
 import { Feed } from './Feed';
-import { Review, User, Book } from '@/types';
+import { FeedSkeleton } from './FeedSkeleton';
+import { reviewApi } from '@/apis/review';
+import type { Review } from '@/types/review';
 
-interface FeedItem {
-  id: string;
-  review: Review;
-  user: User;
-  book: Book;
+interface ReviewResponse {
+  data: {
+    data: Review[];
+    meta: {
+      currentPage: number;
+      totalPages: number;
+    };
+  };
 }
 
-const TABS = [
-  { key: 'popular', title: '인기순' },
-  { key: 'recent', title: '최신순' },
-];
+export function FeedList() {
+  const [tab, setTab] = useState<'popular' | 'recent'>('popular');
 
-export const FeedList = () => {
-  const [activeTab, setActiveTab] = useState('popular');
-  const [loading, setLoading] = useState(false);
-  const [reviews, setReviews] = useState<FeedItem[]>([]);
+  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery<ReviewResponse>({
+    queryKey: ['reviews', tab],
+    queryFn: async ({ pageParam = 1 }) => {
+      return await reviewApi.searchReviews({
+        page: pageParam as number,
+        limit: 10,
+        sortBy: tab === 'popular' ? 'likeCount:DESC' : 'createdAt:DESC',
+      });
+    },
+    initialPageParam: 1,
+    getNextPageParam: response => {
+      const { currentPage, totalPages } = response.data.meta;
+      return currentPage < totalPages ? currentPage + 1 : undefined;
+    },
+  });
 
-  const renderItem = ({ item }: { item: FeedItem }) => (
-    <Feed review={item.review} user={item.user} book={item.book} />
-  );
+  const reviews = useMemo(() => data?.pages?.flatMap(page => page.data.data) ?? [], [data]);
 
-  const loadMore = () => {
-    // 여기에 페이지네이션 로직을 구현하세요
-  };
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Tab
+          tabs={[
+            { value: 'popular', label: '인기순' },
+            { value: 'recent', label: '최신순' },
+          ]}
+          value={tab}
+          onChange={value => setTab(value as 'popular' | 'recent')}
+        />
+        {[1, 2, 3].map(i => (
+          <FeedSkeleton key={i} />
+        ))}
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Tab tabs={TABS} activeTab={activeTab} onChangeTab={tab => setActiveTab(tab)} />
+      <Tab
+        tabs={[
+          { value: 'popular', label: '인기순' },
+          { value: 'recent', label: '최신순' },
+        ]}
+        value={tab}
+        onChange={value => setTab(value as 'popular' | 'recent')}
+      />
       <FlatList
         data={reviews}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        onEndReached={loadMore}
+        renderItem={({ item }) => <Feed review={item} user={item.user} book={item.book} />}
+        keyExtractor={item => String(item.id)}
+        onEndReached={() => hasNextPage && fetchNextPage()}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          loading ? <ActivityIndicator style={styles.loader} color="#000" /> : null
-        }
+        ListFooterComponent={hasNextPage ? <FeedSkeleton /> : null}
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  loader: {
-    marginVertical: 20,
+    backgroundColor: '#fff',
   },
 });

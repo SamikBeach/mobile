@@ -3,15 +3,50 @@ import axios from 'axios';
 import { STORAGE_KEYS } from '@/constants/storage-keys';
 import { ERROR_CODES } from '@/constants/error-codes';
 
+// AsyncStorage 초기화 확인
+const initializeAsyncStorage = async () => {
+  try {
+    await AsyncStorage.getItem('test-key');
+    return true;
+  } catch (error) {
+    console.error('AsyncStorage is not initialized:', error);
+    return false;
+  }
+};
+
+const instance = axios.create({
+  baseURL: 'http://localhost:3001/api/v2',
+  withCredentials: true,
+});
+
+let isStorageInitialized = false;
+
 const getToken = async () => {
+  if (!isStorageInitialized) {
+    isStorageInitialized = await initializeAsyncStorage();
+  }
+
+  if (!isStorageInitialized) {
+    return null;
+  }
+
   try {
     return await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-  } catch {
+  } catch (error) {
+    console.error('Error getting token:', error);
     return null;
   }
 };
 
 const setToken = async (token: string) => {
+  if (!isStorageInitialized) {
+    isStorageInitialized = await initializeAsyncStorage();
+  }
+
+  if (!isStorageInitialized) {
+    return;
+  }
+
   try {
     await AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
   } catch (error) {
@@ -20,17 +55,20 @@ const setToken = async (token: string) => {
 };
 
 const removeToken = async () => {
+  if (!isStorageInitialized) {
+    isStorageInitialized = await initializeAsyncStorage();
+  }
+
+  if (!isStorageInitialized) {
+    return;
+  }
+
   try {
     await AsyncStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
   } catch (error) {
     console.error('Error removing token:', error);
   }
 };
-
-const instance = axios.create({
-  baseURL: 'YOUR_API_URL',
-  withCredentials: true,
-});
 
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
