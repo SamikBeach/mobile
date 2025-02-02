@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useAtom } from 'jotai';
-import { bookSearchKeywordAtom } from '@/atoms/book';
 import Icon from 'react-native-vector-icons/Feather';
-import { debounce } from 'lodash';
+import { bookSearchKeywordAtom } from '@/atoms/book';
+import { colors, spacing, borderRadius } from '@/styles/theme';
+import { debounce } from 'lodash-es';
 
 export function SearchBar() {
   const [searchKeyword, setSearchKeyword] = useAtom(bookSearchKeywordAtom);
@@ -25,16 +26,20 @@ export function SearchBar() {
 
   return (
     <View style={styles.container}>
-      <Icon name="search" size={16} color="#6B7280" style={styles.searchIcon} />
+      <Icon name="search" size={16} color={colors.gray[400]} />
       <TextInput
         style={styles.input}
         placeholder="제목, 저자 검색..."
+        placeholderTextColor={colors.gray[400]}
         value={inputValue}
         onChangeText={handleChange}
       />
       {inputValue ? (
-        <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
-          <Icon name="x" size={16} color="#9CA3AF" />
+        <TouchableOpacity
+          onPress={handleClear}
+          style={styles.clearButton}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Icon name="x" size={16} color={colors.gray[400]} />
         </TouchableOpacity>
       ) : null}
     </View>
@@ -45,21 +50,19 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    height: 40,
-  },
-  searchIcon: {
-    marginRight: 8,
+    backgroundColor: colors.gray[50],
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.md,
+    height: 44,
+    gap: spacing.sm,
   },
   input: {
     flex: 1,
-    fontSize: 14,
-    color: '#111827',
+    fontSize: 15,
+    color: colors.gray[900],
     padding: 0,
   },
   clearButton: {
-    padding: 4,
+    padding: spacing.xs,
   },
-}); 
+});

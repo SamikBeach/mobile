@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
-import { Button } from '@/components/common/Button';
 import { Text } from '@/components/common/Text';
 import { useAtom } from 'jotai';
 import { authorIdAtom } from '@/atoms/book';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
 import Icon from 'react-native-vector-icons/Feather';
-import { Input } from '@/components/common/Input';
+import { colors, spacing, borderRadius } from '@/styles/theme';
+import { TextInput } from 'react-native';
 
 export function AuthorSelect() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,15 +17,17 @@ export function AuthorSelect() {
   const { data: authors } = useQuery({
     queryKey: ['authors'],
     queryFn: authorApi.getAllAuthors,
-    select: response => response.data,
+    select: response =>
+      response.data.map(author => ({
+        ...author,
+        nameInKor: author.nameInKor.trim(),
+      })),
   });
 
-  const selectedAuthor = authors?.find(
-    author => author.id.toString() === selectedAuthorId
-  );
+  const selectedAuthor = authors?.find(author => author.id.toString() === selectedAuthorId);
 
   const filteredAuthors = authors?.filter(author =>
-    author.nameInKor.toLowerCase().includes(search.toLowerCase())
+    author.nameInKor.toLowerCase().includes(search.trim().toLowerCase()),
   );
 
   const handleSelect = (authorId: string) => {
@@ -37,50 +39,58 @@ export function AuthorSelect() {
     setSelectedAuthorId(undefined);
   };
 
+  const handleSearch = (value: string) => {
+    setSearch(value.trim());
+  };
+
   return (
     <>
-      <Button
-        variant="outline"
-        onPress={() => setIsOpen(true)}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>
-          {selectedAuthor?.nameInKor || '작가'}
-        </Text>
+      <TouchableOpacity onPress={() => setIsOpen(true)} style={styles.button}>
+        <Text style={styles.buttonText}>{selectedAuthor?.nameInKor || '작가'}</Text>
         {selectedAuthor ? (
-          <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
-            <Icon name="x" size={16} color="#9CA3AF" />
+          <TouchableOpacity
+            onPress={handleClear}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Icon name="x" size={16} color={colors.gray[400]} />
           </TouchableOpacity>
         ) : (
-          <Icon name="chevron-down" size={16} color="#6B7280" />
+          <Icon name="chevron-down" size={16} color={colors.gray[400]} />
         )}
-      </Button>
+      </TouchableOpacity>
 
       <Modal visible={isOpen} animationType="slide">
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>작가 선택</Text>
-            <Button variant="text" onPress={() => setIsOpen(false)}>
-              닫기
-            </Button>
+            <TouchableOpacity
+              onPress={() => setIsOpen(false)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Icon name="x" size={20} color={colors.gray[500]} />
+            </TouchableOpacity>
           </View>
-          <Input
-            value={search}
-            onChangeText={setSearch}
-            placeholder="작가 검색..."
-            style={styles.searchInput}
-          />
+
+          <View style={styles.searchContainer}>
+            <Icon name="search" size={16} color={colors.gray[400]} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="작가 검색..."
+              placeholderTextColor={colors.gray[400]}
+              value={search}
+              onChangeText={handleSearch}
+            />
+          </View>
+
           <FlatList
             data={filteredAuthors}
             keyExtractor={item => item.id.toString()}
+            contentContainerStyle={styles.list}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.authorItem}
-                onPress={() => handleSelect(item.id.toString())}
-              >
-                <Text>{item.nameInKor}</Text>
+                onPress={() => handleSelect(item.id.toString())}>
+                <Text style={styles.authorName}>{item.nameInKor}</Text>
                 {item.id.toString() === selectedAuthorId && (
-                  <View style={styles.selectedMark} />
+                  <Icon name="check" size={16} color={colors.primary[600]} />
                 )}
               </TouchableOpacity>
             )}
@@ -93,51 +103,63 @@ export function AuthorSelect() {
 
 const styles = StyleSheet.create({
   button: {
-    minWidth: 120,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.gray[50],
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.lg,
+    minWidth: 120,
+    gap: spacing.sm,
   },
   buttonText: {
-    color: '#111827',
     fontSize: 14,
-  },
-  clearButton: {
-    padding: 4,
+    color: colors.gray[900],
   },
   modal: {
     flex: 1,
-    backgroundColor: 'white',
-    paddingTop: 44,
+    backgroundColor: colors.white,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    padding: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: colors.gray[100],
   },
   modalTitle: {
     fontSize: 16,
     fontWeight: '600',
+    color: colors.gray[900],
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: spacing.lg,
+    padding: spacing.md,
+    backgroundColor: colors.gray[50],
+    borderRadius: borderRadius.lg,
+    gap: spacing.sm,
   },
   searchInput: {
-    margin: 16,
+    flex: 1,
+    fontSize: 15,
+    color: colors.gray[900],
+    padding: 0,
+  },
+  list: {
+    padding: spacing.lg,
   },
   authorItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    paddingVertical: spacing.md,
   },
-  selectedMark: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#111827',
+  authorName: {
+    fontSize: 15,
+    color: colors.gray[900],
   },
-}); 
+});

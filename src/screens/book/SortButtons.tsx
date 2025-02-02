@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button } from '@/components/common/Button';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useAtom } from 'jotai';
 import { bookSortModeAtom, type BookSortMode } from '@/atoms/book';
+import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 
 const SORT_OPTIONS: { value: BookSortMode; label: string }[] = [
   { value: 'popular', label: '인기순' },
@@ -16,17 +16,12 @@ export function SortButtons() {
   return (
     <View style={styles.container}>
       {SORT_OPTIONS.map(({ value, label }) => (
-        <Button
+        <TouchableOpacity
           key={value}
-          variant="text"
           onPress={() => setSortMode(value)}
-          style={[
-            styles.button,
-            sortMode === value && styles.activeButton,
-          ]}
-        >
-          {label}
-        </Button>
+          style={[styles.button, sortMode === value && styles.activeButton]}>
+          <Text style={[styles.text, sortMode === value && styles.activeText]}>{label}</Text>
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -35,12 +30,26 @@ export function SortButtons() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    gap: 8,
+    backgroundColor: colors.gray[50],
+    padding: spacing.xs,
+    borderRadius: borderRadius.lg,
+    gap: spacing.xs,
   },
   button: {
-    paddingHorizontal: 8,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
   },
   activeButton: {
-    color: '#111827',
+    backgroundColor: colors.white,
+    ...shadows.sm,
   },
-}); 
+  text: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.gray[500],
+  },
+  activeText: {
+    color: colors.gray[900],
+  },
+});

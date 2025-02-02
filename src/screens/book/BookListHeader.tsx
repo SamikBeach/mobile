@@ -4,17 +4,20 @@ import { GenreButtons } from './GenreButtons';
 import { SearchBar } from './SearchBar';
 import { SortButtons } from './SortButtons';
 import { AuthorSelect } from './AuthorSelect';
+import { colors, spacing, shadows } from '@/styles/theme';
 
 export function BookListHeader() {
   return (
     <View style={styles.container}>
       <View style={styles.top}>
         <GenreButtons />
-        <SearchBar />
       </View>
       <View style={styles.bottom}>
-        <AuthorSelect />
-        <SortButtons />
+        <SearchBar />
+        <View style={styles.filters}>
+          <AuthorSelect />
+          <SortButtons />
+        </View>
       </View>
     </View>
   );
@@ -22,15 +25,19 @@ export function BookListHeader() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-    gap: 12,
+    backgroundColor: colors.white,
+    paddingTop: spacing.lg,
+    ...shadows.sm,
   },
   top: {
-    gap: 12,
+    paddingHorizontal: spacing.lg,
   },
   bottom: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
+  },
+  filters: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
