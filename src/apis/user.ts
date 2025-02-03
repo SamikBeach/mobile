@@ -3,13 +3,19 @@ import type { PaginatedResponse, PaginationQuery } from '@/types/common';
 import type { Author } from '@/types/author';
 import type { Book } from '@/types/book';
 import type { Review } from '@/types/review';
-import type { ChangePasswordDto, UpdateUserDto, User, UserBase, UserSearch } from '@/types/user';
+import type {
+  ChangePasswordDto,
+  UpdateUserDto,
+  User,
+  UserSearch,
+  UserResponse,
+} from '@/types/user';
 
 export const userApi = {
   /**
    * 내 프로필 정보를 조회합니다.
    */
-  getMyProfile: () => axios.get<UserBase>('/user/me'),
+  getMyProfile: () => axios.get<UserResponse>('/user/me'),
 
   /**
    * 사용자 상세 정보를 조회합니다.

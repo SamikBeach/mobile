@@ -1,29 +1,31 @@
-import axios from '@/lib/axios';
+import axios, { saveAuthTokens, clearAuthTokens } from '@/lib/axios';
 import type {
   AuthResponse,
   EmailVerificationDto,
   LoginDto,
   RegisterCompleteDto,
   RegisterDto,
-  TokenRefreshResponse,
   VerifyEmailDto,
 } from '@/types/auth';
 
-interface LoginResponse {
-  accessToken: string;
-  user: {
-    id: string;
-    email: string;
-    nickname: string;
-  };
-}
-
 export const authApi = {
-  login: (data: LoginDto) => axios.post<AuthResponse>('/auth/login/email', data),
+  login: async (data: LoginDto) => {
+    const response = await axios.post<AuthResponse>('/auth/login/email', data);
+    await saveAuthTokens(response.data.accessToken, response.data.refreshToken);
+    return response;
+  },
 
-  logout: () => axios.post<void>('/auth/logout'),
+  logout: async () => {
+    const response = await axios.post<void>('/auth/logout');
+    await clearAuthTokens();
+    return response;
+  },
 
-  googleLogin: (code: string) => axios.post<AuthResponse>('/auth/login/google', { code }),
+  googleLogin: async (code: string) => {
+    const response = await axios.post<AuthResponse>('/auth/login/google', { code });
+    await saveAuthTokens(response.data.accessToken, response.data.refreshToken);
+    return response;
+  },
 
   checkEmail: (data: EmailVerificationDto) =>
     axios.post<{ available: boolean }>('/auth/register/check-email', data),
@@ -38,7 +40,7 @@ export const authApi = {
   completeRegistration: (data: RegisterCompleteDto) =>
     axios.post<AuthResponse>('/auth/register/complete', data),
 
-  refresh: () => axios.post<TokenRefreshResponse>('/auth/refresh'),
+  refresh: () => axios.post<AuthResponse>('/auth/refresh'),
 
   sendPasswordResetEmail: (email: string) =>
     axios.post<{ message: string }>('/auth/password/reset-request', { email }),

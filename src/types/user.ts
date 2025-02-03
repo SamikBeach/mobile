@@ -9,7 +9,16 @@ export interface User {
   imageUrl?: string;
 }
 
-export type UserBase = Pick<User, 'id' | 'email' | 'nickname' | 'imageUrl'>;
+export interface UserBase {
+  id: string;
+  email: string;
+  nickname: string;
+  imageUrl?: string;
+}
+
+export interface UserResponse {
+  data: UserBase;
+}
 
 export interface UpdateUserDto {
   nickname?: string;
