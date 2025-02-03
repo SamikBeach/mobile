@@ -42,23 +42,20 @@ export type TabParamList = {
   BookTab: undefined;
   AuthorTab: undefined;
   UserTab: { userId: number };
-  AuthTab: NavigatorScreenParams<AuthStackParamList>;
+  AuthTab: undefined;
 };
 
 export type RootStackParamList = {
   Tab: NavigatorScreenParams<TabParamList>;
-  Review: {
-    reviewId: number;
-  };
-  User: {
-    userId: number;
-  };
-  BookDetail: {
-    bookId: number;
-  };
-  AuthorDetail: {
-    authorId: number;
-  };
+  Review: { reviewId: number };
+  Login: undefined;
+  SignUp: undefined;
+  UserInfo: { email: string };
+  VerifyCode: { email: string };
+  ResetPassword: { email: string; token: string };
+  User: { userId: number };
+  BookDetail: { bookId: number };
+  AuthorDetail: { authorId: number };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<

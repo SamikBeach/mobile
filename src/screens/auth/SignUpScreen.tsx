@@ -5,13 +5,17 @@ import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button, Input, Text } from '@/components/common';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '@/navigation/AuthStack';
+import type { AuthStackParamList } from '@/navigation/types';
 import type { EmailVerificationDto } from '@/types/auth';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
 
 export default function SignUpScreen({ navigation }: Props) {
-  const { control, handleSubmit, formState: { errors } } = useForm<EmailVerificationDto>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EmailVerificationDto>({
     defaultValues: {
       email: '',
     },
@@ -66,11 +70,10 @@ export default function SignUpScreen({ navigation }: Props) {
 
         <View style={styles.links}>
           <Text style={styles.linkText}>이미 계정이 있으신가요?</Text>
-          <Button 
-            variant="text" 
+          <Button
+            variant="text"
             onPress={() => navigation.navigate('Login')}
-            style={styles.linkButton}
-          >
+            style={styles.linkButton}>
             <Text style={[styles.linkText, styles.linkButton]}>로그인</Text>
           </Button>
         </View>
@@ -118,4 +121,4 @@ const styles = StyleSheet.create({
     color: '#EF4444',
     fontSize: 13,
   },
-}); 
+});

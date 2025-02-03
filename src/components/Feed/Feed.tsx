@@ -80,9 +80,7 @@ export function Feed({ review, user, book, expanded }: Props) {
 
   const handleLikePress = () => {
     if (!currentUser) {
-      navigation.navigate('AuthTab', {
-        screen: 'Login',
-      });
+      navigation.navigate('Login');
       return;
     }
     toggleLike();

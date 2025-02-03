@@ -7,6 +7,8 @@ import { UserScreen } from '@/screens/user/UserScreen';
 import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
 import { AuthorDetailScreen } from '@/screens/author/AuthorDetailScreen';
 import { ReviewScreen } from '@/screens/review/ReviewScreen';
+import SignUpScreen from '@/screens/auth/SignUpScreen';
+import LoginScreen from '@/screens/auth/LoginScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,12 +21,12 @@ export default function RootNavigator() {
           headerBackTitle: '뒤로',
         }}>
         <Stack.Screen name="Tab" component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
         <Stack.Screen
-          name="Review"
-          component={ReviewScreen}
-          options={{
-            headerTitle: '리뷰',
-          }}
+          name="SignUp"
+          component={SignUpScreen}
+          options={{ headerTitle: '회원가입' }}
         />
         <Stack.Screen
           name="User"
