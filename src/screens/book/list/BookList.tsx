@@ -11,7 +11,7 @@ import { GENRE_IDS } from '@/constants/genre';
 import type { Book } from '@/types/book';
 import { BookListSkeleton } from '@/components/common/Skeleton/BookListSkeleton';
 import { spacing } from '@/styles/theme';
-import { BookItem } from '@/components/book/BookItem';
+import { BookItem } from './BookItem';
 
 export function BookList() {
   const genre = useAtomValue(bookGenreAtom);
