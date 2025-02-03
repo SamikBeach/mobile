@@ -49,12 +49,7 @@ export function ReviewScreen({ route }: Props) {
 
   const handleLikePress = () => {
     if (!currentUser) {
-      // navigation.navigate('Tab', {
-      //   screen: 'AuthTab',
-      //   params: {
-      //     screen: 'Login',
-      //   },
-      // });
+      navigation.navigate('Login');
 
       return;
     }
@@ -72,7 +67,9 @@ export function ReviewScreen({ route }: Props) {
         <View style={styles.header}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{review.title}</Text>
-            <TouchableOpacity style={styles.bookCard}>
+            <TouchableOpacity
+              style={styles.bookCard}
+              onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
               <Image
                 source={{ uri: review.book.imageUrl ?? undefined }}
                 style={styles.bookThumbnail}
@@ -123,11 +120,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    gap: 16,
+    gap: 10,
     marginBottom: 32,
   },
   titleContainer: {
-    gap: 16,
+    gap: 10,
   },
   title: {
     fontSize: 24,
@@ -139,24 +136,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     backgroundColor: '#F9FAFB',
-    padding: 8,
     borderRadius: 8,
-    maxWidth: '100%',
+    paddingRight: 8,
+    paddingLeft: 8,
+    alignSelf: 'flex-start',
   },
   bookThumbnail: {
-    width: 20,
-    height: 28,
+    width: 25,
+    height: 35,
     borderRadius: 2,
     backgroundColor: '#F3F4F6',
   },
   bookInfo: {
-    flexShrink: 1,
+    gap: 2,
   },
   bookTitle: {
     fontSize: 12,
     fontWeight: '500',
     color: '#111827',
-    marginBottom: 2,
+    marginTop: 8,
   },
   bookAuthor: {
     fontSize: 11,
