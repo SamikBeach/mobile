@@ -19,21 +19,7 @@ interface LoginResponse {
 }
 
 export const authApi = {
-  login: async (data: { email: string; password: string }): Promise<LoginResponse> => {
-    // TODO: 실제 API 구현
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve({
-          accessToken: 'dummy_token',
-          user: {
-            id: '1',
-            email: data.email,
-            nickname: 'User',
-          },
-        });
-      }, 1000);
-    });
-  },
+  login: (data: LoginDto) => axios.post<AuthResponse>('/auth/login/email', data),
 
   logout: () => axios.post<void>('/auth/logout'),
 
