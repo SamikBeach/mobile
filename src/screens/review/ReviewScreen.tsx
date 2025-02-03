@@ -1,7 +1,16 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { HomeStackParamList, RootStackParamList } from '@/navigation/types';
+import { RootStackParamList } from '@/navigation/types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { FeedContent } from '@/components/feed/FeedContent';
@@ -12,14 +21,19 @@ import { format } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigation } from '@react-navigation/native';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
+import { CommentList } from './CommentList';
+import { CommentEditor } from '@/components/comment/CommentEditor';
+import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 
-type Props = NativeStackScreenProps<HomeStackParamList, 'Review'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Review'>;
 
 export function ReviewScreen({ route }: Props) {
   const { reviewId } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const currentUser = useCurrentUser();
   const { updateReviewLikeQueryData } = useReviewQueryData();
+  const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
+  const { createCommentQueryData } = useCommentQueryData();
 
   const { data: review } = useQuery({
     queryKey: ['review', reviewId],
@@ -47,6 +61,14 @@ export function ReviewScreen({ route }: Props) {
     },
   });
 
+  const { mutate: createComment } = useMutation({
+    mutationFn: (content: string) => reviewApi.createComment(reviewId, { content }),
+    onSuccess: response => {
+      createCommentQueryData({ reviewId, comment: response.data });
+      setReplyToUser(null);
+    },
+  });
+
   const handleLikePress = () => {
     if (!currentUser) {
       navigation.navigate('Login');
@@ -62,8 +84,10 @@ export function ReviewScreen({ route }: Props) {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <ScrollView style={styles.content}>
         <View style={styles.header}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{review.title}</Text>
@@ -106,8 +130,15 @@ export function ReviewScreen({ route }: Props) {
           />
           <CommentButton commentCount={review.commentCount} />
         </View>
-      </View>
-    </ScrollView>
+
+        <CommentList reviewId={reviewId} onReply={user => setReplyToUser(user)} />
+      </ScrollView>
+      <CommentEditor
+        onSubmit={createComment}
+        replyToUser={replyToUser}
+        onCancel={() => setReplyToUser(null)}
+      />
+    </KeyboardAvoidingView>
   );
 }
 
@@ -117,7 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   content: {
-    padding: 20,
+    flex: 1,
   },
   header: {
     gap: 10,
