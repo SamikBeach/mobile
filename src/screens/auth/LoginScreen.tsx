@@ -4,15 +4,11 @@ import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button, Input, Text } from '@/components/common';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '@/navigation/AuthStack';
 import { currentUserAtom } from '@/atoms/auth';
 import { useSetAtom } from 'jotai';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
-
-type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 interface LoginFormData {
   email: string;
@@ -21,7 +17,9 @@ interface LoginFormData {
 
 export default function LoginScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const setCurrentUser = useSetAtom(currentUserAtom);
+
   const {
     control,
     handleSubmit,
@@ -38,6 +36,14 @@ export default function LoginScreen() {
     onSuccess: response => {
       const { user } = response.data;
       setCurrentUser(user);
+
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.navigate('Tab', {
+          screen: 'HomeTab',
+        });
+      }
     },
   });
 

@@ -26,6 +26,8 @@ import { useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
+import { BookImage } from '@/components/common/BookImage';
+import { colors } from '@/styles/theme';
 
 interface Props {
   review: Review;
@@ -104,16 +106,31 @@ export function Feed({ review, user, book, expanded }: Props) {
       <View style={styles.mainContent}>
         {/* 왼쪽: 책 정보 */}
         <View style={styles.bookSection}>
-          <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.bookImage} />
-          <View style={styles.bookInfo}>
+          <BookImage
+            imageUrl={book.imageUrl}
+            size="xl"
+            onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}
+          />
+          <Pressable
+            style={styles.bookInfo}
+            onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}>
             <Text style={styles.bookTitle} numberOfLines={2}>
               {book.title}
             </Text>
-            <Text style={styles.bookAuthor} numberOfLines={2}>
-              {book.authorBooks.map(author => author.author.nameInKor).join(', ')} ·{' '}
-              {book.publisher} · {formattedPublicationDate}
-            </Text>
-          </View>
+            {book.authorBooks.length > 0 && (
+              <Text style={styles.bookAuthor} numberOfLines={1}>
+                {book.authorBooks
+                  .map(author => author.author.nameInKor)
+                  .join(', ')
+                  .trim()}
+              </Text>
+            )}
+            {book.publisher && (
+              <Text style={styles.bookPublisher} numberOfLines={1}>
+                {book.publisher}
+              </Text>
+            )}
+          </Pressable>
         </View>
 
         {/* 오른쪽: 리뷰 내용 */}
@@ -145,7 +162,7 @@ export function Feed({ review, user, book, expanded }: Props) {
               likeCount={review.likeCount}
               onPress={handleLikePress}
             />
-            <CommentButton commentCount={review.commentCount} />
+            <CommentButton commentCount={review.commentCount} onPress={handlePress} />
           </View>
         </View>
       </View>
@@ -184,6 +201,7 @@ const styles = StyleSheet.create({
   },
   bookSection: {
     width: 120,
+    gap: 8,
   },
   bookImage: {
     width: 120,
@@ -192,16 +210,23 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bookInfo: {
-    maxWidth: 120,
+    gap: 4,
   },
   bookTitle: {
     fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
+    fontWeight: '600',
+    color: colors.gray[900],
+    lineHeight: 18,
   },
   bookAuthor: {
-    fontSize: 12,
-    color: '#666666',
+    fontSize: 13,
+    color: colors.gray[600],
+    lineHeight: 14,
+  },
+  bookPublisher: {
+    fontSize: 13,
+    color: colors.gray[500],
+    marginTop: 2,
   },
   reviewSection: {
     flex: 1,
