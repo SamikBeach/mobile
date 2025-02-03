@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as JotaiProvider } from 'jotai';
 import RootNavigator from '@/navigation/RootNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Initializer from '@/components/Initializer';
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <JotaiProvider>
         <SafeAreaProvider>
+          <Initializer />
           <RootNavigator />
         </SafeAreaProvider>
       </JotaiProvider>

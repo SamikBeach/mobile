@@ -1,4 +1,4 @@
-import { UserBase } from './user';
+import type { UserBase } from './user';
 
 export interface LoginDto {
   email: string;
@@ -18,11 +18,8 @@ export interface RegisterCompleteDto {
 
 export interface AuthResponse {
   accessToken: string;
-  user: {
-    id: string;
-    email: string;
-    nickname: string;
-  };
+  refreshToken: string;
+  user: UserBase;
 }
 
 export interface EmailVerificationDto {

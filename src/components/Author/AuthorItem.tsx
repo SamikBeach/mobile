@@ -9,7 +9,19 @@ import type { AuthorStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 
 interface Props {
-  author: Author;
+  author: {
+    id: number;
+    name: string | null;
+    nameInKor: string | null;
+    imageUrl: string | null;
+    description: string | null;
+    era?: {
+      eraInKor: string;
+    };
+    bookCount: number;
+    likeCount: number;
+    isLiked: boolean;
+  };
 }
 
 export function AuthorItem({ author }: Props) {
@@ -51,9 +63,11 @@ export function AuthorItem({ author }: Props) {
             <Text style={styles.statText}>{author.bookCount}</Text>
           </View>
           <View style={styles.stat}>
-            <Icon name={author.isLiked ? "heart" : "heart"} 
-                  size={14} 
-                  color={author.isLiked ? colors.primary[500] : colors.gray[500]} />
+            <Icon 
+              name={author.isLiked ? "heart" : "heart"} 
+              size={14} 
+              color={author.isLiked ? colors.primary[500] : colors.gray[500]} 
+            />
             <Text style={styles.statText}>{author.likeCount}</Text>
           </View>
         </View>
@@ -142,4 +156,4 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.gray[700],
   },
-});
+}); 

@@ -8,12 +8,8 @@ interface Props extends TextInputProps {
 export function Input({ error, style, ...props }: Props) {
   return (
     <View style={styles.container}>
-      <TextInput 
-        style={[
-          styles.input,
-          error && styles.inputError,
-          style
-        ]}
+      <TextInput
+        style={[styles.input, error && styles.inputError, style]}
         placeholderTextColor="#999"
         {...props}
       />
@@ -27,6 +23,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   input: {
+    height: 44,
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
@@ -41,4 +38,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-}); 
+});

@@ -1,22 +1,25 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Skeleton } from '../Skeleton';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import { colors, spacing, borderRadius } from '@/styles/theme';
+import { Skeleton } from './Skeleton';
 
 export function AuthorListSkeleton() {
   return (
     <View style={styles.container}>
-      {Array.from({ length: 5 }).map((_, index) => (
+      {Array.from({ length: 4 }).map((_, index) => (
         <View key={index} style={styles.item}>
           <Skeleton style={styles.image} />
           <View style={styles.content}>
             <View style={styles.header}>
-              <Skeleton style={styles.name} />
-              <Skeleton style={styles.era} />
+              <View style={styles.nameSection}>
+                <Skeleton style={styles.name} />
+                <Skeleton style={styles.originalName} />
+              </View>
+              <Skeleton style={styles.badge} />
             </View>
             <View style={styles.description}>
-              <Skeleton style={styles.descriptionLine} />
-              <Skeleton style={{ ...styles.descriptionLine, width: '60%' }} />
+              <Skeleton style={styles.textLine} />
+              <Skeleton style={{ ...styles.textLine, width: '80%' }} />
             </View>
             <View style={styles.stats}>
               <Skeleton style={styles.stat} />
@@ -45,6 +48,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: borderRadius.full,
+    backgroundColor: colors.gray[200],
   },
   content: {
     flex: 1,
@@ -52,33 +56,47 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
+    justifyContent: 'space-between',
+  },
+  nameSection: {
+    flex: 1,
+    gap: spacing.xs,
   },
   name: {
-    width: 100,
-    height: 24,
+    height: 18,
+    width: '80%',
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
-  era: {
-    width: 60,
-    height: 20,
+  originalName: {
+    height: 14,
+    width: '60%',
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
+  },
+  badge: {
+    width: 60,
+    height: 24,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.gray[200],
   },
   description: {
     gap: spacing.xs,
   },
-  descriptionLine: {
+  textLine: {
     height: 16,
+    width: '100%',
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
   stats: {
     flexDirection: 'row',
-    gap: spacing.lg,
+    gap: spacing.md,
   },
   stat: {
-    width: 60,
-    height: 20,
+    width: 50,
+    height: 14,
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
 });

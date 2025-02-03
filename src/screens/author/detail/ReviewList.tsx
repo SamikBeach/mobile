@@ -57,7 +57,7 @@ export function ReviewList({ authorId }: Props) {
           </View>
         </View>
         <Empty
-          icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
+          icon="message-square"
           message="아직 리뷰가 없어요"
           description="첫 번째 리뷰를 작성해보세요"
         />

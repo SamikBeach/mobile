@@ -1,24 +1,27 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Skeleton } from './Skeleton';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { Skeleton } from './Skeleton';
 
 export function BookListSkeleton() {
   return (
     <View style={styles.container}>
-      {[1, 2, 3].map(key => (
-        <View key={key} style={styles.item}>
-          <Skeleton style={styles.image} />
-          <View style={styles.content}>
-            <View style={styles.titleContainer}>
-              <Skeleton style={styles.titleLine} />
-              <Skeleton style={{ ...styles.titleLine, width: '60%' }} />
-            </View>
-            <View style={styles.meta}>
-              <Skeleton style={styles.author} />
-              <Skeleton style={styles.publisher} />
+      {Array.from({ length: 5 }).map((_, index) => (
+        <View key={index}>
+          <View style={styles.item}>
+            <Skeleton style={styles.image} />
+            <View style={styles.content}>
+              <View style={styles.titleSection}>
+                <Skeleton style={styles.title} />
+                <Skeleton style={{ ...styles.title, width: '70%' }} />
+              </View>
+              <View style={styles.meta}>
+                <Skeleton style={styles.author} />
+                <Skeleton style={styles.publisher} />
+              </View>
             </View>
           </View>
+          {index < 4 && <View style={styles.separator} />}
         </View>
       ))}
     </View>
@@ -28,7 +31,6 @@ export function BookListSkeleton() {
 const styles = StyleSheet.create({
   container: {
     padding: spacing.lg,
-    gap: spacing.md,
   },
   item: {
     flexDirection: 'row',
@@ -42,29 +44,37 @@ const styles = StyleSheet.create({
     width: 90,
     height: 130,
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
   content: {
     flex: 1,
     gap: spacing.sm,
   },
-  titleContainer: {
+  titleSection: {
     gap: spacing.xs,
   },
-  titleLine: {
+  title: {
     height: 20,
+    width: '100%',
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
   meta: {
     gap: spacing.xs,
   },
   author: {
     height: 16,
-    width: '60%',
+    width: '80%',
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
   publisher: {
     height: 16,
-    width: '40%',
+    width: '50%',
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
+  },
+  separator: {
+    height: spacing.md,
   },
 });

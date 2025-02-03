@@ -2,6 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { STORAGE_KEYS } from '@/constants/storage-keys';
 import { ERROR_CODES } from '@/constants/error-codes';
+import { storage } from './storage';
+import { AuthResponse } from '@/types/auth';
+
+const instance = axios.create({
+  baseURL: 'http://localhost:3001/api/v2', // 개발 환경 기준
+});
 
 // AsyncStorage 초기화 확인
 const initializeAsyncStorage = async () => {
@@ -13,11 +19,6 @@ const initializeAsyncStorage = async () => {
     return false;
   }
 };
-
-const instance = axios.create({
-  baseURL: 'http://localhost:3001/api/v2',
-  withCredentials: true,
-});
 
 let isStorageInitialized = false;
 
@@ -80,18 +81,73 @@ const onRefreshed = (accessToken: string) => {
 
 const refreshAccessToken = async () => {
   try {
-    const response = await instance.post<{ accessToken: string }>('/auth/refresh');
-    const { accessToken } = response.data;
-    await setToken(accessToken);
+    // 리프레시 토큰 가져오기
+    const refreshToken = await storage.getRefreshToken();
+    if (!refreshToken) {
+      throw new Error('No refresh token');
+    }
+
+    const response = await instance.post<AuthResponse>('/auth/refresh', {
+      refreshToken,
+    });
+
+    const { accessToken, refreshToken: newRefreshToken } = response.data;
+
+    // 새로운 토큰들 저장
+    await storage.setTokens(accessToken, newRefreshToken);
+
     return accessToken;
   } catch (error) {
-    await removeToken();
+    await storage.clearTokens();
     throw error;
   }
 };
 
+// 로그인 성공 시 토큰 저장 헬퍼 함수
+export const saveAuthTokens = async (accessToken: string, refreshToken: string) => {
+  await storage.setTokens(accessToken, refreshToken);
+};
+
+// 로그아웃 시 토큰 제거 헬퍼 함수
+export const clearAuthTokens = async () => {
+  await storage.clearTokens();
+};
+
+// Flipper 네트워크 로깅 설정
+if (__DEV__) {
+  instance.interceptors.request.use(request => {
+    console.log('🚀 Request:', {
+      url: request.url,
+      method: request.method,
+      headers: request.headers,
+      data: request.data,
+    });
+    return request;
+  });
+
+  instance.interceptors.response.use(
+    response => {
+      console.log('✅ Response:', {
+        url: response.config.url,
+        status: response.status,
+        headers: response.headers,
+        data: response.data,
+      });
+      return response;
+    },
+    error => {
+      console.log('❌ Error:', {
+        url: error.config?.url,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      return Promise.reject(error);
+    },
+  );
+}
+
 instance.interceptors.request.use(async config => {
-  const token = await getToken();
+  const token = await storage.getAccessToken();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

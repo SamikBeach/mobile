@@ -1,19 +1,17 @@
-import { Book } from './book';
-import { BaseEntity, PaginationQuery } from './common';
-import { UserBase } from './user';
+import type { BaseEntity } from './common';
+import type { Book } from './book';
+import type { UserBase } from './user';
 import type { User } from './user';
 
-export interface Review {
-  id: number;
+export interface Review extends BaseEntity {
   title: string;
   content: string;
+  rating: number;
+  user: UserBase;
+  book: Book;
   likeCount: number;
   commentCount: number;
   isLiked?: boolean;
-  createdAt: string;
-  updatedAt: string;
-  user: User;
-  book: Book;
 }
 
 export interface CreateReviewDto {
