@@ -5,17 +5,9 @@ import HomeStack from '@/navigation/HomeStack';
 import BookStack from '@/navigation/BookStack';
 import AuthorStack from '@/navigation/AuthorStack';
 import AuthStack from '@/navigation/AuthStack';
-import { UserScreen } from '@/screens/user/UserScreen';
-import { useCurrentUser } from '@/hooks/useCurrentUser';
 import UserStack from './UserStack';
-
-export type TabParamList = {
-  HomeTab: undefined;
-  BookTab: undefined;
-  AuthorTab: undefined;
-  UserTab: { userId: number };
-  AuthTab: undefined;
-};
+import { TabParamList } from './types';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 

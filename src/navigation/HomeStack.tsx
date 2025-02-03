@@ -2,13 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '@/screens/home/HomeScreen';
 import { ReviewScreen } from '@/screens/review/ReviewScreen';
-
-export type HomeStackParamList = {
-  Home: undefined;
-  Review: {
-    reviewId: number;
-  };
-};
+import { HomeStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 

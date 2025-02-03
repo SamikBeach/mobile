@@ -1,18 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { AuthStackParamList } from './types';
 import UserInfoScreen from '../screens/auth/UserInfoScreen';
 import LoginScreen from '@/screens/auth/LoginScreen';
 import SignUpScreen from '@/screens/auth/SignUpScreen';
 import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
 import { ResetPasswordScreen } from '@/screens/auth/ResetPasswordScreen';
-
-export type AuthStackParamList = {
-  Login: undefined;
-  SignUp: undefined;
-  UserInfo: { email: string };
-  VerifyCode: { email: string };
-  ResetPassword: undefined;
-};
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
