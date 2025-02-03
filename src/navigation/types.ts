@@ -3,9 +3,11 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 
 export type HomeStackParamList = {
   Home: undefined;
-  Review: {
-    reviewId: number;
-  };
+  Review: { reviewId: number };
+  Login: undefined;
+  SignUp: undefined;
+  BookDetail: { bookId: number };
+  AuthorDetail: { authorId: number };
 };
 
 export type BookStackParamList = {
@@ -38,7 +40,7 @@ export type UserStackParamList = {
 };
 
 export type TabParamList = {
-  HomeTab: undefined;
+  HomeTab: NavigatorScreenParams<HomeStackParamList>;
   BookTab: undefined;
   AuthorTab: undefined;
   UserTab: { userId: number };
