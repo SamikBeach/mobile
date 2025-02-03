@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, Pressable, Keyboard } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors } from '@/styles/theme';
@@ -24,6 +24,12 @@ export function CommentEditor({
   const [content, setContent] = useState(initialContent);
   const currentUser = useCurrentUser();
 
+  useEffect(() => {
+    if (replyToUser) {
+      setContent(`@${replyToUser.nickname} `);
+    }
+  }, [replyToUser]);
+
   const handleSubmit = () => {
     if (!content.trim()) return;
     onSubmit(content);
@@ -31,18 +37,15 @@ export function CommentEditor({
     Keyboard.dismiss();
   };
 
+  const handleCancel = () => {
+    setContent('');
+    onCancel?.();
+  };
+
   return (
     <View style={styles.container}>
       {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
       <View style={styles.inputContainer}>
-        {replyToUser && (
-          <View style={styles.replyBadge}>
-            <Text style={styles.replyText}>@{replyToUser.nickname}</Text>
-            <Pressable onPress={onCancel}>
-              <Icon name="x" size={14} color={colors.gray[500]} />
-            </Pressable>
-          </View>
-        )}
         <TextInput
           style={styles.input}
           placeholder="댓글을 입력하세요..."
@@ -50,17 +53,22 @@ export function CommentEditor({
           onChangeText={setContent}
           multiline
           maxLength={1000}
+          placeholderTextColor={colors.gray[400]}
         />
-        <Pressable
-          style={[styles.submitButton, !content.trim() && styles.submitButtonDisabled]}
-          onPress={handleSubmit}
-          disabled={!content.trim()}>
-          <Text
-            style={[styles.submitButtonText, !content.trim() && styles.submitButtonTextDisabled]}>
-            등록
-          </Text>
-        </Pressable>
+        {replyToUser && (
+          <Pressable onPress={handleCancel} hitSlop={8} style={styles.cancelButton}>
+            <Icon name="x" size={16} color={colors.gray[500]} />
+          </Pressable>
+        )}
       </View>
+      <Pressable
+        style={[styles.submitButton, !content.trim() && styles.submitButtonDisabled]}
+        onPress={handleSubmit}
+        disabled={!content.trim()}>
+        <Text style={[styles.submitButtonText, !content.trim() && styles.submitButtonTextDisabled]}>
+          등록
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -68,6 +76,7 @@ export function CommentEditor({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 12,
     padding: 16,
     backgroundColor: 'white',
@@ -76,40 +85,37 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    gap: 8,
-  },
-  replyBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
     backgroundColor: colors.gray[100],
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    alignSelf: 'flex-start',
-  },
-  replyText: {
-    fontSize: 12,
-    color: colors.gray[600],
+    borderRadius: 20,
+    paddingLeft: 16,
+    paddingRight: 8,
+    paddingVertical: 6,
+    minHeight: 40,
   },
   input: {
-    backgroundColor: colors.gray[50],
-    borderRadius: 8,
-    padding: 12,
-    minHeight: 40,
-    maxHeight: 120,
+    flex: 1,
     fontSize: 14,
     color: colors.gray[900],
+    padding: 0,
+    maxHeight: 100,
+  },
+  cancelButton: {
+    padding: 4,
+    marginLeft: 4,
   },
   submitButton: {
-    alignSelf: 'flex-end',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: colors.primary[500],
+    borderRadius: 15,
+    backgroundColor: colors.gray[900],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
   },
   submitButtonDisabled: {
-    backgroundColor: colors.gray[300],
+    backgroundColor: colors.gray[200],
   },
   submitButtonText: {
     fontSize: 14,
