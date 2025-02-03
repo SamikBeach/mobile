@@ -12,7 +12,6 @@ export default function Initializer() {
     queryKey: ['me'],
     queryFn: async () => {
       const token = await storage.getAccessToken();
-      console.log('Stored token:', token);
 
       if (!token) {
         return null;
@@ -20,7 +19,6 @@ export default function Initializer() {
 
       try {
         const response = await userApi.getMyProfile();
-        console.log('User profile:', response.data);
         return response.data;
       } catch (error) {
         console.error('Profile fetch error:', error);
@@ -30,7 +28,6 @@ export default function Initializer() {
     },
     retry: 0,
     refetchOnMount: false,
-    select: data => data?.data,
   });
 
   useEffect(() => {

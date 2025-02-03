@@ -10,14 +10,10 @@ export interface User {
 }
 
 export interface UserBase {
-  id: string;
+  id: number;
   email: string;
   nickname: string;
   imageUrl?: string;
-}
-
-export interface UserResponse {
-  data: UserBase;
 }
 
 export interface UpdateUserDto {
