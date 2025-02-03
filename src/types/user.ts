@@ -2,11 +2,11 @@ import { Author } from './author';
 import { Book } from './book';
 import { BaseEntity, PaginationQuery } from './common';
 
-export interface User extends Omit<BaseEntity, 'deletedAt'> {
+export interface User {
+  id: number;
   email: string;
   nickname: string;
-  imageUrl: string | null;
-  verified: boolean;
+  imageUrl?: string;
 }
 
 export type UserBase = Pick<User, 'id' | 'email' | 'nickname' | 'imageUrl'>;

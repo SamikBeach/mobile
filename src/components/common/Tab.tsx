@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 
 interface TabProps {
-  tabs: Array<{ value: string; label: string }>;
+  tabs: { value: string; label: string }[];
   value: string;
   onChange: (value: string) => void;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export function Tab({ tabs, value, onChange }: TabProps) {
