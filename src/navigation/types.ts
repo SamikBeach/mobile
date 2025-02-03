@@ -41,7 +41,7 @@ export type TabParamList = {
   HomeTab: NavigatorScreenParams<HomeStackParamList>;
   BookTab: NavigatorScreenParams<BookStackParamList>;
   AuthorTab: NavigatorScreenParams<AuthorStackParamList>;
-  UserTab: NavigatorScreenParams<UserStackParamList>;
+  UserTab: { userId: number } & NavigatorScreenParams<UserStackParamList>;
   AuthTab: NavigatorScreenParams<AuthStackParamList>;
 };
 
