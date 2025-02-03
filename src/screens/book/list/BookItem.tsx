@@ -15,7 +15,7 @@ export function BookItem({ book }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
-    navigation.push('BookDetail', { bookId: book.id });
+    navigation.navigate('BookDetail', { bookId: book.id });
   };
 
   return (
