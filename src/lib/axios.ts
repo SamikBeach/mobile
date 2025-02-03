@@ -90,6 +90,39 @@ const refreshAccessToken = async () => {
   }
 };
 
+// Flipper 네트워크 로깅 설정
+if (__DEV__) {
+  instance.interceptors.request.use(request => {
+    console.log('🚀 Request:', {
+      url: request.url,
+      method: request.method,
+      headers: request.headers,
+      data: request.data,
+    });
+    return request;
+  });
+
+  instance.interceptors.response.use(
+    response => {
+      console.log('✅ Response:', {
+        url: response.config.url,
+        status: response.status,
+        headers: response.headers,
+        data: response.data,
+      });
+      return response;
+    },
+    error => {
+      console.log('❌ Error:', {
+        url: error.config?.url,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      return Promise.reject(error);
+    },
+  );
+}
+
 instance.interceptors.request.use(async config => {
   const token = await getToken();
 
