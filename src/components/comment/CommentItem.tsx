@@ -11,6 +11,7 @@ import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import { CommentActions } from './CommentActions';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors } from '@/styles/theme';
+import { LexicalContent } from '../common/LexicalContent';
 
 interface Props {
   comment: Comment;
@@ -51,7 +52,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
-          <UserAvatar user={comment.user} size="sm" />
+          <UserAvatar user={comment.user} size="sm" showNickname />
           <Text style={styles.date}>{formatDate(comment.createdAt)}</Text>
         </View>
         {isMyComment && (
@@ -65,7 +66,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.text}>{comment.content}</Text>
+        <LexicalContent content={comment.content} />
       </View>
 
       <View style={styles.actions}>

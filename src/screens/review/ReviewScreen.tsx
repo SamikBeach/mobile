@@ -13,7 +13,7 @@ import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-naviga
 import { RootStackParamList } from '@/navigation/types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
-import { FeedContent } from '@/components/feed/FeedContent';
+import { LexicalContent } from '@/components/common/LexicalContent';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
@@ -93,7 +93,11 @@ export function ReviewScreen({ route }: Props) {
             <Text style={styles.title}>{review.title}</Text>
             <TouchableOpacity
               style={styles.bookCard}
-              onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
+              onPress={() =>
+                navigation.navigate('BookDetail', {
+                  bookId: review.book.id,
+                })
+              }>
               <Image
                 source={{ uri: review.book.imageUrl ?? undefined }}
                 style={styles.bookThumbnail}
@@ -110,7 +114,7 @@ export function ReviewScreen({ route }: Props) {
           </View>
 
           <View style={styles.userInfo}>
-            <UserAvatar user={review.user} size="sm" />
+            <UserAvatar user={review.user} size="sm" showNickname />
             <Text style={styles.dot}>·</Text>
             <Text style={styles.date}>
               {format(new Date(review.createdAt), 'yyyy년 M월 d일 HH시 mm분')}
@@ -119,7 +123,7 @@ export function ReviewScreen({ route }: Props) {
         </View>
 
         <View style={styles.reviewContent}>
-          <FeedContent content={review.content} isExpanded={true} />
+          <LexicalContent content={review.content} isExpanded={true} />
         </View>
 
         <View style={styles.actions}>
@@ -149,6 +153,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    padding: 20,
   },
   header: {
     gap: 10,

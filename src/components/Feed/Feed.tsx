@@ -18,7 +18,7 @@ import { formatDate } from '@/utils/date';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
 import { UserAvatar } from '@/components/common/UserAvatar';
-import { FeedContent } from './FeedContent';
+import { LexicalContent } from '../common/LexicalContent';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
@@ -137,7 +137,7 @@ export function Feed({ review, user, book, expanded }: Props) {
                 numberOfLines={isExpanded ? undefined : 8}
                 ellipsizeMode="tail"
                 onTextLayout={onTextLayout}>
-                <FeedContent content={review.content} isExpanded={isExpanded} />
+                <LexicalContent content={review.content} isExpanded={isExpanded} />
               </Text>
               {isTruncated && !isExpanded && (
                 <TouchableOpacity

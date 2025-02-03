@@ -20,7 +20,7 @@ interface LexicalContent {
   root: LexicalNode;
 }
 
-export function FeedContent({ content, isExpanded = false }: Props) {
+export function LexicalContent({ content, isExpanded = false }: Props) {
   // 텍스트만 추출하는 함수
   const extractPlainText = (node: LexicalNode): string => {
     if (node.type === 'text') {
