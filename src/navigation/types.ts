@@ -38,15 +38,27 @@ export type UserStackParamList = {
 };
 
 export type TabParamList = {
-  HomeTab: NavigatorScreenParams<HomeStackParamList>;
-  BookTab: NavigatorScreenParams<BookStackParamList>;
-  AuthorTab: NavigatorScreenParams<AuthorStackParamList>;
-  UserTab: { userId: number } & NavigatorScreenParams<UserStackParamList>;
-  AuthTab: NavigatorScreenParams<AuthStackParamList>;
+  HomeTab: undefined;
+  BookTab: undefined;
+  AuthorTab: undefined;
+  UserTab: { userId: number };
+  AuthTab: undefined;
 };
 
 export type RootStackParamList = {
-  Main: NavigatorScreenParams<TabParamList>;
+  Tab: NavigatorScreenParams<TabParamList>;
+  Review: {
+    reviewId: number;
+  };
+  User: {
+    userId: number;
+  };
+  BookDetail: {
+    bookId: number;
+  };
+  AuthorDetail: {
+    authorId: number;
+  };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<

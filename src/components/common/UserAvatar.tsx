@@ -17,11 +17,7 @@ export function UserAvatar({ user, size = 'md', showNickname = false, disabled =
 
   const handlePress = () => {
     if (disabled) return;
-
-    navigation.navigate('UserTab', {
-      screen: 'User',
-      params: { userId: user.id },
-    });
+    navigation.navigate('User', { userId: user.id });
   };
 
   return (

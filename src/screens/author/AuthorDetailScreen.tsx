@@ -10,7 +10,7 @@ import { colors } from '@/styles/theme';
 
 type AuthorDetailScreenRouteProp = RouteProp<AuthorStackParamList, 'AuthorDetail'>;
 
-export default function AuthorDetailScreen() {
+export function AuthorDetailScreen() {
   const route = useRoute<AuthorDetailScreenRouteProp>();
   const { authorId } = route.params;
 

@@ -19,17 +19,11 @@ export function ReviewItem({ review, showBook = false }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
-    navigation.navigate('HomeTab', {
-      screen: 'Review',
-      params: { reviewId: review.id },
-    });
+    navigation.navigate('Review', { reviewId: review.id });
   };
 
   const handleUserPress = () => {
-    navigation.navigate('UserTab', {
-      screen: 'User',
-      params: { userId: review.user.id },
-    });
+    navigation.navigate('User', { userId: review.user.id });
   };
 
   const score = typeof review.rating === 'number' ? review.rating.toFixed(1) : '-';

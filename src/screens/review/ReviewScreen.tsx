@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '@/navigation/types';
+import { HomeStackParamList, RootStackParamList } from '@/navigation/types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { FeedContent } from '@/components/Feed/FeedContent';
@@ -12,7 +12,6 @@ import { format } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigation } from '@react-navigation/native';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
-import { HomeStackParamList } from '@/navigation/HomeStack';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Review'>;
 
@@ -50,12 +49,13 @@ export function ReviewScreen({ route }: Props) {
 
   const handleLikePress = () => {
     if (!currentUser) {
-      navigation.navigate({
-        name: 'AuthTab',
-        params: {
-          screen: 'Login',
-        },
-      });
+      // navigation.navigate('Tab', {
+      //   screen: 'AuthTab',
+      //   params: {
+      //     screen: 'Login',
+      //   },
+      // });
+
       return;
     }
 

@@ -80,27 +80,22 @@ export function Feed({ review, user, book, expanded }: Props) {
 
   const handleLikePress = () => {
     if (!currentUser) {
-      navigation.navigate({
-        name: 'AuthTab',
-        params: {
-          screen: 'Login',
-        },
+      navigation.navigate('AuthTab', {
+        screen: 'Login',
       });
       return;
     }
     toggleLike();
   };
 
+  const handlePress = () => {
+    if (!expanded) {
+      navigation.navigate('Review', { reviewId: review.id });
+    }
+  };
+
   return (
-    <Pressable
-      style={styles.container}
-      onPress={() =>
-        !expanded &&
-        navigation.navigate('HomeTab', {
-          screen: 'Review',
-          params: { reviewId: review.id },
-        })
-      }>
+    <Pressable style={styles.container} onPress={handlePress}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={user} showNickname={true} />
