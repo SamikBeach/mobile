@@ -13,41 +13,48 @@ interface Props {
 }
 
 export function AuthorItem({ author }: Props) {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AuthorStackParamList, 'AuthorDetail'>>();
+  const navigation = useNavigation<NativeStackNavigationProp<AuthorStackParamList, 'AuthorDetail'>>();
 
   const handlePress = () => {
     navigation.navigate('AuthorDetail', { authorId: author.id });
   };
 
   return (
-    <Pressable
-      style={styles.container}
-      onPress={handlePress}
-      android_ripple={{ color: colors.gray[100] }}>
-      <Image
-        source={{ uri: author.imageUrl ?? undefined }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+    <Pressable style={styles.container} onPress={handlePress}>
+      <View style={styles.imageWrapper}>
+        {author.imageUrl ? (
+          <Image source={{ uri: author.imageUrl }} style={styles.image} />
+        ) : (
+          <View style={styles.defaultImage}>
+            <Icon name="user" size={24} color={colors.gray[400]} />
+          </View>
+        )}
+      </View>
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.name}>{author.nameInKor?.trim()}</Text>
-          <Text style={styles.originalName}>{author.name?.trim()}</Text>
+          <View style={styles.nameSection}>
+            <Text style={styles.name}>{author.nameInKor?.trim()}</Text>
+            <Text style={styles.originalName}>{author.name?.trim()}</Text>
+          </View>
+          {author.era && (
+            <View style={styles.eraBadge}>
+              <Text style={styles.eraText}>{author.era.eraInKor}</Text>
+            </View>
+          )}
         </View>
         <Text style={styles.description} numberOfLines={2}>
           {author.description}
         </Text>
-        <View style={styles.footer}>
-          <View style={styles.stats}>
-            <View style={styles.stat}>
-              <Icon name="book-open" size={14} color={colors.gray[500]} />
-              <Text style={styles.statValue}>{author.bookCount}</Text>
-            </View>
-            <View style={styles.stat}>
-              <Icon name="heart" size={14} color={colors.gray[500]} />
-              <Text style={styles.statValue}>{author.likeCount}</Text>
-            </View>
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Icon name="book" size={14} color={colors.gray[500]} />
+            <Text style={styles.statText}>{author.bookCount}</Text>
+          </View>
+          <View style={styles.stat}>
+            <Icon name={author.isLiked ? "heart" : "heart"} 
+                  size={14} 
+                  color={author.isLiked ? colors.primary[500] : colors.gray[500]} />
+            <Text style={styles.statText}>{author.likeCount}</Text>
           </View>
         </View>
       </View>
@@ -60,69 +67,79 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    padding: spacing.sm,
+    padding: spacing.md,
     gap: spacing.md,
     ...shadows.sm,
   },
-  image: {
-    width: 72,
-    height: 72,
+  imageWrapper: {
+    width: 80,
+    height: 80,
     borderRadius: borderRadius.full,
+    overflow: 'hidden',
+    ...shadows.sm,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultImage: {
+    width: '100%',
+    height: '100%',
     backgroundColor: colors.gray[100],
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     flex: 1,
-    justifyContent: 'space-between',
-    gap: 4,
+    gap: spacing.xs,
   },
   header: {
-    gap: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  nameSection: {
+    flex: 1,
+    marginRight: spacing.sm,
   },
   name: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.gray[900],
-    lineHeight: 19,
+    marginBottom: 2,
   },
   originalName: {
     fontSize: 13,
     color: colors.gray[500],
-    lineHeight: 16,
+  },
+  eraBadge: {
+    backgroundColor: colors.primary[50],
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+  },
+  eraText: {
+    fontSize: 12,
+    color: colors.primary[700],
+    fontWeight: '500',
   },
   description: {
     fontSize: 14,
     color: colors.gray[600],
-    lineHeight: 18,
-    marginTop: 2,
-    marginBottom: 2,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    lineHeight: 20,
   },
   stats: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.md,
+    marginTop: spacing.xs,
   },
   stat: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
-  statValue: {
+  statText: {
     fontSize: 13,
     color: colors.gray[700],
-  },
-  badge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    backgroundColor: colors.primary[50],
-    borderRadius: borderRadius.full,
-  },
-  badgeText: {
-    fontSize: 12,
-    color: colors.primary[700],
-    fontWeight: '500',
   },
 });
