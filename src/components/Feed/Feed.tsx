@@ -106,14 +106,8 @@ export function Feed({ review, user, book, expanded }: Props) {
       <View style={styles.mainContent}>
         {/* 왼쪽: 책 정보 */}
         <View style={styles.bookSection}>
-          <BookImage
-            imageUrl={book.imageUrl}
-            size="xl"
-            onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}
-          />
-          <Pressable
-            style={styles.bookInfo}
-            onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}>
+          <BookImage imageUrl={book.imageUrl} size="xl" />
+          <Pressable style={styles.bookInfo}>
             <Text style={styles.bookTitle} numberOfLines={2}>
               {book.title}
             </Text>
