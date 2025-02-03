@@ -22,6 +22,10 @@ import { FeedContent } from './FeedContent';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
+import { useMutation } from '@tanstack/react-query';
+import { reviewApi } from '@/apis/review';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useReviewQueryData } from '@/hooks/useReviewQueryData';
 
 interface Props {
   review: Review;
@@ -34,6 +38,9 @@ export function Feed({ review, user, book, expanded }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
+  const currentUser = useCurrentUser();
+
+  const { updateReviewLikeQueryData } = useReviewQueryData();
 
   const formattedPublicationDate = book.publicationDate
     ? format(new Date(book.publicationDate), 'yyyy년 M월 d일')
@@ -51,8 +58,32 @@ export function Feed({ review, user, book, expanded }: Props) {
     }
   };
 
-  const handlePress = () => {
-    navigation.navigate('Review', { reviewId: review.id });
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: () => reviewApi.toggleReviewLike(review.id),
+    onMutate: () => {
+      updateReviewLikeQueryData({
+        reviewId: review.id,
+        isOptimistic: true,
+      });
+    },
+    onError: () => {
+      updateReviewLikeQueryData({
+        reviewId: review.id,
+        isOptimistic: false,
+        currentStatus: {
+          isLiked: review.isLiked ?? false,
+          likeCount: review.likeCount,
+        },
+      });
+    },
+  });
+
+  const handleLikePress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    toggleLike();
   };
 
   return (
@@ -108,7 +139,7 @@ export function Feed({ review, user, book, expanded }: Props) {
             <LikeButton
               isLiked={review.isLiked ?? false}
               likeCount={review.likeCount}
-              onPress={() => {}}
+              onPress={handleLikePress}
             />
             <CommentButton commentCount={review.commentCount} />
           </View>

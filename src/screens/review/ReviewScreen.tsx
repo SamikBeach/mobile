@@ -1,25 +1,59 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { FeedContent } from '@/components/Feed/FeedContent';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
 import { format } from 'date-fns';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useNavigation } from '@react-navigation/native';
+import { useReviewQueryData } from '@/hooks/useReviewQueryData';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Review'>;
 
 export function ReviewScreen({ route }: Props) {
   const { reviewId } = route.params;
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const currentUser = useCurrentUser();
+  const { updateReviewLikeQueryData } = useReviewQueryData();
 
   const { data: review } = useQuery({
     queryKey: ['review', reviewId],
     queryFn: () => reviewApi.getReviewDetail(reviewId),
     select: response => response.data,
   });
+
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: () => reviewApi.toggleReviewLike(reviewId),
+    onMutate: () => {
+      updateReviewLikeQueryData({
+        reviewId: reviewId,
+        isOptimistic: true,
+      });
+    },
+    onError: () => {
+      updateReviewLikeQueryData({
+        reviewId: reviewId,
+        isOptimistic: false,
+        currentStatus: {
+          isLiked: review?.isLiked ?? false,
+          likeCount: review?.likeCount ?? 0,
+        },
+      });
+    },
+  });
+
+  const handleLikePress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    toggleLike();
+  };
 
   if (!review) {
     return null;
@@ -64,7 +98,7 @@ export function ReviewScreen({ route }: Props) {
           <LikeButton
             isLiked={review.isLiked ?? false}
             likeCount={review.likeCount}
-            onPress={() => {}}
+            onPress={handleLikePress}
           />
           <CommentButton commentCount={review.commentCount} />
         </View>
