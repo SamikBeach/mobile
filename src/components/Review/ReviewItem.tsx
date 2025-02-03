@@ -13,26 +13,29 @@ import { format } from 'date-fns';
 import { BookItem } from '../Book/BookItem';
 import type { Review } from '@/types/review';
 
-type ReviewItemNavigationProp = CompositeNavigationProp<
-  NativeStackNavigationProp<RootStackParamList>,
-  BottomTabNavigationProp<TabParamList>
->;
-
 interface Props {
   review: Review;
   showBook?: boolean;
 }
 
 export function ReviewItem({ review, showBook = false }: Props) {
-  const navigation = useNavigation<ReviewItemNavigationProp>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
-    navigation.navigate('Review', { reviewId: review.id });
+    navigation.navigate('HomeTab', {
+      screen: 'Review',
+      params: { reviewId: review.id },
+    });
   };
 
   const handleUserPress = () => {
-    navigation.navigate('UserTab', { userId: review.user.id });
+    navigation.navigate('UserTab', {
+      screen: 'User',
+      params: { userId: review.user.id },
+    });
   };
+
+  const score = typeof review.rating === 'number' ? review.rating.toFixed(1) : '-';
 
   return (
     <View style={styles.container}>
@@ -49,7 +52,7 @@ export function ReviewItem({ review, showBook = false }: Props) {
           </Pressable>
           <View style={styles.rating}>
             <Icon name="star" size={16} color={colors.yellow[500]} />
-            <Text style={styles.ratingText}>{review.rating.toFixed(1)}</Text>
+            <Text style={styles.ratingText}>{score}</Text>
           </View>
         </View>
         <Text style={styles.text} numberOfLines={3}>
