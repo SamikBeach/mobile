@@ -26,7 +26,7 @@ import { useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
-import { BookImage } from '@/components/common/BookImage';
+import { BookImage } from '@/components/book/BookImage';
 import { colors } from '@/styles/theme';
 
 interface Props {

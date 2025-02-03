@@ -5,13 +5,13 @@ import { useAtomValue } from 'jotai';
 import Icon from 'react-native-vector-icons/Feather';
 
 import { bookApi } from '@/apis/book';
-import { BookItem } from './BookItem';
 import { Empty } from '@/components/common/Empty';
 import { bookGenreAtom, bookSearchKeywordAtom, bookSortModeAtom, authorIdAtom } from '@/atoms/book';
 import { GENRE_IDS } from '@/constants/genre';
 import type { Book } from '@/types/book';
 import { BookListSkeleton } from '@/components/common/Skeleton/BookListSkeleton';
 import { spacing } from '@/styles/theme';
+import { BookItem } from '@/components/book/BookItem';
 
 export function BookList() {
   const genre = useAtomValue(bookGenreAtom);

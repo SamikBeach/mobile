@@ -1,65 +1,60 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
-import { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import { format } from 'date-fns';
-import { BookItem } from '../Book/BookItem';
+import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import type { Review } from '@/types/review';
 
 interface Props {
   review: Review;
-  showBook?: boolean;
+  showBookInfo?: boolean;
 }
 
-export function ReviewItem({ review, showBook = false }: Props) {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
-  const handlePress = () => {
-    navigation.navigate('Review', { reviewId: review.id });
-  };
-
-  const handleUserPress = () => {
-    navigation.navigate('User', { userId: review.user.id });
-  };
-
-  const score = typeof review.rating === 'number' ? review.rating.toFixed(1) : '-';
+export function ReviewItem({ review, showBookInfo }: Props) {
+  const [isExpanded, setIsExpanded] = React.useState(false);
 
   return (
     <View style={styles.container}>
-      {showBook && review.book && (
-        <View style={styles.bookSection}>
-          <BookItem book={review.book} size="small" />
+      <View style={styles.header}>
+        <View style={styles.userInfo}>
+          <View style={styles.avatar} />
+          <Text style={styles.username}>{review.user.nickname}</Text>
+          <Text style={styles.date}>{format(new Date(review.createdAt), 'yyyy.MM.dd')}</Text>
         </View>
-      )}
-      <Pressable style={styles.content} onPress={handlePress}>
-        <View style={styles.header}>
-          <Pressable style={styles.userInfo} onPress={handleUserPress}>
-            <Text style={styles.username}>{review.user.nickname}</Text>
-            <Text style={styles.date}>{format(new Date(review.createdAt), 'yyyy.MM.dd')}</Text>
+        {showBookInfo && (
+          <Pressable style={styles.bookInfo}>
+            <Icon name="book-open" size={14} color={colors.gray[500]} />
+            <Text style={styles.bookTitle} numberOfLines={1}>
+              {review.book.title}
+            </Text>
           </Pressable>
-          <View style={styles.rating}>
-            <Icon name="star" size={16} color={colors.yellow[500]} />
-            <Text style={styles.ratingText}>{score}</Text>
-          </View>
-        </View>
-        <Text style={styles.text} numberOfLines={3}>
+        )}
+      </View>
+
+      <Text style={styles.title}>{review.title}</Text>
+
+      <Pressable onPress={() => setIsExpanded(!isExpanded)}>
+        <Text style={styles.content} numberOfLines={isExpanded ? undefined : 3}>
           {review.content}
         </Text>
-        <View style={styles.footer}>
-          <View style={styles.stat}>
-            <Icon name="thumbs-up" size={14} color={colors.gray[500]} />
-            <Text style={styles.statText}>{review.likeCount}</Text>
-          </View>
-          <View style={styles.stat}>
-            <Icon name="message-square" size={14} color={colors.gray[500]} />
-            <Text style={styles.statText}>{review.commentCount}</Text>
-          </View>
-        </View>
+        {!isExpanded && review.content.length > 100 && <Text style={styles.more}>더보기</Text>}
       </Pressable>
+
+      <View style={styles.footer}>
+        <View style={styles.actions}>
+          <Pressable style={styles.actionButton}>
+            <Icon
+              name="heart"
+              size={16}
+              color={review.isLiked ? colors.primary[500] : colors.gray[400]}
+            />
+            <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
+              {review.likeCount}
+            </Text>
+          </Pressable>
+        </View>
+      </View>
     </View>
   );
 }
@@ -68,62 +63,80 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    gap: spacing.md,
     ...shadows.sm,
   },
-  bookSection: {
-    padding: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[100],
-  },
-  content: {
-    padding: spacing.md,
+  header: {
     gap: spacing.sm,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
   userInfo: {
-    flex: 1,
-    marginRight: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  avatar: {
+    width: 24,
+    height: 24,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.gray[200],
   },
   username: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '500',
     color: colors.gray[900],
   },
   date: {
     fontSize: 13,
     color: colors.gray[500],
-    marginTop: 2,
   },
-  rating: {
+  bookInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
+    backgroundColor: colors.gray[50],
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    borderRadius: borderRadius.md,
+    alignSelf: 'flex-start',
   },
-  ratingText: {
-    fontSize: 15,
+  bookTitle: {
+    fontSize: 13,
+    color: colors.gray[700],
+  },
+  title: {
+    fontSize: 16,
     fontWeight: '600',
     color: colors.gray[900],
   },
-  text: {
+  content: {
     fontSize: 15,
-    color: colors.gray[800],
     lineHeight: 22,
+    color: colors.gray[800],
+  },
+  more: {
+    fontSize: 14,
+    color: colors.primary[500],
+    marginTop: spacing.xs,
   },
   footer: {
+    marginTop: spacing.xs,
+  },
+  actions: {
     flexDirection: 'row',
     gap: spacing.md,
   },
-  stat: {
+  actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
+    paddingVertical: spacing.xs,
   },
-  statText: {
-    fontSize: 13,
-    color: colors.gray[600],
+  actionText: {
+    fontSize: 14,
+    color: colors.gray[500],
+  },
+  activeActionText: {
+    color: colors.primary[500],
   },
 });

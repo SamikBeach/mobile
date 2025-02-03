@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface CommentButtonProps {
   commentCount: number;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 export function CommentButton({ commentCount, onPress }: CommentButtonProps) {

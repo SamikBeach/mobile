@@ -5,7 +5,6 @@ import { colors } from '@/styles/theme';
 
 interface Props {
   imageUrl?: string | null;
-  title: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   onPress?: () => void;
 }

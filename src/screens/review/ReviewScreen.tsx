@@ -4,7 +4,7 @@ import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-naviga
 import { HomeStackParamList, RootStackParamList } from '@/navigation/types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
-import { FeedContent } from '@/components/Feed/FeedContent';
+import { FeedContent } from '@/components/feed/FeedContent';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';

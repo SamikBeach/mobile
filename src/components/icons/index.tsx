@@ -16,4 +16,4 @@ export function Library({ size = 24, color = '#000' }: IconProps) {
 
 export function User({ size = 24, color = '#000' }: IconProps) {
   return <Icon name="user" size={size} color={color} />;
-} 
+}

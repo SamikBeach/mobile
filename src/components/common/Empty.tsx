@@ -7,13 +7,13 @@ import { colors, spacing } from '@/styles/theme';
 interface Props {
   message: string;
   description?: string;
-  icon?: string;
+  icon?: string | React.ReactNode;
 }
 
 export function Empty({ message, description, icon = 'inbox' }: Props) {
   return (
     <View style={styles.container}>
-      <Icon name={icon} size={24} color={colors.gray[400]} />
+      {typeof icon === 'string' ? <Icon name={icon} size={24} color={colors.gray[400]} /> : icon}
       <View style={styles.textContainer}>
         <Text style={styles.message}>{message}</Text>
         {description && <Text style={styles.description}>{description}</Text>}

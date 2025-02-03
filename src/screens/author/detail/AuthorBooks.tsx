@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { AuthorBooksSkeleton } from '@/components/common/Skeleton/AuthorBooksSkeleton';
-import { BookItem } from '@/components/common/BookItem';
+import { BookItem } from '@/components/book/BookItem';
 
 interface Props {
   authorId: number;

@@ -39,10 +39,10 @@ export function FeedContent({ content, isExpanded = false }: Props) {
     if (node.type === 'text') {
       let style: TextStyle = styles.content;
 
-      if (node.format && node.format & 1) {
+      if (node.format && node.format % 2 === 1) {
         style = { ...style, fontWeight: 'bold' as const };
       }
-      if (node.format && node.format & 2) {
+      if (node.format && node.format % 2 === 0) {
         style = { ...style, fontStyle: 'italic' as const };
       }
 

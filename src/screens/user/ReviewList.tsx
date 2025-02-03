@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, FlatList } from 'react-native';
-import { ReviewItem } from '@/components/Review/ReviewItem';
+import { ReviewItem } from '@/components/review/ReviewItem';
 import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';

@@ -6,7 +6,7 @@ import { bookApi } from '@/apis/book';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing, borderRadius } from '@/styles/theme';
-import { ReviewItem } from './ReviewItem';
+import { ReviewItem } from '@/components/review/ReviewItem';
 import { Checkbox } from '@/components/common/Checkbox';
 
 interface Props {
