@@ -53,11 +53,13 @@ export function UserInfo({ userId }: Props) {
     <View style={styles.container}>
       <View style={styles.profileSection}>
         <Pressable onPress={isMyProfile ? handleImagePick : undefined}>
-          <Image
-            source={{ uri: user.imageUrl ?? undefined }}
-            style={styles.profileImage}
-            defaultSource={require('@/assets/images/default-profile.png')}
-          />
+          {user.imageUrl ? (
+            <Image source={{ uri: user.imageUrl }} style={styles.profileImage} />
+          ) : (
+            <View style={[styles.profileImage, styles.defaultProfile]}>
+              <Icon name="user" size={48} color={colors.gray[400]} />
+            </View>
+          )}
           {isMyProfile && (
             <View style={styles.editButton}>
               <Icon name="edit-2" size={16} color={colors.gray[500]} />
@@ -103,5 +105,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: colors.gray[900],
+  },
+  defaultProfile: {
+    backgroundColor: colors.gray[100],
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

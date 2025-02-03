@@ -4,13 +4,22 @@ import { Home, Library, User } from '@/components/icons';
 import HomeStack from '@/navigation/HomeStack';
 import BookStack from '@/navigation/BookStack';
 import AuthorStack from '@/navigation/AuthorStack';
-import { useAuth } from '@/hooks/useAuth';
 import AuthStack from '@/navigation/AuthStack';
+import { UserScreen } from '@/screens/user/UserScreen';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
-const Tab = createBottomTabNavigator();
+export type TabParamList = {
+  HomeTab: undefined;
+  BookTab: undefined;
+  AuthorTab: undefined;
+  UserTab: { userId: number };
+  AuthTab: undefined;
+};
+
+const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function TabNavigator() {
-  const { currentUser } = useAuth();
+  const currentUser = useCurrentUser();
 
   return (
     <Tab.Navigator
@@ -43,7 +52,17 @@ export default function TabNavigator() {
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
       />
-      {!currentUser && (
+      {currentUser ? (
+        <Tab.Screen
+          name="UserTab"
+          component={UserScreen}
+          initialParams={{ userId: currentUser.id }}
+          options={{
+            tabBarLabel: '마이페이지',
+            tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+          }}
+        />
+      ) : (
         <Tab.Screen
           name="AuthTab"
           component={AuthStack}

@@ -4,10 +4,10 @@ import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button, Input, Text } from '@/components/common';
-import { useAuth } from '@/hooks/useAuth';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '@/navigation/AuthStack';
-import type { LoginDto } from '@/types/auth';
+import { currentUserAtom } from '@/atoms/auth';
+import { useSetAtom } from 'jotai';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
@@ -17,7 +17,7 @@ interface LoginFormData {
 }
 
 export default function LoginScreen({ navigation }: Props) {
-  const { setCurrentUser } = useAuth();
+  const setCurrentUser = useSetAtom(currentUserAtom);
   const {
     control,
     handleSubmit,
