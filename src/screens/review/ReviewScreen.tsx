@@ -49,9 +49,15 @@ export function ReviewScreen({ route }: Props) {
 
   const handleLikePress = () => {
     if (!currentUser) {
-      navigation.navigate('Login');
+      navigation.navigate({
+        name: 'AuthTab',
+        params: {
+          screen: 'Login',
+        },
+      });
       return;
     }
+
     toggleLike();
   };
 

@@ -32,15 +32,10 @@ export default function LoginScreen({ navigation }: Props) {
   const { mutate, isPending, error } = useMutation({
     mutationFn: authApi.login,
     onSuccess: response => {
-      const { accessToken, user } = response.data;
-      // TODO: 토큰 저장 로직 구현
+      const { user } = response.data;
       setCurrentUser(user);
     },
   });
-
-  const onSubmit = (data: LoginFormData) => {
-    mutate(data);
-  };
 
   return (
     <View style={styles.container}>

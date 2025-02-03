@@ -4,7 +4,7 @@ import UserInfoScreen from '../screens/auth/UserInfoScreen';
 import LoginScreen from '@/screens/auth/LoginScreen';
 import SignUpScreen from '@/screens/auth/SignUpScreen';
 import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
-import ResetPasswordScreen from '@/screens/auth/ResetPasswordScreen';
+import { ResetPasswordScreen } from '@/screens/auth/ResetPasswordScreen';
 
 export type AuthStackParamList = {
   Login: undefined;

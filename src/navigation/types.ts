@@ -21,27 +21,41 @@ export type AuthorStackParamList = {
   AuthorDetail: { authorId: number };
 };
 
-export type RootStackParamList = {
-  Home: undefined;
+export type AuthStackParamList = {
   Login: undefined;
+  ResetPassword: {
+    email: string;
+    token: string;
+  };
+};
+
+export type ProfileStackParamList = {
+  Profile: undefined;
+  Login: undefined;
+  ResetPassword: {
+    email: string;
+    token: string;
+  };
+  // ... 다른 프로필 관련 스크린들
+};
+
+export type MainTabParamList = {
+  Home: undefined;
+  Search: undefined;
+  Profile: undefined;
+};
+
+export type RootStackParamList = {
+  Main: NavigatorScreenParams<MainTabParamList>;
+  AuthTab: NavigatorScreenParams<AuthStackParamList>;
   Review: {
     reviewId: number;
   };
   Book: {
     bookId: number;
   };
-  WriteReview: {
-    bookId: number;
-    reviewId?: number;
-  };
-  Author: NavigatorScreenParams<AuthorStackParamList>;
-  User: NavigatorScreenParams<UserStackParamList>;
-  ResetPassword: {
-    email: string;
-    token: string;
-  };
-  // ... 다른 스크린들
-} & BookStackParamList; // BookStack의 스크린들도 포함
+  // ... 다른 모달 스크린들
+};
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
   RootStackParamList,

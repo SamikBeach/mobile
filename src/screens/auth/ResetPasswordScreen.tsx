@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, useController } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '@/navigation/types';
+import { AuthStackParamList, RootStackParamList } from '@/navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Text } from '@/components/common';
 
@@ -15,7 +15,7 @@ type ResetPasswordFormData = {
   confirmPassword: string;
 };
 
-type ResetPasswordScreenRouteProp = RouteProp<RootStackParamList, 'ResetPassword'>;
+type ResetPasswordScreenRouteProp = RouteProp<AuthStackParamList, 'ResetPassword'>;
 
 export function ResetPasswordScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -34,6 +34,27 @@ export function ResetPasswordScreen() {
     },
   });
 
+  const { field: newPasswordField } = useController({
+    name: 'newPassword',
+    control,
+    rules: {
+      required: '새로운 비밀번호를 입력해주세요',
+      minLength: {
+        value: 6,
+        message: '비밀번호는 최소 6자 이상이어야 합니다',
+      },
+    },
+  });
+
+  const { field: confirmPasswordField } = useController({
+    name: 'confirmPassword',
+    control,
+    rules: {
+      required: '비밀번호를 다시 입력해주세요',
+      validate: value => value === watch('newPassword') || '비밀번호가 일치하지 않습니다',
+    },
+  });
+
   const { mutate: verifyToken, isPending: isVerifying } = useMutation({
     mutationFn: () => {
       if (!email || !token) {
@@ -42,7 +63,7 @@ export function ResetPasswordScreen() {
       return authApi.verifyPasswordResetToken(email, token);
     },
     onError: () => {
-      navigation.navigate('Login');
+      navigation.navigate('Auth', { screen: 'Login' });
     },
   });
 
@@ -54,7 +75,7 @@ export function ResetPasswordScreen() {
       return authApi.resetPassword(email, token, data.newPassword);
     },
     onSuccess: () => {
-      navigation.navigate('Login');
+      navigation.navigate('Auth', { screen: 'Login' });
     },
   });
 
@@ -77,43 +98,20 @@ export function ResetPasswordScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.form}>
-        <Controller
-          control={control}
-          name="newPassword"
-          rules={{
-            required: '새로운 비밀번호를 입력해주세요',
-            minLength: {
-              value: 6,
-              message: '비밀번호는 최소 6자 이상이어야 합니다',
-            },
-          }}
-          render={({ field: { onChange, value } }) => (
-            <Input
-              value={value}
-              onChangeText={onChange}
-              placeholder="새로운 비밀번호"
-              secureTextEntry
-              error={errors.newPassword?.message}
-            />
-          )}
+        <Input
+          value={newPasswordField.value}
+          onChangeText={newPasswordField.onChange}
+          placeholder="새로운 비밀번호"
+          secureTextEntry
+          error={errors.newPassword?.message}
         />
 
-        <Controller
-          control={control}
-          name="confirmPassword"
-          rules={{
-            required: '비밀번호를 다시 입력해주세요',
-            validate: value => value === watch('newPassword') || '비밀번호가 일치하지 않습니다',
-          }}
-          render={({ field: { onChange, value } }) => (
-            <Input
-              value={value}
-              onChangeText={onChange}
-              placeholder="비밀번호 확인"
-              secureTextEntry
-              error={errors.confirmPassword?.message}
-            />
-          )}
+        <Input
+          value={confirmPasswordField.value}
+          onChangeText={confirmPasswordField.onChange}
+          placeholder="비밀번호 확인"
+          secureTextEntry
+          error={errors.confirmPassword?.message}
         />
 
         <Button onPress={onSubmit} disabled={isResetting} loading={isResetting}>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Library, User } from '@/components/icons';
 import HomeStack from '@/navigation/HomeStack';
