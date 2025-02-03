@@ -20,14 +20,6 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function TabNavigator() {
   const currentUser = useCurrentUser();
-  console.log('TabNavigator render');
-  console.log('TabNavigator currentUser:', currentUser);
-  console.log('TabNavigator currentUser type:', currentUser?.id, typeof currentUser?.id);
-
-  // atom 값이 변경될 때마다 실행되는 useEffect
-  useEffect(() => {
-    console.log('TabNavigator useEffect - currentUser changed:', currentUser);
-  }, [currentUser]);
 
   return (
     <Tab.Navigator
