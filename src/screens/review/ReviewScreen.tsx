@@ -12,8 +12,9 @@ import { format } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigation } from '@react-navigation/native';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
+import { HomeStackParamList } from '@/navigation/HomeStack';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Review'>;
+type Props = NativeStackScreenProps<HomeStackParamList, 'Review'>;
 
 export function ReviewScreen({ route }: Props) {
   const { reviewId } = route.params;

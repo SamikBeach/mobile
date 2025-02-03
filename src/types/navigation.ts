@@ -23,4 +23,4 @@ export type BookStackParamList = {
 
 export type AuthorStackParamList = {
   Author: undefined;
-}; 
+};

@@ -1,8 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { NavigatorScreenParams } from '@react-navigation/native';
+import { HomeStackParamList } from './HomeStack';
 
 export type UserStackParamList = {
-  Profile: {
+  User: {
     userId?: number; // 없으면 현재 유저
   };
   EditProfile: undefined;
@@ -30,31 +31,17 @@ export type AuthStackParamList = {
 };
 
 export type ProfileStackParamList = {
-  Profile: undefined;
-  Login: undefined;
-  ResetPassword: {
-    email: string;
-    token: string;
+  Profile: {
+    userId: number;
   };
-  // ... 다른 프로필 관련 스크린들
-};
-
-export type MainTabParamList = {
-  Home: undefined;
-  Search: undefined;
-  Profile: undefined;
 };
 
 export type RootStackParamList = {
-  Main: NavigatorScreenParams<MainTabParamList>;
+  HomeTab: NavigatorScreenParams<HomeStackParamList>;
+  BookTab: NavigatorScreenParams<BookStackParamList>;
+  AuthorTab: NavigatorScreenParams<AuthorStackParamList>;
   AuthTab: NavigatorScreenParams<AuthStackParamList>;
-  Review: {
-    reviewId: number;
-  };
-  Book: {
-    bookId: number;
-  };
-  // ... 다른 모달 스크린들
+  UserTab: NavigatorScreenParams<UserStackParamList>;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<

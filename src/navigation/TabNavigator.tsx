@@ -7,6 +7,7 @@ import AuthorStack from '@/navigation/AuthorStack';
 import AuthStack from '@/navigation/AuthStack';
 import { UserScreen } from '@/screens/user/UserScreen';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import UserStack from './UserStack';
 
 export type TabParamList = {
   HomeTab: undefined;
@@ -55,7 +56,7 @@ export default function TabNavigator() {
       {currentUser ? (
         <Tab.Screen
           name="UserTab"
-          component={UserScreen}
+          component={UserStack}
           initialParams={{ userId: currentUser.id }}
           options={{
             tabBarLabel: '마이페이지',

@@ -1,48 +1,36 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import { Image, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { UserBase } from '@/types/user';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/navigation/types';
 
 interface Props {
   user: UserBase;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md';
   showNickname?: boolean;
+  disabled?: boolean;
 }
 
-const getSizeStyle = (size: 'sm' | 'md' | 'lg') => {
-  const sizes = {
-    sm: 32,
-    md: 40,
-    lg: 48,
-  };
-  return {
-    width: sizes[size],
-    height: sizes[size],
-  };
-};
+export function UserAvatar({ user, size = 'md', showNickname = false, disabled = false }: Props) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-export function UserAvatar({ user, size = 'md', showNickname = true }: Props) {
-  const sizeStyle = getSizeStyle(size);
-  const textSize = {
-    sm: 14,
-    md: 14,
-    lg: 16,
-  }[size];
+  const handlePress = () => {
+    if (disabled) return;
+
+    navigation.navigate('UserTab', {
+      screen: 'User',
+      params: { userId: user.id },
+    });
+  };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => {}}>
-      {user.imageUrl ? (
-        <Image source={{ uri: user.imageUrl }} style={[styles.avatar, sizeStyle]} />
-      ) : (
-        <View style={[styles.placeholderAvatar, sizeStyle]}>
-          <Icon name="user" size={sizeStyle.width * 0.5} color="#9CA3AF" />
-        </View>
-      )}
-      {showNickname && (
-        <Text style={[styles.nickname, { fontSize: textSize }]}>
-          {user.nickname ?? '알 수 없음'}
-        </Text>
-      )}
+    <TouchableOpacity style={styles.container} onPress={handlePress} disabled={disabled}>
+      <Image
+        source={{ uri: user.imageUrl ?? undefined }}
+        style={[styles.avatar, size === 'sm' ? styles.avatarSmall : styles.avatarMedium]}
+      />
+      {showNickname && <Text style={styles.nickname}>{user.nickname}</Text>}
     </TouchableOpacity>
   );
 }
@@ -54,15 +42,20 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   avatar: {
+    backgroundColor: '#F3F4F6',
     borderRadius: 9999,
   },
-  placeholderAvatar: {
-    borderRadius: 9999,
-    backgroundColor: '#F3F4F6',
-    alignItems: 'center',
-    justifyContent: 'center',
+  avatarSmall: {
+    width: 28,
+    height: 28,
+  },
+  avatarMedium: {
+    width: 40,
+    height: 40,
   },
   nickname: {
+    fontSize: 14,
     fontWeight: '500',
+    color: '#111827',
   },
 });
