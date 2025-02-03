@@ -1,72 +1,61 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { Text } from '@/components/common/Text';
+import { StyleSheet, FlatList } from 'react-native';
+import { BookItem } from '@/components/Book/BookItem';
+import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';
-import { BookItem } from '@/components/common/BookItem';
-import { BookListSkeleton } from '@/components/common/Skeleton/BookListSkeleton';
 import { spacing } from '@/styles/theme';
 
 interface Props {
   userId: number;
 }
 
+const LIMIT = 10;
+
 export function BookList({ userId }: Props) {
-  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['user-liked-books', userId],
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ['user', userId, 'likedBooks'],
     queryFn: ({ pageParam = 1 }) =>
-      userApi.getUserLikedBooks(userId, {
-        page: pageParam,
-        limit: 20,
-      }),
+      userApi.getUserLikedBooks(userId, { page: pageParam, limit: LIMIT }),
     getNextPageParam: lastPage => {
-      if (!lastPage.data.links.next) return undefined;
-      const nextPage = Number(lastPage.data.links.next.split('page=')[1].split('&')[0]);
-      return nextPage;
+      const totalPages = Math.ceil(lastPage.data.meta.totalItems / LIMIT);
+      const nextPage = lastPage.data.meta.currentPage + 1;
+      return nextPage <= totalPages ? nextPage : undefined;
     },
     initialPageParam: 1,
   });
 
-  if (isLoading) return <BookListSkeleton />;
-
   const books = data?.pages.flatMap(page => page.data.data) ?? [];
 
-  if (books.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text>아직 좋아요한 책이 없습니다.</Text>
-      </View>
-    );
-  }
+  if (!books.length) return <Empty message="좋아요한 책이 없습니다" />;
+
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
   return (
     <FlatList
       data={books}
-      renderItem={({ item }) => <BookItem book={item.book} size="small" showPublisher />}
+      renderItem={({ item }) => <BookItem book={item.book} showPublisher showPublicationDate />}
       keyExtractor={item => String(item.book.id)}
-      contentContainerStyle={styles.listContainer}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
-      onEndReached={() => hasNextPage && fetchNextPage()}
-      onEndReachedThreshold={0.5}
-      numColumns={3}
+      contentContainerStyle={styles.list}
+      horizontal={false}
+      numColumns={2}
       columnWrapperStyle={styles.row}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
     />
   );
 }
 
 const styles = StyleSheet.create({
-  listContainer: {
+  list: {
     padding: spacing.lg,
-  },
-  separator: {
-    height: spacing.lg,
-  },
-  emptyContainer: {
-    padding: spacing.lg,
-    alignItems: 'center',
   },
   row: {
-    gap: spacing.md,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: spacing.lg,
   },
 });

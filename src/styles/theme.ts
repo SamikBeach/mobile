@@ -18,6 +18,20 @@ export const colors = {
     800: '#1F2937',
     900: '#111827',
   },
+  yellow: {
+    50: '#FEFCE8',
+    100: '#FEF9C3',
+    500: '#EAB308',
+    600: '#CA8A04',
+    700: '#A16207',
+  },
+  red: {
+    50: '#FEF2F2',
+    100: '#FEE2E2',
+    500: '#EF4444',
+    600: '#DC2626',
+    700: '#B91C1C',
+  },
   white: '#FFFFFF',
 };
 
@@ -54,4 +68,4 @@ export const shadows = {
     shadowRadius: 4,
     elevation: 4,
   },
-}; 
+};

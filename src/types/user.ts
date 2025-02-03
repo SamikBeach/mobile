@@ -1,6 +1,6 @@
 import { Author } from './author';
 import { Book } from './book';
-import { BaseEntity, PaginationQuery } from './common';
+import { PaginationQuery } from './common';
 
 export interface User {
   id: number;

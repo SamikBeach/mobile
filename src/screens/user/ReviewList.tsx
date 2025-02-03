@@ -1,66 +1,66 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { Text } from '@/components/common/Text';
+import { StyleSheet, FlatList } from 'react-native';
+import { ReviewItem } from '@/components/Review/ReviewItem';
+import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';
-import { ReviewItem } from '@/components/common/ReviewItem';
-import { ReviewListSkeleton } from '@/components/common/Skeleton/ReviewListSkeleton';
 import { spacing } from '@/styles/theme';
+import { ActivityIndicator } from 'react-native';
+import { colors } from '@/styles/theme';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 interface Props {
   userId: number;
 }
 
 export function ReviewList({ userId }: Props) {
-  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['user-reviews', userId],
+  const currentUser = useCurrentUser();
+
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ['user', userId, 'reviews'],
     queryFn: ({ pageParam = 1 }) =>
-      userApi.getUserReviews(userId, {
-        page: pageParam,
-        limit: 20,
-      }),
+      userId === currentUser?.id
+        ? userApi.getMyReviews({ page: pageParam, limit: 20 })
+        : userApi.getUserReviews(userId, { page: pageParam, limit: 20 }),
+    initialPageParam: 1,
     getNextPageParam: lastPage => {
       if (!lastPage.data.links.next) return undefined;
-      const nextPage = Number(lastPage.data.links.next.split('page=')[1].split('&')[0]);
-      return nextPage;
+      const nextPage = new URLSearchParams(lastPage.data.links.next.split('?')[1]).get('page');
+      return nextPage ? Number(nextPage) : undefined;
     },
-    initialPageParam: 1,
   });
-
-  if (isLoading) return <ReviewListSkeleton />;
 
   const reviews = data?.pages.flatMap(page => page.data.data) ?? [];
 
-  if (reviews.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text>아직 작성한 리뷰가 없습니다.</Text>
-      </View>
-    );
-  }
+  if (!reviews.length) return <Empty message="작성한 리뷰가 없습니다" />;
 
   return (
     <FlatList
       data={reviews}
-      renderItem={({ item }) => <ReviewItem review={item} showBookInfo />}
+      renderItem={({ item }) => <ReviewItem review={item} showBook />}
       keyExtractor={item => String(item.id)}
-      contentContainerStyle={styles.listContainer}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
-      onEndReached={() => hasNextPage && fetchNextPage()}
+      contentContainerStyle={styles.list}
+      onEndReached={() => {
+        if (hasNextPage) {
+          fetchNextPage();
+        }
+      }}
       onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
+        ) : null
+      }
     />
   );
 }
 
 const styles = StyleSheet.create({
-  listContainer: {
+  list: {
     padding: spacing.lg,
+    gap: spacing.md,
   },
-  separator: {
-    height: spacing.lg,
-  },
-  emptyContainer: {
-    padding: spacing.lg,
-    alignItems: 'center',
+  spinner: {
+    marginVertical: spacing.lg,
   },
 });

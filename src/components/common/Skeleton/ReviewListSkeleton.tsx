@@ -1,32 +1,28 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Skeleton } from './Skeleton';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import { colors, spacing, borderRadius } from '@/styles/theme';
+import { Skeleton } from './Skeleton';
 
 export function ReviewListSkeleton() {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Skeleton style={styles.title} />
-        <Skeleton style={styles.badge} />
-      </View>
-      {Array.from({ length: 3 }).map((_, index) => (
-        <View key={index} style={styles.reviewItem}>
-          <View style={styles.reviewHeader}>
+      {Array.from({ length: 4 }).map((_, index) => (
+        <View key={index} style={styles.item}>
+          <View style={styles.header}>
             <View style={styles.userInfo}>
-              <Skeleton style={styles.avatar} />
               <Skeleton style={styles.username} />
               <Skeleton style={styles.date} />
             </View>
-            <Skeleton style={styles.bookInfo} />
+            <Skeleton style={styles.rating} />
           </View>
-          <Skeleton style={styles.reviewTitle} />
           <View style={styles.content}>
-            <Skeleton style={styles.contentLine} />
-            <Skeleton style={{ ...styles.contentLine, width: '80%' }} />
+            <Skeleton style={styles.textLine} />
+            <Skeleton style={{ ...styles.textLine, width: '80%' }} />
+            <Skeleton style={{ ...styles.textLine, width: '60%' }} />
           </View>
           <View style={styles.footer}>
-            <Skeleton style={styles.action} />
+            <Skeleton style={styles.stat} />
+            <Skeleton style={styles.stat} />
           </View>
         </View>
       ))}
@@ -36,78 +32,57 @@ export function ReviewListSkeleton() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: spacing.xl,
+    padding: spacing.lg,
     gap: spacing.md,
+  },
+  item: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    gap: spacing.sm,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-  },
-  title: {
-    width: 60,
-    height: 24,
-    borderRadius: borderRadius.sm,
-  },
-  badge: {
-    width: 30,
-    height: 20,
-    borderRadius: borderRadius.full,
-  },
-  reviewItem: {
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
-    padding: spacing.lg,
-    marginHorizontal: spacing.lg,
-    gap: spacing.md,
-  },
-  reviewHeader: {
-    gap: spacing.sm,
+    justifyContent: 'space-between',
   },
   userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: borderRadius.full,
+    gap: spacing.xs,
   },
   username: {
-    width: 80,
+    width: 100,
     height: 16,
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
   date: {
-    width: 70,
+    width: 80,
+    height: 14,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
+  },
+  rating: {
+    width: 40,
     height: 16,
     borderRadius: borderRadius.sm,
-  },
-  bookInfo: {
-    width: 120,
-    height: 24,
-    borderRadius: borderRadius.md,
-  },
-  reviewTitle: {
-    width: '60%',
-    height: 20,
-    borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
   content: {
     gap: spacing.xs,
   },
-  contentLine: {
+  textLine: {
     height: 16,
+    width: '100%',
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
   footer: {
-    marginTop: spacing.xs,
+    flexDirection: 'row',
+    gap: spacing.md,
   },
-  action: {
-    width: 60,
-    height: 20,
+  stat: {
+    width: 50,
+    height: 14,
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
 });

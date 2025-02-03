@@ -1,24 +1,16 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { Skeleton } from './Skeleton';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 
 export function BookListSkeleton() {
   return (
     <View style={styles.container}>
-      {[1, 2, 3].map(key => (
-        <View key={key} style={styles.item}>
+      {Array.from({ length: 6 }).map((_, index) => (
+        <View key={index} style={styles.item}>
           <Skeleton style={styles.image} />
-          <View style={styles.content}>
-            <View style={styles.titleContainer}>
-              <Skeleton style={styles.titleLine} />
-              <Skeleton style={{ ...styles.titleLine, width: '60%' }} />
-            </View>
-            <View style={styles.meta}>
-              <Skeleton style={styles.author} />
-              <Skeleton style={styles.publisher} />
-            </View>
-          </View>
+          <Skeleton style={styles.title} />
+          <Skeleton style={styles.subtitle} />
         </View>
       ))}
     </View>
@@ -28,43 +20,32 @@ export function BookListSkeleton() {
 const styles = StyleSheet.create({
   container: {
     padding: spacing.lg,
-    gap: spacing.md,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   item: {
-    flexDirection: 'row',
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    gap: spacing.md,
-    ...shadows.sm,
+    width: '48%',
+    marginBottom: spacing.lg,
   },
   image: {
-    width: 90,
-    height: 130,
-    borderRadius: borderRadius.sm,
+    width: '100%',
+    height: 160,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.gray[200],
   },
-  content: {
-    flex: 1,
-    gap: spacing.sm,
-  },
-  titleContainer: {
-    gap: spacing.xs,
-  },
-  titleLine: {
+  title: {
     height: 20,
+    width: '80%',
+    marginTop: spacing.sm,
     borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
-  meta: {
-    gap: spacing.xs,
-  },
-  author: {
+  subtitle: {
     height: 16,
     width: '60%',
+    marginTop: spacing.xs,
     borderRadius: borderRadius.sm,
-  },
-  publisher: {
-    height: 16,
-    width: '40%',
-    borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[200],
   },
 });

@@ -27,34 +27,31 @@ export function UserHistory({ userId }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.stats}>
-        <Pressable 
-          style={[styles.statItem, activeSection === 'review' && styles.activeStatItem]} 
+        <Pressable
+          style={[styles.statItem, activeSection === 'review' && styles.activeStatItem]}
           onPress={() => setActiveSection('review')}>
           <Text style={styles.statValue}>0</Text>
-          <Text style={[
-            styles.statLabel,
-            activeSection === 'review' && styles.activeStatLabel
-          ]}>리뷰</Text>
+          <Text style={[styles.statLabel, activeSection === 'review' && styles.activeStatLabel]}>
+            리뷰
+          </Text>
         </Pressable>
         <View style={styles.statDivider} />
-        <Pressable 
+        <Pressable
           style={[styles.statItem, activeSection === 'books' && styles.activeStatItem]}
           onPress={() => setActiveSection('books')}>
           <Text style={styles.statValue}>0</Text>
-          <Text style={[
-            styles.statLabel,
-            activeSection === 'books' && styles.activeStatLabel
-          ]}>좋아요한 책</Text>
+          <Text style={[styles.statLabel, activeSection === 'books' && styles.activeStatLabel]}>
+            좋아요한 책
+          </Text>
         </Pressable>
         <View style={styles.statDivider} />
-        <Pressable 
+        <Pressable
           style={[styles.statItem, activeSection === 'authors' && styles.activeStatItem]}
           onPress={() => setActiveSection('authors')}>
           <Text style={styles.statValue}>0</Text>
-          <Text style={[
-            styles.statLabel,
-            activeSection === 'authors' && styles.activeStatLabel
-          ]}>좋아요한 작가</Text>
+          <Text style={[styles.statLabel, activeSection === 'authors' && styles.activeStatLabel]}>
+            좋아요한 작가
+          </Text>
         </Pressable>
       </View>
       <View style={styles.content}>{renderContent()}</View>
