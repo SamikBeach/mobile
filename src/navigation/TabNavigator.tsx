@@ -1,13 +1,14 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Library, User } from '@/components/icons';
-import HomeStack from '@/navigation/HomeStack';
-import BookStack from '@/navigation/BookStack';
-import AuthorStack from '@/navigation/AuthorStack';
-import AuthStack from '@/navigation/AuthStack';
-import UserStack from './UserStack';
+import { HomeScreen } from '@/screens/home/HomeScreen';
+import { UserScreen } from '@/screens/user/UserScreen';
 import { TabParamList } from './types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import BookScreen from '@/screens/book/BookScreen';
+import AuthorScreen from '@/screens/author/list/AuthorScreen';
+import LoginScreen from '@/screens/auth/LoginScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -23,7 +24,7 @@ export default function TabNavigator() {
       }}>
       <Tab.Screen
         name="HomeTab"
-        component={HomeStack}
+        component={HomeScreen}
         options={{
           tabBarLabel: '홈',
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
@@ -31,7 +32,7 @@ export default function TabNavigator() {
       />
       <Tab.Screen
         name="BookTab"
-        component={BookStack}
+        component={BookScreen}
         options={{
           tabBarLabel: '책',
           tabBarIcon: ({ color, size }) => <Library size={size} color={color} />,
@@ -39,7 +40,7 @@ export default function TabNavigator() {
       />
       <Tab.Screen
         name="AuthorTab"
-        component={AuthorStack}
+        component={AuthorScreen}
         options={{
           tabBarLabel: '작가',
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
@@ -48,7 +49,7 @@ export default function TabNavigator() {
       {currentUser ? (
         <Tab.Screen
           name="UserTab"
-          component={UserStack}
+          component={UserScreen}
           initialParams={{ userId: currentUser.id }}
           options={{
             tabBarLabel: '마이페이지',
@@ -58,7 +59,7 @@ export default function TabNavigator() {
       ) : (
         <Tab.Screen
           name="AuthTab"
-          component={AuthStack}
+          component={LoginScreen}
           options={{
             tabBarLabel: '로그인',
             tabBarIcon: ({ color, size }) => <User size={size} color={color} />,

@@ -52,9 +52,7 @@ export function BookItem({
             </Text>
           )}
           {showPublicationDate && book.publicationDate && (
-            <Text style={styles.date}>
-              {format(new Date(book.publicationDate), 'yyyy.MM')}
-            </Text>
+            <Text style={styles.date}>{format(new Date(book.publicationDate), 'yyyy.MM')}</Text>
           )}
           <View style={styles.stats}>
             <View style={styles.stat}>
@@ -113,4 +111,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.gray[500],
   },
-}); 
+});

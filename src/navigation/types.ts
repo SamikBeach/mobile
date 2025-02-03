@@ -42,7 +42,7 @@ export type TabParamList = {
   BookTab: undefined;
   AuthorTab: undefined;
   UserTab: { userId: number };
-  AuthTab: undefined;
+  AuthTab: NavigatorScreenParams<AuthStackParamList>;
 };
 
 export type RootStackParamList = {

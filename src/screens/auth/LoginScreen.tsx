@@ -8,6 +8,9 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from '@/navigation/AuthStack';
 import { currentUserAtom } from '@/atoms/auth';
 import { useSetAtom } from 'jotai';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/navigation/types';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
@@ -16,7 +19,8 @@ interface LoginFormData {
   password: string;
 }
 
-export default function LoginScreen({ navigation }: Props) {
+export default function LoginScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const setCurrentUser = useSetAtom(currentUserAtom);
   const {
     control,

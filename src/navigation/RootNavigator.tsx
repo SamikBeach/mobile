@@ -13,15 +13,17 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function RootNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerTitleAlign: 'center',
+          headerBackTitle: '뒤로',
+        }}>
         <Stack.Screen name="Tab" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen
           name="Review"
           component={ReviewScreen}
           options={{
             headerTitle: '리뷰',
-            headerBackTitle: '뒤로',
-            headerTitleAlign: 'center',
           }}
         />
         <Stack.Screen
@@ -29,8 +31,6 @@ export default function RootNavigator() {
           component={UserScreen}
           options={{
             headerTitle: '프로필',
-            headerBackTitle: '뒤로',
-            headerTitleAlign: 'center',
           }}
         />
         <Stack.Screen
@@ -38,8 +38,6 @@ export default function RootNavigator() {
           component={BookDetailScreen}
           options={{
             headerTitle: '도서 상세',
-            headerBackTitle: '뒤로',
-            headerTitleAlign: 'center',
           }}
         />
         <Stack.Screen
@@ -47,8 +45,6 @@ export default function RootNavigator() {
           component={AuthorDetailScreen}
           options={{
             headerTitle: '작가 상세',
-            headerBackTitle: '뒤로',
-            headerTitleAlign: 'center',
           }}
         />
       </Stack.Navigator>

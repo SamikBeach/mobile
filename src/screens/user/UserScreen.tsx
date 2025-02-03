@@ -6,12 +6,13 @@ import { UserHistory } from './UserHistory';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { UserStackParamList } from '@/navigation/types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { TabParamList } from '@/navigation/types';
+import { useRoute, RouteProp } from '@react-navigation/native';
 
-type Props = NativeStackScreenProps<UserStackParamList, 'User'>;
-
-export function UserScreen({ route }: Props) {
-  const currentUser = useCurrentUser();
+export function UserScreen() {
+  const route = useRoute<RouteProp<TabParamList, 'UserTab'>>();
   const { userId } = route.params;
+  const currentUser = useCurrentUser();
 
   // userId가 없으면 현재 로그인한 유저의 ID를 사용
   const targetUserId = userId ?? currentUser?.id;

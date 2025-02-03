@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { UserBase } from '@/types/user';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -16,7 +16,9 @@ export function UserAvatar({ user, size = 'md', showNickname = false, disabled =
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
     navigation.navigate('User', { userId: user.id });
   };
 
