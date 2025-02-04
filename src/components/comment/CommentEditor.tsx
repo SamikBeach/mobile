@@ -17,21 +17,35 @@ interface Props {
   onSubmit: (content: string) => void;
   onCancel: () => void;
   initialContent?: string;
-  replyToUser: { nickname: string } | null;
+  replyToUser?: { nickname: string } | null;
   showAvatar?: boolean;
 }
 
-export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = true }: Props) {
+export function CommentEditor({
+  onSubmit,
+  onCancel,
+  initialContent,
+  replyToUser,
+  showAvatar = true,
+}: Props) {
   const [text, setText] = useState('');
   const currentUser = useCurrentUser();
 
   useEffect(() => {
-    if (replyToUser) {
+    if (initialContent) {
+      try {
+        const parsedContent = JSON.parse(initialContent);
+        const textContent = parsedContent.root.children[0].children
+          .map((node: any) => (node.type === 'text' ? node.text : ''))
+          .join('');
+        setText(textContent);
+      } catch (error) {
+        console.warn('Failed to parse initial content:', error);
+      }
+    } else if (replyToUser) {
       setText(`@${replyToUser.nickname} `);
-    } else {
-      setText('');
     }
-  }, [replyToUser]);
+  }, [initialContent, replyToUser]);
 
   const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
     if (
@@ -108,8 +122,10 @@ export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = tr
     onCancel();
   };
 
+  const isEditMode = Boolean(initialContent);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, !isEditMode && styles.fixedContainer]}>
       {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
       <View style={styles.inputContainer}>
         {replyToUser && <Text style={styles.mention}>@{replyToUser.nickname}</Text>}
@@ -123,20 +139,27 @@ export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = tr
           maxLength={1000}
           placeholderTextColor={colors.gray[400]}
         />
-        {replyToUser && (
-          <Pressable onPress={handleCancel} hitSlop={8} style={styles.cancelButton}>
+        {replyToUser && !isEditMode && (
+          <Pressable onPress={handleCancel} hitSlop={8} style={styles.closeButton}>
             <Icon name="x" size={16} color={colors.gray[500]} />
           </Pressable>
         )}
       </View>
-      <Pressable
-        style={[styles.submitButton, !text.trim() && styles.submitButtonDisabled]}
-        onPress={handleSubmit}
-        disabled={!text.trim()}>
-        <Text style={[styles.submitButtonText, !text.trim() && styles.submitButtonTextDisabled]}>
-          등록
-        </Text>
-      </Pressable>
+      <View style={styles.buttonContainer}>
+        {isEditMode && (
+          <Pressable style={styles.cancelButton} onPress={onCancel}>
+            <Text style={styles.cancelButtonText}>취소</Text>
+          </Pressable>
+        )}
+        <Pressable
+          style={[styles.submitButton, !text.trim() && styles.submitButtonDisabled]}
+          onPress={handleSubmit}
+          disabled={!text.trim()}>
+          <Text style={[styles.submitButtonText, !text.trim() && styles.submitButtonTextDisabled]}>
+            등록
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -146,8 +169,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 16,
     backgroundColor: 'white',
+  },
+  fixedContainer: {
+    padding: 16,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
   },
@@ -155,12 +180,16 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.gray[100],
+    backgroundColor: colors.gray[50],
     borderRadius: 20,
     paddingLeft: 16,
     paddingRight: 8,
     paddingVertical: 6,
     minHeight: 40,
+  },
+  closeButton: {
+    padding: 4,
+    marginLeft: 4,
   },
   input: {
     flex: 1,
@@ -169,9 +198,19 @@ const styles = StyleSheet.create({
     padding: 0,
     maxHeight: 100,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
   cancelButton: {
-    padding: 4,
-    marginLeft: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
+  cancelButtonText: {
+    fontSize: 14,
+    color: colors.gray[500],
   },
   submitButton: {
     paddingHorizontal: 12,

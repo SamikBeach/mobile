@@ -12,6 +12,7 @@ import { CommentActions } from './CommentActions';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors } from '@/styles/theme';
 import { LexicalContent } from '../common/LexicalContent';
+import { CommentEditor } from './CommentEditor';
 
 interface Props {
   comment: Comment;
@@ -24,7 +25,8 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
   const currentUser = useCurrentUser();
   const isMyComment = comment.user.id === currentUser?.id;
 
-  const { updateCommentLikeQueryData, deleteCommentQueryData } = useCommentQueryData();
+  const { updateCommentLikeQueryData, deleteCommentQueryData, updateCommentQueryData } =
+    useCommentQueryData();
 
   const { mutate: toggleLike } = useMutation({
     mutationFn: () => reviewApi.toggleCommentLike(reviewId, comment.id),
@@ -56,6 +58,15 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
     onError: () => {},
   });
 
+  const { mutate: updateComment } = useMutation({
+    mutationFn: (content: string) => reviewApi.updateComment(reviewId, comment.id, { content }),
+    onSuccess: (_, content) => {
+      updateCommentQueryData({ reviewId, commentId: comment.id, content });
+      setIsEditing(false);
+    },
+    onError: () => {},
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -68,8 +79,17 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
         )}
       </View>
 
-      <View style={styles.content}>
-        <LexicalContent content={comment.content} isComment />
+      <View style={[styles.content, isEditing && styles.editingContent]}>
+        {isEditing ? (
+          <CommentEditor
+            initialContent={comment.content}
+            onSubmit={updateComment}
+            onCancel={() => setIsEditing(false)}
+            showAvatar={false}
+          />
+        ) : (
+          <LexicalContent content={comment.content} isComment />
+        )}
       </View>
 
       <View style={styles.actions}>
@@ -114,6 +134,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
     padding: 12,
     borderRadius: 8,
+  },
+  editingContent: {
+    backgroundColor: 'transparent',
+    padding: 0,
   },
   text: {
     fontSize: 14,
