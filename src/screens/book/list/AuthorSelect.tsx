@@ -46,7 +46,9 @@ export function AuthorSelect() {
   return (
     <>
       <TouchableOpacity onPress={() => setIsOpen(true)} style={styles.button}>
-        <Text style={styles.buttonText}>{selectedAuthor?.nameInKor || '작가'}</Text>
+        <Text numberOfLines={1} style={styles.buttonText}>
+          {selectedAuthor?.nameInKor || '작가'}
+        </Text>
         {selectedAuthor ? (
           <TouchableOpacity
             onPress={handleClear}
@@ -116,6 +118,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
     color: colors.gray[900],
+    maxWidth: 120,
   },
   modal: {
     flex: 1,
