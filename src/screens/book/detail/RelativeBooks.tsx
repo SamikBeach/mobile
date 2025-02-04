@@ -15,7 +15,7 @@ interface Props {
 
 export function RelativeBooks({ bookId }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  
+
   const { data: books = [] } = useQuery({
     queryKey: ['relative-books', bookId],
     queryFn: () => bookApi.getAllRelatedBooks(bookId),
@@ -38,14 +38,12 @@ export function RelativeBooks({ bookId }: Props) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+        contentContainerStyle={styles.scrollContent}>
         {books.map(book => (
           <Pressable
             key={book.id}
             style={styles.bookItem}
-            onPress={() => navigation.push('BookDetail', { bookId: book.id })}
-          >
+            onPress={() => navigation.push('BookDetail', { bookId: book.id })}>
             <View style={styles.imageContainer}>
               <Image
                 source={{ uri: book.imageUrl ?? undefined }}
@@ -132,4 +130,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.gray[500],
   },
-}); 
+});
