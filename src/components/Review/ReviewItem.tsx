@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
-import { format } from 'date-fns';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
+import { formatDate } from '@/utils/date';
 
 interface Props {
   review: Review;
@@ -40,7 +40,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         <View style={styles.userInfo}>
           <View style={styles.avatar} />
           <Text style={styles.username}>{review.user.nickname}</Text>
-          <Text style={styles.date}>{format(new Date(review.createdAt), 'yyyy.MM.dd')}</Text>
+          <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
         </View>
         {showBookInfo && (
           <Pressable style={styles.bookInfo}>
