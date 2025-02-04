@@ -54,7 +54,11 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
     if (!isExpanded) {
       const { lines } = event.nativeEvent;
-      setIsTruncated(lines.length > 3 && event.nativeEvent.lines[2].text.endsWith('...'));
+      if (lines.length >= 3) {
+        setIsTruncated(true);
+      } else {
+        setIsTruncated(false);
+      }
     }
   };
 
@@ -156,8 +160,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
   return (
     <Animated.View
-      entering={FadeIn.duration(300)}
-      exiting={FadeOut.duration(300)}
+      entering={FadeInRight.duration(300)}
+      exiting={FadeOutRight.duration(300)}
       layout={Layout.duration(300)}
       style={styles.container}>
       <View style={styles.header}>
