@@ -7,9 +7,10 @@ import { colors, spacing } from '@/styles/theme';
 import { RelativeBooks } from './detail/RelativeBooks';
 import { ReviewList } from './detail/ReviewList';
 import { BookDetailSkeleton } from '@/components/common/Skeleton/BookDetailSkeleton';
-import type { RootStackScreenProps } from '@/navigation/types';
+import type { RootStackParamList } from '@/navigation/types';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-type Props = RootStackScreenProps<'BookDetail'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'BookDetail'>;
 
 export function BookDetailScreen({ route }: Props) {
   const { bookId } = route.params;

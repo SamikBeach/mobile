@@ -25,7 +25,7 @@ export function BookDetailInfo({ book }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={handleBookClick} style={styles.imageContainer}>
+        <Pressable onPress={handleBookClick} style={styles.imageWrapper}>
           <Image
             source={{ uri: book.imageUrl ?? undefined }}
             style={styles.image}
@@ -34,32 +34,36 @@ export function BookDetailInfo({ book }: Props) {
         </Pressable>
 
         <View style={styles.info}>
-          <View style={styles.titleSection}>
-            <Text style={styles.title}>{book.title}</Text>
-            <Text style={styles.author}>
-              {book.authorBooks.map(ab => ab.author.nameInKor).join(', ')}
-            </Text>
-            <Text style={styles.publisher}>
-              {book.publisher}
-              {book.publisher && formattedPublicationDate && ' · '}
-              {formattedPublicationDate}
-            </Text>
-          </View>
+          <View style={styles.infoContent}>
+            <View style={styles.titleSection}>
+              <Text style={styles.title} numberOfLines={3}>
+                {book.title}
+              </Text>
+              <Text style={styles.author} numberOfLines={1}>
+                {book.authorBooks
+                  .map(ab => ab.author.nameInKor)
+                  .join(', ')
+                  .trim()}
+              </Text>
+              <Text style={styles.meta} numberOfLines={2}>
+                {book.publisher}
+                {book.publisher && formattedPublicationDate && ' · '}
+                {formattedPublicationDate}
+              </Text>
+              <Text style={styles.aladin}>정보제공: 알라딘</Text>
+            </View>
 
-          <View style={styles.statsContainer}>
-            <Pressable style={styles.statButton}>
-              <View style={styles.statIconWrapper}>
-                <Icon name="heart" size={16} color={colors.gray[600]} />
+            <View style={styles.stats}>
+              <View style={styles.statItem}>
+                <Icon name="heart" size={14} color={colors.gray[500]} />
+                <Text style={styles.statText}>{book.likeCount}</Text>
               </View>
-              <Text style={styles.statValue}>{book.likeCount}</Text>
-            </Pressable>
-            <View style={styles.statDivider} />
-            <Pressable style={styles.statButton}>
-              <View style={styles.statIconWrapper}>
-                <Icon name="message-circle" size={16} color={colors.gray[600]} />
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Icon name="message-circle" size={14} color={colors.gray[500]} />
+                <Text style={styles.statText}>{book.reviewCount}</Text>
               </View>
-              <Text style={styles.statValue}>{book.reviewCount}</Text>
-            </Pressable>
+            </View>
           </View>
         </View>
       </View>
@@ -83,7 +87,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.lg,
   },
-  imageContainer: {
+  imageWrapper: {
     ...shadows.md,
   },
   image: {
@@ -94,59 +98,52 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
+    height: 180,
+  },
+  infoContent: {
+    flex: 1,
     justifyContent: 'space-between',
   },
   titleSection: {
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   title: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
-    lineHeight: 30,
+    lineHeight: 24,
   },
   author: {
-    fontSize: 16,
+    fontSize: 15,
     color: colors.gray[700],
   },
-  publisher: {
-    fontSize: 14,
-    color: colors.gray[500],
-    marginTop: spacing.xs,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    backgroundColor: colors.gray[50],
-    borderRadius: borderRadius.lg,
-    padding: spacing.sm,
-  },
-  statButton: {
-    flex: 1,
+  stats: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    marginBottom: spacing.xs,
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.sm,
-  },
-  statIconWrapper: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.sm,
   },
   statDivider: {
     width: 1,
-    height: '50%',
-    alignSelf: 'center',
+    height: 12,
     backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
   },
-  statValue: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.gray[700],
+  statText: {
+    fontSize: 14,
+    color: colors.gray[600],
+  },
+  meta: {
+    fontSize: 13,
+    color: colors.gray[500],
+  },
+  aladin: {
+    fontSize: 13,
+    color: colors.gray[400],
   },
   writeButton: {
     paddingVertical: spacing.md,
@@ -156,6 +153,7 @@ const styles = StyleSheet.create({
   writeButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: spacing.sm,
   },
   writeButtonText: {
