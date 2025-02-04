@@ -160,8 +160,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
   return (
     <Animated.View
-      entering={FadeInRight.duration(300)}
-      exiting={FadeOutRight.duration(300)}
+      entering={FadeIn.duration(300)}
+      exiting={FadeOut.duration(300)}
       layout={Layout.duration(300)}
       style={styles.container}>
       <View style={styles.header}>
