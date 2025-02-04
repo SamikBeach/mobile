@@ -4,7 +4,13 @@ import { storage } from './storage';
 import { AuthResponse } from '@/types/auth';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3001/api/v2', // 개발 환경 기준
+  baseURL: 'http://localhost:3001/api/v2',
+  params: {
+    encode: true,
+  },
+  paramsSerializer: {
+    encode: (param: string) => encodeURIComponent(param),
+  },
 });
 
 let isRefreshing = false;
