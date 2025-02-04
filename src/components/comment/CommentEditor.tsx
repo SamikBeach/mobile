@@ -81,11 +81,14 @@ export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = tr
     <View style={styles.container}>
       {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
       <View style={styles.inputContainer}>
+        {replyToUser && <Text style={styles.mention}>@{replyToUser.nickname}</Text>}
         <TextInput
-          style={styles.input}
-          placeholder="댓글을 입력하세요..."
-          value={text}
-          onChangeText={setText}
+          style={[styles.input, replyToUser && styles.inputWithMention]}
+          placeholder={!replyToUser ? '댓글을 입력하세요.' : undefined}
+          value={replyToUser ? text.replace(`@${replyToUser.nickname} `, '') : text}
+          onChangeText={newText => {
+            setText(replyToUser ? `@${replyToUser.nickname} ${newText}` : newText);
+          }}
           multiline
           maxLength={1000}
           placeholderTextColor={colors.gray[400]}
@@ -159,5 +162,12 @@ const styles = StyleSheet.create({
   },
   submitButtonTextDisabled: {
     color: colors.gray[400],
+  },
+  mention: {
+    color: '#3B82F6',
+    fontSize: 14,
+  },
+  inputWithMention: {
+    paddingLeft: 4,
   },
 });

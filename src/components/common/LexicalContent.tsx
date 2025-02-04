@@ -50,7 +50,11 @@ export function LexicalContent({ content, isExpanded = false, mentionStyle }: Pr
     }
 
     if (node.type === 'mention') {
-      return <Text style={[styles.content, mentionStyle]}>@{node.text}</Text>;
+      return (
+        <Text key={node.text} style={[styles.content, mentionStyle]}>
+          @{node.text}
+        </Text>
+      );
     }
 
     if (node.type === 'paragraph') {
