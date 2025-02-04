@@ -1,10 +1,12 @@
-import { PaginatedResponse } from '@/types/common';
-import { Review } from '@/types/review';
-import { InfiniteData, useQueryClient } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
+import { useQueryClient } from '@tanstack/react-query';
+import type { Review } from '@/types/review';
+import type { PaginatedResponse } from '@/types/common';
+import type { AxiosResponse } from 'axios';
+import type { InfiniteData } from '@tanstack/react-query';
 
 interface UpdateLikeParams {
   reviewId: number;
+  bookId: number;
   isOptimistic: boolean;
   currentStatus?: {
     isLiked: boolean;
@@ -15,22 +17,27 @@ interface UpdateLikeParams {
 export function useReviewQueryData() {
   const queryClient = useQueryClient();
 
-  function updateReviewLikeQueryData({ reviewId, isOptimistic, currentStatus }: UpdateLikeParams) {
-    // 리뷰 목록 쿼리 데이터 업데이트
+  const updateReviewLikeQueryData = ({
+    reviewId,
+    bookId,
+    isOptimistic,
+    currentStatus,
+  }: UpdateLikeParams) => {
     queryClient.setQueriesData<InfiniteData<AxiosResponse<PaginatedResponse<Review>>>>(
       {
-        queryKey: ['reviews'],
+        queryKey: ['book-reviews', bookId],
         exact: false,
       },
-      reviewListData => {
-        if (!reviewListData) return reviewListData;
+      oldData => {
+        if (!oldData) return oldData;
+
         return {
-          ...reviewListData,
-          pages: reviewListData.pages.map(reviewPage => ({
-            ...reviewPage,
+          ...oldData,
+          pages: oldData.pages.map(page => ({
+            ...page,
             data: {
-              ...reviewPage.data,
-              data: reviewPage.data.data.map(review => {
+              ...page.data,
+              data: page.data.data.map(review => {
                 if (review.id !== reviewId) return review;
                 return {
                   ...review,
@@ -49,34 +56,7 @@ export function useReviewQueryData() {
         };
       },
     );
-
-    // 단일 리뷰 쿼리 데이터 업데이트
-    queryClient.setQueryData<AxiosResponse<Review>>(['review', reviewId], reviewDetailData => {
-      if (!reviewDetailData) return reviewDetailData;
-
-      if (isOptimistic) {
-        return {
-          ...reviewDetailData,
-          data: {
-            ...reviewDetailData.data,
-            isLiked: !reviewDetailData.data.isLiked,
-            likeCount: reviewDetailData.data.isLiked
-              ? reviewDetailData.data.likeCount - 1
-              : reviewDetailData.data.likeCount + 1,
-          },
-        };
-      }
-
-      return {
-        ...reviewDetailData,
-        data: {
-          ...reviewDetailData.data,
-          isLiked: currentStatus?.isLiked ?? reviewDetailData.data.isLiked,
-          likeCount: currentStatus?.likeCount ?? reviewDetailData.data.likeCount,
-        },
-      };
-    });
-  }
+  };
 
   return {
     updateReviewLikeQueryData,

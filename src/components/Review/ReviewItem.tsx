@@ -5,6 +5,7 @@ import {
   Pressable,
   NativeSyntheticEvent,
   TextLayoutEventData,
+  Alert,
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
@@ -13,6 +14,18 @@ import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
 import { formatDate } from '@/utils/date';
 import { UserAvatar } from '@/components/common/UserAvatar';
+import { useMutation } from '@tanstack/react-query';
+import { reviewApi } from '@/apis/review';
+import { useReviewQueryData } from '@/hooks/useReviewQueryData';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '@/navigation/types';
+import { CommentEditor } from '@/components/comment/CommentEditor';
+import { CommentActions } from '@/components/comment/CommentActions';
+import Toast from 'react-native-toast-message';
+import Animated, { FadeInRight, FadeOutRight, Layout } from 'react-native-reanimated';
+import { CommentList } from '../comment/CommentList';
 
 interface Props {
   review: Review;
@@ -22,11 +35,18 @@ interface Props {
 export function ReviewItem({ review, showBookInfo }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
+
+  const currentUser = useCurrentUser();
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { updateReviewLikeQueryData } = useReviewQueryData();
+  const isMyReview = currentUser?.id === review.user.id;
 
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
     if (!isExpanded) {
       const { lines } = event.nativeEvent;
-      // 3줄 이상일 때 더보기 버튼 표시
       if (lines.length >= 3) {
         setIsTruncated(true);
       } else {
@@ -35,22 +55,111 @@ export function ReviewItem({ review, showBookInfo }: Props) {
     }
   };
 
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: () => reviewApi.toggleReviewLike(review.id),
+    onMutate: () => {
+      updateReviewLikeQueryData({
+        reviewId: review.id,
+        bookId: review.book.id,
+        isOptimistic: true,
+      });
+    },
+    onError: () => {
+      updateReviewLikeQueryData({
+        reviewId: review.id,
+        bookId: review.book.id,
+        isOptimistic: false,
+        currentStatus: {
+          isLiked: review.isLiked ?? false,
+          likeCount: review.likeCount,
+        },
+      });
+      Toast.show({
+        type: 'error',
+        text1: '좋아요 처리에 실패했습니다.',
+      });
+    },
+  });
+
+  const { mutate: createComment } = useMutation({
+    mutationFn: (content: string) => reviewApi.createComment(review.id, { content }),
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '댓글이 등록되었습니다.',
+      });
+      setReplyToUser(null);
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '댓글 작성에 실패했습니다.',
+      });
+    },
+  });
+
+  const { mutate: deleteReview } = useMutation({
+    mutationFn: () => reviewApi.deleteReview(review.id),
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '리뷰가 삭제되었습니다.',
+      });
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '리뷰 삭제에 실패했습니다.',
+      });
+    },
+  });
+
+  const handleLikePress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    toggleLike();
+  };
+
+  const handleReply = (user: { nickname: string }) => {
+    setIsReplying(true);
+    setReplyToUser(user);
+  };
+
   return (
-    <View style={styles.container}>
+    <Animated.View
+      entering={FadeInRight.duration(300)}
+      exiting={FadeOutRight.duration(300)}
+      layout={Layout.duration(300)}
+      style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={review.user} showNickname={false} size="sm" />
           <Text style={styles.username}>{review.user.nickname}</Text>
           <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
         </View>
-        {showBookInfo && (
-          <Pressable style={styles.bookInfo}>
-            <Icon name="book-open" size={14} color={colors.gray[500]} />
-            <Text style={styles.bookTitle} numberOfLines={1}>
-              {review.book.title}
-            </Text>
-          </Pressable>
-        )}
+        <View style={styles.headerActions}>
+          {showBookInfo && (
+            <Pressable style={styles.bookInfo}>
+              <Icon name="book-open" size={14} color={colors.gray[500]} />
+              <Text style={styles.bookTitle} numberOfLines={1}>
+                {review.book.title}
+              </Text>
+            </Pressable>
+          )}
+          {isMyReview && (
+            <CommentActions
+              onEdit={() => {}}
+              onDelete={() => {
+                Alert.alert('리뷰 삭제', '정말로 이 리뷰를 삭제하시겠습니까?', [
+                  { text: '취소', style: 'cancel' },
+                  { text: '삭제', style: 'destructive', onPress: () => deleteReview() },
+                ]);
+              }}
+            />
+          )}
+        </View>
       </View>
 
       <Text style={styles.title}>{review.title}</Text>
@@ -68,7 +177,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
       <View style={styles.footer}>
         <View style={styles.actions}>
-          <Pressable style={styles.actionButton}>
+          <Pressable style={styles.actionButton} onPress={handleLikePress}>
             <Icon
               name="heart"
               size={16}
@@ -78,9 +187,33 @@ export function ReviewItem({ review, showBookInfo }: Props) {
               {review.likeCount}
             </Text>
           </Pressable>
+          <Pressable style={styles.actionButton} onPress={() => setIsReplying(!isReplying)}>
+            <Icon name="message-circle" size={16} color={colors.gray[400]} />
+            <Text style={styles.actionText}>{review.commentCount}</Text>
+          </Pressable>
         </View>
       </View>
-    </View>
+
+      {isReplying && (
+        <View style={styles.replySection}>
+          <CommentEditor
+            onSubmit={content => {
+              if (!currentUser) {
+                navigation.navigate('Login');
+                return;
+              }
+              createComment(content);
+            }}
+            onCancel={() => {
+              setIsReplying(false);
+              setReplyToUser(null);
+            }}
+            replyToUser={replyToUser}
+          />
+          <CommentList reviewId={review.id} onReply={handleReply} />
+        </View>
+      )}
+    </Animated.View>
   );
 }
 
@@ -91,7 +224,9 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   header: {
-    gap: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   userInfo: {
     flexDirection: 'row',
@@ -106,6 +241,11 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 13,
     color: colors.gray[500],
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   bookInfo: {
     flexDirection: 'row',
@@ -158,5 +298,9 @@ const styles = StyleSheet.create({
   },
   activeActionText: {
     color: colors.primary[500],
+  },
+  replySection: {
+    marginTop: spacing.md,
+    paddingLeft: spacing.xl,
   },
 });
