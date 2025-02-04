@@ -26,13 +26,7 @@ import Toast from 'react-native-toast-message';
 import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
-import Animated, {
-  FadeIn,
-  FadeInRight,
-  FadeOut,
-  FadeOutRight,
-  Layout,
-} from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 
 interface Props {
   review: Review;
