@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -14,7 +14,7 @@ import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
 import { formatDate } from '@/utils/date';
 import { UserAvatar } from '@/components/common/UserAvatar';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -22,7 +22,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { CommentEditor } from '@/components/comment/CommentEditor';
-import { CommentActions } from '@/components/comment/CommentActions';
 import Toast from 'react-native-toast-message';
 import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
@@ -142,7 +141,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   };
 
   const handleEditPress = () => {
-    navigation.navigate('WriteReview', { reviewId: review.id });
+    // navigation.navigate('WriteReview', { reviewId: review.id });
   };
 
   const handleDeletePress = () => {
@@ -322,6 +321,6 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.xl,
   },
   activeActionButton: {
-    color: colors.primary[500],
+    opacity: 0.8,
   },
 });
