@@ -27,6 +27,8 @@ export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = tr
   const handleSubmit = () => {
     if (!text.trim()) return;
 
+    const textWithoutMention = replyToUser ? text.replace(`@${replyToUser.nickname} `, '') : text;
+
     const lexicalContent = {
       root: {
         children: [
@@ -46,7 +48,7 @@ export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = tr
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: replyToUser ? ' ' + text : text,
+                text: textWithoutMention,
                 type: 'text',
                 version: 1,
               },

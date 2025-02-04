@@ -46,7 +46,8 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
         style = { ...style, fontStyle: 'italic' as const };
       }
 
-      return <Text style={style}>{node.text}</Text>;
+      const textWithoutMention = node.text?.replace(/@[\w가-힣ㄱ-ㅎㅏ-ㅣ]+\s?/g, '') || '';
+      return textWithoutMention ? <Text style={style}>{textWithoutMention}</Text> : null;
     }
 
     if (node.type === 'mention') {
@@ -60,9 +61,11 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
     if (node.type === 'paragraph') {
       return (
         <View style={styles.paragraph}>
-          {node.children?.map((child, index) => (
-            <React.Fragment key={index}>{renderFormattedContent(child)}</React.Fragment>
-          ))}
+          <Text style={styles.content}>
+            {node.children?.map((child, index) => (
+              <React.Fragment key={index}>{renderFormattedContent(child)}</React.Fragment>
+            ))}
+          </Text>
         </View>
       );
     }
