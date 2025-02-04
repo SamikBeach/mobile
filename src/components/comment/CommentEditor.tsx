@@ -74,18 +74,31 @@ export function CommentEditor({
 
   const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
     if (
-      replyToUser &&
+      mentions.length > 0 &&
       e.nativeEvent.key === 'Backspace' &&
-      !text.substring(text.indexOf(' ') + 1)
+      !text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '').trim()
     ) {
-      setText('');
-      onCancel();
+      setText('');3
+      setMentions([]);
+      if (!isEditMode) {
+        onCancel();
+      }
     }
   };
 
   const handleTextChange = (newText: string) => {
     if (replyToUser) {
       const mentionText = `@${replyToUser.nickname} `;
+      
+      if (newText.length < text.length && !newText) {
+        setText('');
+        setMentions([]);
+        if (!isEditMode) {
+          onCancel();
+        }
+        return;
+      }
+
       setText(mentionText + newText);
     } else {
       setText(newText);
@@ -144,6 +157,8 @@ export function CommentEditor({
 
   const isEditMode = Boolean(initialContent);
 
+  const displayText = text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '');
+
   return (
     <View style={[styles.container, !isEditMode && styles.fixedContainer]}>
       {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
@@ -156,7 +171,7 @@ export function CommentEditor({
         <TextInput
           style={[styles.input, mentions.length > 0 && styles.inputWithMention]}
           placeholder={!replyToUser ? '댓글을 입력하세요.' : undefined}
-          value={text}
+          value={displayText}
           onChangeText={handleTextChange}
           onKeyPress={handleKeyPress}
           multiline
