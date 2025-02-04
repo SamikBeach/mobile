@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode } from 'react';
+import React, { Fragment, ReactNode, useRef, forwardRef, useImperativeHandle } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -14,9 +14,25 @@ interface Props {
   reviewId: number;
   onReply: (user: { nickname: string }) => void;
   ListHeaderComponent?: ReactNode;
+  onCommentButtonPress?: () => void;
 }
 
-export function ReviewScreenContent({ reviewId, onReply, ListHeaderComponent }: Props) {
+export const ReviewScreenContent = forwardRef<
+  { scrollToComments: () => void },
+  Props
+>(({ reviewId, onReply, ListHeaderComponent }, ref) => {
+  const flatListRef = useRef<FlatList>(null);
+  const commentHeaderYRef = useRef(0);
+
+  useImperativeHandle(ref, () => ({
+    scrollToComments: () => {
+      flatListRef.current?.scrollToOffset({
+        offset: commentHeaderYRef.current,
+        animated: true,
+      });
+    },
+  }));
+
   const { data: review } = useQuery({
     queryKey: ['review', reviewId],
     queryFn: () => reviewApi.getReviewDetail(reviewId),
@@ -57,7 +73,11 @@ export function ReviewScreenContent({ reviewId, onReply, ListHeaderComponent }: 
     <View style={styles.container}>
       {comments.length === 0 ? (
         <>
-          <View style={styles.header}>
+          <View 
+            style={styles.header}
+            onLayout={e => {
+              commentHeaderYRef.current = e.nativeEvent.layout.y;
+            }}>
             <Text style={styles.title}>댓글</Text>
             <View style={styles.countBadge}>
               <Text style={styles.countText}>{review?.commentCount}</Text>
@@ -67,10 +87,15 @@ export function ReviewScreenContent({ reviewId, onReply, ListHeaderComponent }: 
         </>
       ) : (
         <FlatList
+          ref={flatListRef}
           ListHeaderComponent={
             <Fragment>
               {ListHeaderComponent}
-              <View style={styles.header}>
+              <View 
+                style={styles.header}
+                onLayout={e => {
+                  commentHeaderYRef.current = e.nativeEvent.layout.y;
+                }}>
                 <Text style={styles.title}>댓글</Text>
                 <View style={styles.countBadge}>
                   <Text style={styles.countText}>{review?.commentCount}</Text>
@@ -90,7 +115,7 @@ export function ReviewScreenContent({ reviewId, onReply, ListHeaderComponent }: 
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

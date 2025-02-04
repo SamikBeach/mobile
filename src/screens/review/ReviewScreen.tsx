@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -33,6 +33,7 @@ export function ReviewScreen({ route }: Props) {
   const { updateReviewLikeQueryData } = useReviewQueryData();
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const { createCommentQueryData } = useCommentQueryData();
+  const contentRef = useRef<{ scrollToComments: () => void }>(null);
 
   const { data: review } = useQuery({
     queryKey: ['review', reviewId],
@@ -128,7 +129,15 @@ export function ReviewScreen({ route }: Props) {
           likeCount={review.likeCount}
           onPress={handleLikePress}
         />
-        <CommentButton commentCount={review.commentCount} />
+        <CommentButton
+          commentCount={review.commentCount}
+          onPress={() => {
+            const content = contentRef.current;
+            if (content) {
+              content.scrollToComments();
+            }
+          }}
+        />
       </View>
     </>
   );
@@ -138,6 +147,7 @@ export function ReviewScreen({ route }: Props) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ReviewScreenContent
+        ref={contentRef}
         reviewId={reviewId}
         onReply={user => setReplyToUser(user)}
         ListHeaderComponent={renderHeader()}
