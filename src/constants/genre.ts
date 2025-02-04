@@ -5,7 +5,6 @@ export const GENRE_LABELS: Record<Genre, string> = {
   philosophy: '철학',
 };
 
-export const GENRE_IDS: Record<Genre, number> = {
-  all: 0,
+export const GENRE_IDS: Record<string, number> = {
   philosophy: 1,
-}; 
+};
