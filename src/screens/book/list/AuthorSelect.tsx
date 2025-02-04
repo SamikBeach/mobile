@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Modal, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useAtom } from 'jotai';
 import { authorIdAtom } from '@/atoms/book';
@@ -61,7 +61,7 @@ export function AuthorSelect() {
       </TouchableOpacity>
 
       <Modal visible={isOpen} animationType="slide">
-        <View style={styles.modal}>
+        <SafeAreaView style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>작가 선택</Text>
             <TouchableOpacity
@@ -97,7 +97,7 @@ export function AuthorSelect() {
               </TouchableOpacity>
             )}
           />
-        </View>
+        </SafeAreaView>
       </Modal>
     </>
   );
