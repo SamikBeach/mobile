@@ -8,12 +8,11 @@ import {
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
 import { formatDate } from '@/utils/date';
 import { UserAvatar } from '@/components/common/UserAvatar';
-import { ReviewItemSkeleton } from '@/components/common/Skeleton/ReviewItemSkeleton';
 
 interface Props {
   review: Review;
@@ -97,7 +96,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
     gap: spacing.md,
-    ...shadows.sm,
   },
   header: {
     gap: spacing.sm,

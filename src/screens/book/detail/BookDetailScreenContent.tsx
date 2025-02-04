@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { ReviewItem } from '@/components/review/ReviewItem';
@@ -45,6 +45,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
       return pageParam;
     },
     initialPageParam: 1,
+    placeholderData: keepPreviousData,
   });
 
   const { data: book } = useQuery({
@@ -61,7 +62,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
     }
   };
 
-  if (!book) {
+  if (isLoading || !book) {
     return <BookDetailSkeleton />;
   }
 
@@ -158,7 +159,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.xl,
   },
-  reviewList: {},
+  reviewList: {
+    paddingBottom: spacing.lg,
+  },
   separator: {
     height: spacing.md,
   },

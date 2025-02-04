@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     gap: spacing.md,
     paddingVertical: spacing.xs,
-    paddingRight: spacing.lg,
+    paddingHorizontal: spacing.lg,
   },
   bookItem: {
     width: 130,
