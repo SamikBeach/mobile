@@ -23,6 +23,8 @@ import { useReviewQueryData } from '@/hooks/useReviewQueryData';
 import { ReviewScreenContent } from './ReviewScreenContent';
 import { CommentEditor } from '@/components/comment/CommentEditor';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
+import { spacing } from '@/styles/theme';
+import { colors } from '@/styles/theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Review'>;
 
@@ -148,6 +150,14 @@ export function ReviewScreen({ route }: Props) {
     </>
   );
 
+  const handleSubmit = (content: string) => {
+    createComment(content);
+  };
+
+  const handleCancel = () => {
+    setReplyToUser(null);
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -158,11 +168,9 @@ export function ReviewScreen({ route }: Props) {
         onReply={user => setReplyToUser(user)}
         ListHeaderComponent={renderHeader()}
       />
-      <CommentEditor
-        onSubmit={createComment}
-        replyToUser={replyToUser}
-        onCancel={() => setReplyToUser(null)}
-      />
+      <View style={styles.editorContainer}>
+        <CommentEditor replyToUser={replyToUser} onSubmit={handleSubmit} onCancel={handleCancel} />
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -233,5 +241,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     marginBottom: 32,
+  },
+  editorContainer: {
+    borderTopWidth: 1,
+    borderTopColor: colors.gray[200],
+    padding: spacing.lg,
   },
 });

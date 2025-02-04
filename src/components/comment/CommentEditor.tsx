@@ -191,7 +191,7 @@ export function CommentEditor({
   const displayText = text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '');
 
   return (
-    <View style={[styles.container, !isEditMode && styles.fixedContainer]}>
+    <View style={styles.container}>
       {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
       <View style={styles.inputContainer}>
         {mentions.map((mention, index) => (
@@ -241,11 +241,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     backgroundColor: 'white',
-  },
-  fixedContainer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray[200],
   },
   inputContainer: {
     flex: 1,
