@@ -26,6 +26,7 @@ import { CommentActions } from '@/components/comment/CommentActions';
 import Toast from 'react-native-toast-message';
 import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
+import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 
 interface Props {
   review: Review;
@@ -40,7 +41,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
   const currentUser = useCurrentUser();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { updateReviewLikeQueryData } = useReviewQueryData();
+  const { updateReviewLikeQueryData, deleteReviewDataQueryData } = useReviewQueryData();
+  const { createCommentQueryData } = useCommentQueryData();
   const isMyReview = currentUser?.id === review.user.id;
 
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
@@ -82,7 +84,11 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
   const { mutate: createComment } = useMutation({
     mutationFn: (content: string) => reviewApi.createComment(review.id, { content }),
-    onSuccess: () => {
+    onSuccess: response => {
+      createCommentQueryData({
+        reviewId: review.id,
+        comment: response.data,
+      });
       Toast.show({
         type: 'success',
         text1: '댓글이 등록되었습니다.',
@@ -100,6 +106,11 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   const { mutate: deleteReview } = useMutation({
     mutationFn: () => reviewApi.deleteReview(review.id),
     onSuccess: () => {
+      deleteReviewDataQueryData({
+        reviewId: review.id,
+        bookId: review.book.id,
+        authorId: review.book.authorBooks?.[0]?.author.id,
+      });
       Toast.show({
         type: 'success',
         text1: '리뷰가 삭제되었습니다.',
