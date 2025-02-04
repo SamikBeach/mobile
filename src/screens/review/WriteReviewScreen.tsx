@@ -110,6 +110,10 @@ export function WriteReviewScreen({ route, navigation }: Props) {
     }
   };
 
+  const handleCancel = () => {
+    navigation.goBack();
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -133,12 +137,21 @@ export function WriteReviewScreen({ route, navigation }: Props) {
         />
       </View>
       <View style={styles.footer}>
-        <Button variant="outline" onPress={() => navigation.goBack()} style={styles.cancelButton}>
-          취소
-        </Button>
-        <Button onPress={handleSubmit} disabled={isCreatePending || isUpdatePending}>
-          {isCreatePending || isUpdatePending ? '제출 중...' : reviewId ? '수정하기' : '제출하기'}
-        </Button>
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={handleCancel}
+            style={styles.cancelButton}
+            textStyle={styles.cancelButtonText}>
+            취소
+          </Button>
+          <Button
+            onPress={handleSubmit}
+            disabled={isCreatePending || isUpdatePending}
+            style={styles.submitButton}
+            textStyle={styles.submitButtonText}>
+            {isCreatePending || isUpdatePending ? '제출 중...' : reviewId ? '수정하기' : '제출하기'}
+          </Button>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -170,13 +183,36 @@ const styles = StyleSheet.create({
     color: colors.gray[900],
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: spacing.lg,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.white,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: spacing.md,
   },
   cancelButton: {
+    flex: 1,
     backgroundColor: 'transparent',
+    borderWidth: 0,
+    height: 48,
+  },
+  cancelButtonText: {
+    color: colors.gray[500],
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  submitButton: {
+    flex: 2,
+    backgroundColor: colors.gray[900],
+    height: 48,
+  },
+  submitButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
