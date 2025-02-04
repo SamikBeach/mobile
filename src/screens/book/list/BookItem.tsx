@@ -3,6 +3,7 @@ import { View, Image, StyleSheet, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Icon from 'react-native-vector-icons/Feather';
 import type { Book } from '@/types/book';
 import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
@@ -25,13 +26,22 @@ export function BookItem({ book }: Props) {
         <Text style={styles.title} numberOfLines={2}>
           {book.title}
         </Text>
-        <View style={styles.meta}>
-          <Text style={styles.author} numberOfLines={1}>
-            {book.authorBooks.map(author => author.author.nameInKor).join(', ')}
-          </Text>
-          <Text style={styles.publisher} numberOfLines={1}>
-            {book.publisher}
-          </Text>
+        <Text style={styles.author} numberOfLines={1}>
+          {book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+        </Text>
+        <View style={styles.stats}>
+          <View style={styles.statItem}>
+            <Icon name="thumbs-up" size={14} color={colors.gray[500]} />
+            <Text style={styles.statText}>{book.likeCount}</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Icon name="message-square" size={14} color={colors.gray[500]} />
+            <Text style={styles.statText}>{book.reviewCount}</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Icon name="book" size={14} color={colors.gray[500]} />
+            <Text style={styles.statText}>{book.totalTranslationCount}</Text>
+          </View>
         </View>
       </View>
     </Pressable>
@@ -63,14 +73,21 @@ const styles = StyleSheet.create({
     color: colors.gray[900],
     lineHeight: 22,
   },
-  meta: {
-    gap: spacing.xs,
-  },
   author: {
     fontSize: 14,
     color: colors.gray[700],
   },
-  publisher: {
+  stats: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginTop: spacing.xs,
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  statText: {
     fontSize: 14,
     color: colors.gray[500],
   },
