@@ -44,14 +44,20 @@ export function ReviewScreen({ route }: Props) {
   const { mutate: toggleLike } = useMutation({
     mutationFn: () => reviewApi.toggleReviewLike(reviewId),
     onMutate: () => {
+      if (!review) return;
+
       updateReviewLikeQueryData({
         reviewId: reviewId,
+        bookId: review.book.id,
         isOptimistic: true,
       });
     },
     onError: () => {
+      if (!review) return;
+
       updateReviewLikeQueryData({
         reviewId: reviewId,
+        bookId: review.book.id,
         isOptimistic: false,
         currentStatus: {
           isLiked: review?.isLiked ?? false,

@@ -1,14 +1,16 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Text } from '@/components/common/Text';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
-import { CommentItem } from './CommentItem';
-import { CommentSkeleton } from './CommentSkeleton';
+import { CommentItem } from '../comment/CommentItem';
+import { CommentSkeleton } from '../comment/CommentSkeleton';
 import { Button } from '@/components/common/Button';
 import { colors, spacing } from '@/styles/theme';
 import type { Comment } from '@/types/comment';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
+import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 
 interface Props {
   reviewId: number;
@@ -62,9 +64,13 @@ export function CommentList({ reviewId, onReply }: Props) {
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View
+      entering={FadeIn.duration(200)}
+      exiting={FadeOut.duration(200)}
+      layout={Layout.springify()}
+      style={styles.container}>
       {comments.map(comment => (
-        <CommentItem key={comment.id} comment={comment} reviewId={reviewId} onReply={onReply} />
+        <CommentItem comment={comment} reviewId={reviewId} onReply={onReply} />
       ))}
       {hasNextPage && (
         <Button
@@ -75,7 +81,7 @@ export function CommentList({ reviewId, onReply }: Props) {
           {isFetchingNextPage ? '불러오는 중...' : '댓글 더보기'}
         </Button>
       )}
-    </View>
+    </Animated.View>
   );
 }
 

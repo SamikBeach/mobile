@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -24,8 +24,8 @@ import type { RootStackParamList } from '@/navigation/types';
 import { CommentEditor } from '@/components/comment/CommentEditor';
 import { CommentActions } from '@/components/comment/CommentActions';
 import Toast from 'react-native-toast-message';
-import Animated, { FadeInRight, FadeOutRight, Layout } from 'react-native-reanimated';
-import { CommentList } from '../comment/CommentList';
+import { CommentList } from './CommentList';
+import { ReviewActions } from './ReviewActions';
 
 interface Props {
   review: Review;
@@ -127,12 +127,12 @@ export function ReviewItem({ review, showBookInfo }: Props) {
     setReplyToUser(user);
   };
 
+  const handleReplyPress = () => {
+    setIsReplying(prev => !prev);
+  };
+
   return (
-    <Animated.View
-      entering={FadeInRight.duration(300)}
-      exiting={FadeOutRight.duration(300)}
-      layout={Layout.duration(300)}
-      style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={review.user} showNickname={false} size="sm" />
@@ -149,8 +149,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
             </Pressable>
           )}
           {isMyReview && (
-            <CommentActions
-              onEdit={() => {}}
+            <ReviewActions
+              onEdit={() => navigation.navigate('WriteReview', { reviewId: review.id })}
               onDelete={() => {
                 Alert.alert('리뷰 삭제', '정말로 이 리뷰를 삭제하시겠습니까?', [
                   { text: '취소', style: 'cancel' },
@@ -187,9 +187,17 @@ export function ReviewItem({ review, showBookInfo }: Props) {
               {review.likeCount}
             </Text>
           </Pressable>
-          <Pressable style={styles.actionButton} onPress={() => setIsReplying(!isReplying)}>
-            <Icon name="message-circle" size={16} color={colors.gray[400]} />
-            <Text style={styles.actionText}>{review.commentCount}</Text>
+          <Pressable
+            style={[styles.actionButton, isReplying && styles.activeActionButton]}
+            onPress={handleReplyPress}>
+            <Icon
+              name="message-circle"
+              size={16}
+              color={isReplying ? colors.primary[500] : colors.gray[400]}
+            />
+            <Text style={[styles.actionText, isReplying && styles.activeActionText]}>
+              {review.commentCount}
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -213,7 +221,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           <CommentList reviewId={review.id} onReply={handleReply} />
         </View>
       )}
-    </Animated.View>
+    </View>
   );
 }
 
@@ -302,5 +310,8 @@ const styles = StyleSheet.create({
   replySection: {
     marginTop: spacing.md,
     paddingLeft: spacing.xl,
+  },
+  activeActionButton: {
+    color: colors.primary[500],
   },
 });
