@@ -85,7 +85,7 @@ export function BookList() {
   if (books.length === 0 && (searchKeyword || selectedAuthorId)) {
     return (
       <Empty
-        icon={<Icon name="search-x" size={48} color="#9CA3AF" />}
+        icon={<Icon name="search" size={48} color="#9CA3AF" />}
         message="검색 결과가 없어요."
         description={
           searchKeyword
