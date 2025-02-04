@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { ReviewItem } from '@/components/review/ReviewItem';
 import { Checkbox } from '@/components/common/Checkbox';
+import type { Review } from '@/types/review';
+import type { PaginatedResponse } from '@/types/common';
+import type { AxiosResponse } from 'axios';
+import { ReviewItemSkeleton } from '@/components/common/Skeleton';
 
 interface Props {
   bookId: number;
@@ -16,18 +20,31 @@ interface Props {
 export function ReviewList({ bookId }: Props) {
   const [includeOtherTranslations, setIncludeOtherTranslations] = useState(false);
 
-  const { data: reviews = [], isLoading } = useQuery({
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
+    AxiosResponse<PaginatedResponse<Review>>,
+    Error
+  >({
     queryKey: ['book-reviews', bookId, includeOtherTranslations],
-    queryFn: () =>
+    queryFn: ({ pageParam = 1 }) =>
       bookApi.searchBookReviews(
         bookId,
         {
-          page: 1,
+          page: pageParam as number,
           limit: 20,
         },
         includeOtherTranslations,
       ),
-    select: response => response.data.data,
+    getNextPageParam: param => {
+      const nextParam = param.data.links.next;
+      const query = nextParam?.split('?')[1];
+      const pageParam = query
+        ?.split('&')
+        .find(q => q.startsWith('page'))
+        ?.split('=')[1];
+
+      return pageParam;
+    },
+    initialPageParam: 1,
   });
 
   const { data: book } = useQuery({
@@ -36,8 +53,12 @@ export function ReviewList({ bookId }: Props) {
     select: response => response.data,
   });
 
-  const handleToggleOtherTranslations = () => {
-    setIncludeOtherTranslations(prev => !prev);
+  const reviews = data?.pages.flatMap(page => page.data.data) ?? [];
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
   };
 
   return (
@@ -52,12 +73,8 @@ export function ReviewList({ bookId }: Props) {
           </View>
           <Pressable
             style={styles.checkboxContainer}
-            onPress={handleToggleOtherTranslations}
-          >
-            <Checkbox
-              checked={includeOtherTranslations}
-              onChange={setIncludeOtherTranslations}
-            />
+            onPress={() => setIncludeOtherTranslations(prev => !prev)}>
+            <Checkbox checked={includeOtherTranslations} onChange={setIncludeOtherTranslations} />
             <Text style={styles.checkboxLabel}>다른 번역본 리뷰 포함</Text>
           </Pressable>
         </View>
@@ -82,7 +99,9 @@ export function ReviewList({ bookId }: Props) {
           )}
           keyExtractor={item => item.id.toString()}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
-          scrollEnabled={false}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
           contentContainerStyle={styles.reviewList}
         />
       )}

@@ -13,6 +13,7 @@ import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
 import { formatDate } from '@/utils/date';
 import { UserAvatar } from '@/components/common/UserAvatar';
+import { ReviewItemSkeleton } from '@/components/common/Skeleton/ReviewItemSkeleton';
 
 interface Props {
   review: Review;
