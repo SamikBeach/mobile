@@ -16,9 +16,10 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 interface Props {
   book: Book;
+  onReviewPress: () => void;
 }
 
-export function BookDetailInfo({ book }: Props) {
+export function BookDetailInfo({ book, onReviewPress }: Props) {
   const { updateBookLikeQueryData } = useBookQueryData();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const currentUser = useCurrentUser();
@@ -104,10 +105,10 @@ export function BookDetailInfo({ book }: Props) {
                 </Text>
               </Pressable>
               <View style={styles.statDivider} />
-              <View style={styles.statItem}>
+              <Pressable style={styles.statItem} onPress={onReviewPress}>
                 <Icon name="message-circle" size={14} color={colors.gray[500]} />
                 <Text style={styles.statText}>{book.reviewCount}</Text>
-              </View>
+              </Pressable>
             </View>
           </View>
         </View>

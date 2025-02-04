@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, StyleSheet, FlatList, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -19,6 +19,7 @@ interface Props {
 
 export function BookDetailScreenContent({ bookId }: Props) {
   const [includeOtherTranslations, setIncludeOtherTranslations] = useState(false);
+  const flatListRef = useRef<FlatList>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
@@ -62,13 +63,21 @@ export function BookDetailScreenContent({ bookId }: Props) {
     }
   };
 
+  const handleReviewPress = () => {
+    flatListRef.current?.scrollToIndex({
+      index: 0,
+      animated: true,
+      viewPosition: 0,
+    });
+  };
+
   if (isLoading || !book) {
     return <BookDetailSkeleton />;
   }
 
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
-      <BookDetailInfo book={book} />
+      <BookDetailInfo book={book} onReviewPress={handleReviewPress} />
       <RelativeBooks bookId={bookId} />
       <View style={styles.header}>
         <View style={styles.titleRow}>
@@ -91,6 +100,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
 
   return (
     <FlatList
+      ref={flatListRef}
       data={reviews}
       renderItem={({ item }) => (
         <View style={styles.reviewItemContainer}>
@@ -107,6 +117,9 @@ export function BookDetailScreenContent({ bookId }: Props) {
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
       contentContainerStyle={styles.reviewList}
+      maintainVisibleContentPosition={{
+        minIndexForVisible: 0,
+      }}
     />
   );
 }
