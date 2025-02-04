@@ -29,6 +29,12 @@ interface LexicalNode {
   style?: string;
   textFormat?: number;
   textStyle?: string;
+  key?: string;
+  mode?: string;
+  detail?: number;
+  version?: number;
+  direction?: string;
+  indent?: number;
 }
 
 interface LexicalContent {
@@ -50,10 +56,13 @@ export function CommentEditor({
     if (initialContent) {
       try {
         const parsedContent: LexicalContent = JSON.parse(initialContent);
+        const children = parsedContent.root.children?.[0]?.children;
+        if (!children) return;
+
         const extractedMentions: string[] = [];
         let fullText = '';
 
-        parsedContent.root.children[0].children.forEach((node: LexicalNode) => {
+        children.forEach((node: LexicalNode) => {
           if (node.type === 'mention') {
             extractedMentions.push(node.text || '');
           } else if (node.type === 'text') {
@@ -78,7 +87,8 @@ export function CommentEditor({
       e.nativeEvent.key === 'Backspace' &&
       !text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '').trim()
     ) {
-      setText('');3
+      setText('');
+      3;
       setMentions([]);
       if (!isEditMode) {
         onCancel();
@@ -89,7 +99,7 @@ export function CommentEditor({
   const handleTextChange = (newText: string) => {
     if (replyToUser) {
       const mentionText = `@${replyToUser.nickname} `;
-      
+
       if (newText.length < text.length && !newText) {
         setText('');
         setMentions([]);
@@ -129,7 +139,7 @@ export function CommentEditor({
               },
             ],
             direction: 'ltr',
-            format: '',
+            format: 0,
             indent: 0,
             type: 'paragraph',
             version: 1,
@@ -138,7 +148,7 @@ export function CommentEditor({
           },
         ],
         direction: 'ltr',
-        format: '',
+        format: 0,
         indent: 0,
         type: 'root',
         version: 1,
