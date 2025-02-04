@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet, View, TextStyle } from 'react-native';
+import { colors } from '@/styles/theme';
 
 interface Props {
   content: string;
@@ -21,7 +22,6 @@ interface LexicalContent {
 }
 
 export function LexicalContent({ content, isExpanded = false }: Props) {
-  // 텍스트만 추출하는 함수
   const extractPlainText = (node: LexicalNode): string => {
     if (node.type === 'text') {
       return node.text || '';
@@ -34,7 +34,6 @@ export function LexicalContent({ content, isExpanded = false }: Props) {
     return '';
   };
 
-  // 포맷팅된 컨텐츠를 렌더링하는 함수
   const renderFormattedContent = (node: LexicalNode): React.ReactNode => {
     if (node.type === 'text') {
       let style: TextStyle = styles.content;
@@ -60,32 +59,44 @@ export function LexicalContent({ content, isExpanded = false }: Props) {
     }
 
     if (node.children) {
-      return (
-        <React.Fragment>
-          {node.children.map((child, index) => (
-            <React.Fragment key={index}>{renderFormattedContent(child)}</React.Fragment>
-          ))}
-        </React.Fragment>
-      );
+      return node.children.map((child, index) => (
+        <React.Fragment key={index}>{renderFormattedContent(child)}</React.Fragment>
+      ));
     }
 
     return null;
   };
 
   try {
+    // content가 이미 JSON 문자열인지 확인
+    const isJsonString = typeof content === 'string' && (
+      content.startsWith('{') || content.startsWith('[')
+    );
+
+    // JSON이 아닌 일반 텍스트면 그대로 표시
+    if (!isJsonString) {
+      return (
+        <Text style={styles.content} numberOfLines={isExpanded ? undefined : 8}>
+          {content}
+        </Text>
+      );
+    }
+
     const parsedContent: LexicalContent = JSON.parse(content);
 
     if (!isExpanded) {
-      // 축소된 상태에서는 텍스트만 표시
       const plainText = extractPlainText(parsedContent.root);
-      return <Text style={styles.content}>{plainText}</Text>;
+      return <Text style={styles.content} numberOfLines={8}>{plainText}</Text>;
     }
 
-    // 확장된 상태에서는 포맷팅된 전체 내용 표시
     return <View>{renderFormattedContent(parsedContent.root)}</View>;
   } catch (error) {
-    console.error('Failed to parse Lexical content:', error);
-    return <Text style={styles.content}>{content}</Text>;
+    console.warn('Failed to parse Lexical content:', error);
+    return (
+      <Text style={styles.content} numberOfLines={isExpanded ? undefined : 8}>
+        {content}
+      </Text>
+    );
   }
 }
 
@@ -93,7 +104,7 @@ const styles = StyleSheet.create({
   content: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#4B5563',
+    color: colors.gray[700],
   },
   paragraph: {
     marginBottom: 8,
