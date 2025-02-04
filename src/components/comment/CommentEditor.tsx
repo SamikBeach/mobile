@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Pressable, Keyboard } from 'react-native';
+import { View, StyleSheet, TextInput, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
@@ -8,38 +8,73 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 interface Props {
   onSubmit: (content: string) => void;
-  onCancel?: () => void;
+  onCancel: () => void;
   initialContent?: string;
-  replyToUser?: { nickname: string } | null;
+  replyToUser: { nickname: string } | null;
   showAvatar?: boolean;
 }
 
-export function CommentEditor({
-  onSubmit,
-  onCancel,
-  initialContent = '',
-  replyToUser,
-  showAvatar = true,
-}: Props) {
-  const [content, setContent] = useState(initialContent);
+export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = true }: Props) {
+  const [text, setText] = useState('');
   const currentUser = useCurrentUser();
 
   useEffect(() => {
     if (replyToUser) {
-      setContent(`@${replyToUser.nickname} `);
+      setText(`@${replyToUser.nickname} `);
     }
   }, [replyToUser]);
 
   const handleSubmit = () => {
-    if (!content.trim()) return;
-    onSubmit(content);
-    setContent('');
-    Keyboard.dismiss();
+    if (!text.trim()) return;
+
+    const lexicalContent = {
+      root: {
+        children: [
+          {
+            children: [
+              ...(replyToUser
+                ? [
+                    {
+                      type: 'mention',
+                      text: replyToUser.nickname,
+                      key: '1',
+                    },
+                  ]
+                : []),
+              {
+                detail: 0,
+                format: 0,
+                mode: 'normal',
+                style: '',
+                text: replyToUser ? ' ' + text : text,
+                type: 'text',
+                version: 1,
+              },
+            ],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            type: 'paragraph',
+            version: 1,
+            textFormat: 0,
+            textStyle: '',
+          },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        type: 'root',
+        version: 1,
+      },
+    };
+
+    onSubmit(JSON.stringify(lexicalContent));
+    setText('');
   };
 
   const handleCancel = () => {
-    setContent('');
-    onCancel?.();
+    setText('');
+    onCancel();
   };
 
   return (
@@ -49,8 +84,8 @@ export function CommentEditor({
         <TextInput
           style={styles.input}
           placeholder="댓글을 입력하세요..."
-          value={content}
-          onChangeText={setContent}
+          value={text}
+          onChangeText={setText}
           multiline
           maxLength={1000}
           placeholderTextColor={colors.gray[400]}
@@ -62,10 +97,10 @@ export function CommentEditor({
         )}
       </View>
       <Pressable
-        style={[styles.submitButton, !content.trim() && styles.submitButtonDisabled]}
+        style={[styles.submitButton, !text.trim() && styles.submitButtonDisabled]}
         onPress={handleSubmit}
-        disabled={!content.trim()}>
-        <Text style={[styles.submitButtonText, !content.trim() && styles.submitButtonTextDisabled]}>
+        disabled={!text.trim()}>
+        <Text style={[styles.submitButtonText, !text.trim() && styles.submitButtonTextDisabled]}>
           등록
         </Text>
       </Pressable>

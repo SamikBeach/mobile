@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, StyleSheet, View, TextStyle } from 'react-native';
+import { Text, StyleSheet, View, TextStyle, StyleProp } from 'react-native';
 import { colors } from '@/styles/theme';
 
 interface Props {
   content: string;
   isExpanded?: boolean;
+  mentionStyle?: StyleProp<TextStyle>;
 }
 
 interface LexicalNode {
@@ -21,7 +22,7 @@ interface LexicalContent {
   root: LexicalNode;
 }
 
-export function LexicalContent({ content, isExpanded = false }: Props) {
+export function LexicalContent({ content, isExpanded = false, mentionStyle }: Props) {
   const extractPlainText = (node: LexicalNode): string => {
     if (node.type === 'text') {
       return node.text || '';
@@ -48,6 +49,10 @@ export function LexicalContent({ content, isExpanded = false }: Props) {
       return <Text style={style}>{node.text}</Text>;
     }
 
+    if (node.type === 'mention') {
+      return <Text style={[styles.content, mentionStyle]}>@{node.text}</Text>;
+    }
+
     if (node.type === 'paragraph') {
       return (
         <View style={styles.paragraph}>
@@ -69,9 +74,8 @@ export function LexicalContent({ content, isExpanded = false }: Props) {
 
   try {
     // content가 이미 JSON 문자열인지 확인
-    const isJsonString = typeof content === 'string' && (
-      content.startsWith('{') || content.startsWith('[')
-    );
+    const isJsonString =
+      typeof content === 'string' && (content.startsWith('{') || content.startsWith('['));
 
     // JSON이 아닌 일반 텍스트면 그대로 표시
     if (!isJsonString) {
@@ -86,7 +90,11 @@ export function LexicalContent({ content, isExpanded = false }: Props) {
 
     if (!isExpanded) {
       const plainText = extractPlainText(parsedContent.root);
-      return <Text style={styles.content} numberOfLines={8}>{plainText}</Text>;
+      return (
+        <Text style={styles.content} numberOfLines={8}>
+          {plainText}
+        </Text>
+      );
     }
 
     return <View>{renderFormattedContent(parsedContent.root)}</View>;
