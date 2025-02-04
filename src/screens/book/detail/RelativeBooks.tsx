@@ -8,6 +8,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import { format } from 'date-fns';
+import { RelativeBooksSkeleton } from '@/components/common/Skeleton';
 
 interface Props {
   bookId: number;
@@ -16,11 +17,15 @@ interface Props {
 export function RelativeBooks({ bookId }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const { data: books = [] } = useQuery({
+  const { data: books = [], isLoading } = useQuery({
     queryKey: ['relative-books', bookId],
     queryFn: () => bookApi.getAllRelatedBooks(bookId),
     select: response => response.data,
   });
+
+  if (isLoading) {
+    return <RelativeBooksSkeleton />;
+  }
 
   if (books.length === 0) {
     return null;

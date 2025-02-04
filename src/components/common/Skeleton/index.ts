@@ -7,3 +7,4 @@ export * from './AuthorDetailInfoSkeleton';
 export * from './BookDetailSkeleton';
 export * from './Skeleton';
 export * from './ReviewItemSkeleton';
+export * from './RelativeBooksSkeleton';
