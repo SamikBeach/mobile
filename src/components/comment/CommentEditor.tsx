@@ -20,6 +20,7 @@ interface Props {
   initialContent?: string;
   replyToUser?: { nickname: string } | null;
   showAvatar?: boolean;
+  autoFocus?: boolean;
 }
 
 interface LexicalNode {
@@ -48,6 +49,7 @@ export function CommentEditor({
   initialContent,
   replyToUser,
   showAvatar = true,
+  autoFocus = false,
 }: Props) {
   const [text, setText] = useState('');
   const [mentions, setMentions] = useState<string[]>([]);
@@ -87,6 +89,14 @@ export function CommentEditor({
       setMentions([replyToUser.nickname]);
     }
   }, [initialContent, replyToUser]);
+
+  useEffect(() => {
+    if (autoFocus || replyToUser) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [autoFocus, replyToUser]);
 
   const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
     if (
