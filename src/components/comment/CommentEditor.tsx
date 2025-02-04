@@ -29,12 +29,6 @@ interface LexicalNode {
   style?: string;
   textFormat?: number;
   textStyle?: string;
-  key?: string;
-  mode?: string;
-  detail?: number;
-  version?: number;
-  direction?: string;
-  indent?: number;
 }
 
 interface LexicalContent {
@@ -59,10 +53,7 @@ export function CommentEditor({
         const extractedMentions: string[] = [];
         let fullText = '';
 
-        const children = parsedContent.root.children?.[0]?.children;
-        if (!children) return;
-
-        children.forEach((node: LexicalNode) => {
+        parsedContent.root.children[0].children.forEach((node: LexicalNode) => {
           if (node.type === 'mention') {
             extractedMentions.push(node.text || '');
           } else if (node.type === 'text') {
@@ -125,7 +116,7 @@ export function CommentEditor({
               },
             ],
             direction: 'ltr',
-            format: 0,
+            format: '',
             indent: 0,
             type: 'paragraph',
             version: 1,
@@ -134,7 +125,7 @@ export function CommentEditor({
           },
         ],
         direction: 'ltr',
-        format: 0,
+        format: '',
         indent: 0,
         type: 'root',
         version: 1,
