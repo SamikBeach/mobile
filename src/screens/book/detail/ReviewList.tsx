@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
@@ -36,18 +36,30 @@ export function ReviewList({ bookId }: Props) {
     select: response => response.data,
   });
 
+  const handleToggleOtherTranslations = () => {
+    setIncludeOtherTranslations(prev => !prev);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>리뷰</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{book?.reviewCount ?? 0}</Text>
+          <View style={styles.titleSection}>
+            <Text style={styles.title}>리뷰</Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{book?.reviewCount ?? 0}</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.checkboxContainer}>
-          <Checkbox checked={includeOtherTranslations} onChange={setIncludeOtherTranslations} />
-          <Text style={styles.checkboxLabel}>다른 번역본의 리뷰도 함께 보기</Text>
+          <Pressable
+            style={styles.checkboxContainer}
+            onPress={handleToggleOtherTranslations}
+          >
+            <Checkbox
+              checked={includeOtherTranslations}
+              onChange={setIncludeOtherTranslations}
+            />
+            <Text style={styles.checkboxLabel}>다른 번역본 리뷰 포함</Text>
+          </Pressable>
         </View>
       </View>
 
@@ -86,6 +98,11 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  titleSection: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
