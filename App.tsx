@@ -12,6 +12,7 @@ import RootNavigator from '@/navigation/RootNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Initializer from '@/components/Initializer';
 import Toast from 'react-native-toast-message';
+import { toastConfig } from '@/constants/toast';
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,7 @@ export default function App() {
         <SafeAreaProvider>
           <Initializer />
           <RootNavigator />
-          <Toast />
+          <Toast config={toastConfig} />
         </SafeAreaProvider>
       </JotaiProvider>
     </QueryClientProvider>
