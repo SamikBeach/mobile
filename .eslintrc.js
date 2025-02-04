@@ -4,5 +4,6 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-unused-vars': 'warn',
     curly: 'off',
+    'react/no-unstable-nested-components': 'off',
   },
 };
