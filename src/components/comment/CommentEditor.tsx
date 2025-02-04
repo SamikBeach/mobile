@@ -123,7 +123,7 @@ export function CommentEditor({
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: text.trim(),
+                text: ` ${text.trim()}`,
                 type: 'text',
                 version: 1,
               },

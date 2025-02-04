@@ -66,9 +66,7 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
       return (
         <Text key="paragraph" style={styles.content}>
           {node.children?.map((child, index) => (
-            <React.Fragment key={`child-${index}`}>
-              {renderFormattedContent(child)}
-            </React.Fragment>
+            <React.Fragment key={`child-${index}`}>{renderFormattedContent(child)}</React.Fragment>
           ))}
         </Text>
       );
@@ -76,9 +74,7 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
 
     if (node.children) {
       return node.children.map((child, index) => (
-        <React.Fragment key={`fragment-${index}`}>
-          {renderFormattedContent(child)}
-        </React.Fragment>
+        <React.Fragment key={`fragment-${index}`}>{renderFormattedContent(child)}</React.Fragment>
       ));
     }
 
