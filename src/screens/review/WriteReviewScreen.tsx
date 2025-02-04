@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  Pressable,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
 import { colors, spacing } from '@/styles/theme';
@@ -10,6 +18,7 @@ import { useReviewQueryData } from '@/hooks/useReviewQueryData';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Toast from 'react-native-toast-message';
 import { BookInfo } from './BookInfo';
+import Icon from 'react-native-vector-icons/Feather';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WriteReview'>;
 
@@ -26,13 +35,6 @@ export function WriteReviewScreen({ route, navigation }: Props) {
     queryFn: () => reviewApi.getReviewDetail(reviewId!),
     enabled: !!reviewId,
   });
-
-  useEffect(() => {
-    if (reviewData) {
-      setTitle(reviewData.data.title);
-      setContent(reviewData.data.content);
-    }
-  }, [reviewData]);
 
   const { mutate: updateReview, isPending: isUpdatePending } = useMutation({
     mutationFn: () => reviewApi.updateReview(reviewId!, { title, content }),
@@ -68,11 +70,11 @@ export function WriteReviewScreen({ route, navigation }: Props) {
     },
   });
 
-  const checkUnsavedChanges = () => {
+  const checkUnsavedChanges = useCallback(() => {
     const hasChanges = title.trim() !== '' || content.trim() !== '';
-    if (!hasChanges) return false;
+    if (!hasChanges) return Promise.resolve(true);
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       Alert.alert(
         '작성 중인 내용이 있습니다',
         '페이지를 나가면 작성 중인 내용이 모두 사라집니다. 정말 나가시겠습니까?',
@@ -86,14 +88,14 @@ export function WriteReviewScreen({ route, navigation }: Props) {
         ],
       );
     });
-  };
+  }, [title, content]);
 
-  const handleCancel = async () => {
+  const handleCancel = useCallback(async () => {
     const shouldGoBack = await checkUnsavedChanges();
     if (shouldGoBack) {
       navigation.goBack();
     }
-  };
+  }, [navigation, checkUnsavedChanges]);
 
   const handleSubmit = () => {
     if (!title.trim()) {
@@ -112,6 +114,23 @@ export function WriteReviewScreen({ route, navigation }: Props) {
       createReview();
     }
   };
+
+  useEffect(() => {
+    if (reviewData) {
+      setTitle(reviewData.data.title);
+      setContent(reviewData.data.content);
+    }
+  }, [reviewData]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <Pressable onPress={handleCancel} hitSlop={8} style={{ marginLeft: spacing.sm }}>
+          <Icon name="chevron-left" size={24} color={colors.gray[900]} />
+        </Pressable>
+      ),
+    });
+  }, [navigation, handleCancel]);
 
   return (
     <KeyboardAvoidingView
