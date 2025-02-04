@@ -3,11 +3,10 @@ import { View, StyleSheet, FlatList } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
-import { ReviewItem } from '@/components/common/ReviewItem';
+import { ReviewItem } from '@/components/review/ReviewItem';
 import { Empty } from '@/components/common/Empty';
 import { ReviewListSkeleton } from '@/components/common/Skeleton/ReviewListSkeleton';
 import { colors, spacing, borderRadius } from '@/styles/theme';
-import Icon from 'react-native-vector-icons/Feather';
 import type { Review } from '@/types/review';
 
 interface Props {

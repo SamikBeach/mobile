@@ -1,60 +1,44 @@
-import React, { useMemo, useState } from 'react';
+import React, { Suspense, useMemo, useState } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { Tab } from '@/components/common/Tab';
 import { Feed } from './Feed';
 import { FeedSkeleton } from './FeedSkeleton';
 import { reviewApi } from '@/apis/review';
 import type { Review } from '@/types/review';
+import { AxiosResponse } from 'axios';
+import { PaginatedResponse } from '@/types/common';
 
-interface ReviewResponse {
-  data: {
-    data: Review[];
-    meta: {
-      currentPage: number;
-      totalPages: number;
-    };
-  };
-}
-
-export function FeedList() {
+function FeedListContent() {
   const [tab, setTab] = useState<'popular' | 'recent'>('popular');
 
-  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery<ReviewResponse>({
+  const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery<
+    AxiosResponse<PaginatedResponse<Review>>,
+    Error
+  >({
     queryKey: ['reviews', tab],
     queryFn: async ({ pageParam = 1 }) => {
-      return await reviewApi.searchReviews({
+      const response = await reviewApi.searchReviews({
         page: pageParam as number,
         limit: 10,
         sortBy: tab === 'popular' ? 'likeCount:DESC' : 'createdAt:DESC',
       });
+      return response;
     },
     initialPageParam: 1,
-    getNextPageParam: response => {
-      const { currentPage, totalPages } = response.data.meta;
-      return currentPage < totalPages ? currentPage + 1 : undefined;
+    getNextPageParam: param => {
+      const nextParam = param.data.links.next;
+      const query = nextParam?.split('?')[1];
+      const pageParam = query
+        ?.split('&')
+        .find(q => q.startsWith('page'))
+        ?.split('=')[1];
+
+      return pageParam;
     },
   });
 
   const reviews = useMemo(() => data?.pages?.flatMap(page => page.data.data) ?? [], [data]);
-
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <Tab
-          tabs={[
-            { value: 'popular', label: '인기순' },
-            { value: 'recent', label: '최신순' },
-          ]}
-          value={tab}
-          onChange={value => setTab(value as 'popular' | 'recent')}
-        />
-        {[1, 2, 3].map(i => (
-          <FeedSkeleton key={i} />
-        ))}
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -75,6 +59,29 @@ export function FeedList() {
         ListFooterComponent={hasNextPage ? <FeedSkeleton /> : null}
       />
     </View>
+  );
+}
+
+export function FeedList() {
+  return (
+    <Suspense
+      fallback={
+        <View style={styles.container}>
+          <Tab
+            tabs={[
+              { value: 'popular', label: '인기순' },
+              { value: 'recent', label: '최신순' },
+            ]}
+            value="popular"
+            onChange={() => {}}
+          />
+          {[1, 2, 3].map(i => (
+            <FeedSkeleton key={i} />
+          ))}
+        </View>
+      }>
+      <FeedListContent />
+    </Suspense>
   );
 }
 

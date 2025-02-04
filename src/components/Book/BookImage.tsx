@@ -1,0 +1,69 @@
+import React from 'react';
+import { Image, StyleSheet, View, Pressable } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import { colors } from '@/styles/theme';
+
+interface Props {
+  imageUrl?: string | null;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  onPress?: () => void;
+}
+
+const getSizeStyle = (size: Props['size']) => {
+  switch (size) {
+    case 'xs':
+      return { width: 24, height: 36 };
+    case 'sm':
+      return { width: 40, height: 60 };
+    case 'md':
+      return { width: 80, height: 120 };
+    case 'lg':
+      return { width: 100, height: 150 };
+    case 'xl':
+    default:
+      return { width: 120, height: 180 };
+  }
+};
+
+export function BookImage({ imageUrl, size = 'xl', onPress }: Props) {
+  const sizeStyle = getSizeStyle(size);
+  const Container = onPress ? Pressable : View;
+
+  if (imageUrl) {
+    return (
+      <Container style={[styles.container, sizeStyle]} onPress={onPress}>
+        <Image source={{ uri: imageUrl }} style={[styles.image, sizeStyle]} resizeMode="cover" />
+      </Container>
+    );
+  }
+
+  return (
+    <Container style={[styles.container, styles.fallbackContainer, sizeStyle]} onPress={onPress}>
+      <Icon
+        name="book"
+        size={sizeStyle.width * 0.5}
+        color={colors.gray[400]}
+        style={styles.fallbackIcon}
+      />
+    </Container>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  fallbackContainer: {
+    backgroundColor: colors.gray[100],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fallbackIcon: {
+    opacity: 0.8,
+  },
+});

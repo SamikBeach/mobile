@@ -4,7 +4,6 @@ import { Text } from '@/components/common/Text';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
-import type { Author } from '@/types/author';
 import type { AuthorStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 
@@ -25,7 +24,8 @@ interface Props {
 }
 
 export function AuthorItem({ author }: Props) {
-  const navigation = useNavigation<NativeStackNavigationProp<AuthorStackParamList, 'AuthorDetail'>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AuthorStackParamList, 'AuthorDetail'>>();
 
   const handlePress = () => {
     navigation.navigate('AuthorDetail', { authorId: author.id });
@@ -63,10 +63,10 @@ export function AuthorItem({ author }: Props) {
             <Text style={styles.statText}>{author.bookCount}</Text>
           </View>
           <View style={styles.stat}>
-            <Icon 
-              name={author.isLiked ? "heart" : "heart"} 
-              size={14} 
-              color={author.isLiked ? colors.primary[500] : colors.gray[500]} 
+            <Icon
+              name={author.isLiked ? 'heart' : 'heart'}
+              size={14}
+              color={author.isLiked ? colors.primary[500] : colors.gray[500]}
             />
             <Text style={styles.statText}>{author.likeCount}</Text>
           </View>
@@ -156,4 +156,4 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.gray[700],
   },
-}); 
+});

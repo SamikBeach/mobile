@@ -1,7 +1,6 @@
-import type { BaseEntity } from './common';
+import type { BaseEntity, PaginationQuery } from './common';
 import type { Book } from './book';
 import type { UserBase } from './user';
-import type { User } from './user';
 
 export interface Review extends BaseEntity {
   title: string;

@@ -1,3 +1,4 @@
+import { transformFilterParams } from '@/utils/api';
 import axios from '@/lib/axios';
 import type { PaginatedResponse, PaginationQuery } from '@/types/common';
 import type { Review } from '@/types/review';
@@ -6,7 +7,7 @@ import type { Book, BookDetail, BookSearchQuery } from '@/types/book';
 export const bookApi = {
   searchBooks: (params: BookSearchQuery) =>
     axios.get<PaginatedResponse<Book>>('/book/search', {
-      params,
+      params: transformFilterParams(params),
     }),
 
   getBookDetail: (bookId: number) => axios.get<BookDetail>(`/book/${bookId}`),

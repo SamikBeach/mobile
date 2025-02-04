@@ -1,17 +1,28 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import Icon from 'react-native-vector-icons/Feather';
+import { AxiosResponse } from 'axios';
 
 import { bookApi } from '@/apis/book';
-import { BookItem } from './BookItem';
 import { Empty } from '@/components/common/Empty';
 import { bookGenreAtom, bookSearchKeywordAtom, bookSortModeAtom, authorIdAtom } from '@/atoms/book';
 import { GENRE_IDS } from '@/constants/genre';
 import type { Book } from '@/types/book';
 import { BookListSkeleton } from '@/components/common/Skeleton/BookListSkeleton';
 import { spacing } from '@/styles/theme';
+import { BookItem } from './BookItem';
+
+interface PaginationMeta {
+  currentPage: number;
+  totalPages: number;
+}
+
+interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
 
 export function BookList() {
   const genre = useAtomValue(bookGenreAtom);
@@ -19,9 +30,12 @@ export function BookList() {
   const sortMode = useAtomValue(bookSortModeAtom);
   const selectedAuthorId = useAtomValue(authorIdAtom);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
+    AxiosResponse<PaginatedResponse<Book>>,
+    Error
+  >({
     queryKey: ['books', searchKeyword, sortMode, selectedAuthorId, genre],
-    queryFn: () => {
+    queryFn: ({ pageParam = 1 }) => {
       const sortBy = (() => {
         switch (sortMode) {
           case 'popular':
@@ -36,7 +50,7 @@ export function BookList() {
       })();
 
       return bookApi.searchBooks({
-        page: 1,
+        page: pageParam as number,
         limit: 20,
         ...(searchKeyword && {
           search: searchKeyword,
@@ -49,9 +63,20 @@ export function BookList() {
         },
       });
     },
+    getNextPageParam: lastPage => {
+      const { currentPage, totalPages } = lastPage.data.meta;
+      return currentPage < totalPages ? currentPage + 1 : undefined;
+    },
+    initialPageParam: 1,
   });
 
-  const books = data?.data.data ?? [];
+  const books = data?.pages.flatMap(page => page.data.data) ?? [];
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
   if (isLoading) {
     return <BookListSkeleton />;
@@ -60,7 +85,7 @@ export function BookList() {
   if (books.length === 0 && (searchKeyword || selectedAuthorId)) {
     return (
       <Empty
-        icon={<Icon name="search-x" size={48} color="#9CA3AF" />}
+        icon={<Icon name="search" size={48} color="#9CA3AF" />}
         message="검색 결과가 없어요."
         description={
           searchKeyword
@@ -78,6 +103,9 @@ export function BookList() {
       keyExtractor={item => item.id.toString()}
       contentContainerStyle={styles.list}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={isFetchingNextPage ? <BookListSkeleton /> : null}
     />
   );
 }

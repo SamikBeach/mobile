@@ -1,0 +1,204 @@
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, FlatList, Pressable } from 'react-native';
+import { Text } from '@/components/common/Text';
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { bookApi } from '@/apis/book';
+import { colors, spacing, borderRadius } from '@/styles/theme';
+import { ReviewItem } from '@/components/review/ReviewItem';
+import { Checkbox } from '@/components/common/Checkbox';
+import type { Review } from '@/types/review';
+import type { PaginatedResponse } from '@/types/common';
+import type { AxiosResponse } from 'axios';
+import { BookDetailSkeleton, ReviewItemSkeleton } from '@/components/common/Skeleton';
+import { BookDetailInfo } from './BookDetailInfo';
+import { RelativeBooks } from './RelativeBooks';
+import { Empty } from '@/components/common/Empty';
+import Icon from 'react-native-vector-icons/Feather';
+import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+
+interface Props {
+  bookId: number;
+}
+
+export function BookDetailScreenContent({ bookId }: Props) {
+  const [includeOtherTranslations, setIncludeOtherTranslations] = useState(false);
+  const flatListRef = useRef<FlatList>(null);
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
+    AxiosResponse<PaginatedResponse<Review>>,
+    Error
+  >({
+    queryKey: ['book-reviews', bookId, includeOtherTranslations],
+    queryFn: ({ pageParam = 1 }) =>
+      bookApi.searchBookReviews(
+        bookId,
+        {
+          page: pageParam as number,
+          limit: 20,
+        },
+        includeOtherTranslations,
+      ),
+    getNextPageParam: param => {
+      const nextParam = param.data.links.next;
+      const query = nextParam?.split('?')[1];
+      const pageParam = query
+        ?.split('&')
+        .find(q => q.startsWith('page'))
+        ?.split('=')[1];
+
+      return pageParam;
+    },
+    initialPageParam: 1,
+    placeholderData: keepPreviousData,
+  });
+
+  const { data: book } = useQuery({
+    queryKey: ['book', bookId],
+    queryFn: () => bookApi.getBookDetail(bookId),
+    select: response => response.data,
+  });
+
+  const reviews = data?.pages.flatMap(page => page.data.data) ?? [];
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const handleReviewPress = () => {
+    flatListRef.current?.scrollToIndex({
+      index: 0,
+      animated: true,
+      viewPosition: 0,
+    });
+  };
+
+  if (isLoading || !book) {
+    return <BookDetailSkeleton />;
+  }
+
+  const ListHeaderComponent = (
+    <View style={styles.listHeader}>
+      <BookDetailInfo book={book} onReviewPress={handleReviewPress} />
+      <RelativeBooks bookId={bookId} />
+      <View style={styles.header}>
+        <View style={styles.titleRow}>
+          <View style={styles.titleSection}>
+            <Text style={styles.title}>리뷰</Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{book?.reviewCount ?? 0}</Text>
+            </View>
+          </View>
+          <Pressable
+            style={styles.checkboxContainer}
+            onPress={() => setIncludeOtherTranslations(prev => !prev)}>
+            <Checkbox checked={includeOtherTranslations} onChange={setIncludeOtherTranslations} />
+            <Text style={styles.checkboxLabel}>다른 번역본 리뷰 포함</Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
+  );
+
+  const ListEmptyComponent = (
+    <View style={styles.emptyContainer}>
+      <Empty
+        icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
+        message="아직 리뷰가 없어요"
+        description="첫 번째 리뷰를 작성해보세요"
+      />
+    </View>
+  );
+
+  return (
+    <Animated.FlatList
+      ref={flatListRef}
+      data={reviews}
+      renderItem={({ item }) => (
+        <View style={styles.reviewItemContainer}>
+          <ReviewItem
+            review={item}
+            showBookInfo={includeOtherTranslations && item.book.id !== bookId}
+          />
+        </View>
+      )}
+      itemLayoutAnimation={Layout.springify()}
+      ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={ListEmptyComponent}
+      keyExtractor={item => item.id.toString()}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
+      contentContainerStyle={styles.reviewList}
+      maintainVisibleContentPosition={{
+        minIndexForVisible: 0,
+      }}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    gap: spacing.lg,
+  },
+  header: {
+    gap: spacing.md,
+    padding: spacing.lg,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  titleSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.gray[900],
+  },
+  badge: {
+    backgroundColor: colors.gray[100],
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    borderRadius: borderRadius.full,
+  },
+  badgeText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.gray[600],
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  checkboxLabel: {
+    fontSize: 14,
+    color: colors.gray[600],
+  },
+  emptyContainer: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
+    marginHorizontal: spacing.lg,
+  },
+  reviewList: {
+    paddingBottom: spacing.lg,
+  },
+  separator: {
+    height: spacing.md,
+  },
+  listHeader: {
+    gap: spacing.xl,
+  },
+  reviewItemContainer: {
+    paddingHorizontal: spacing.lg,
+  },
+});

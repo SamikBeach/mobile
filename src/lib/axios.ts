@@ -1,75 +1,17 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { STORAGE_KEYS } from '@/constants/storage-keys';
 import { ERROR_CODES } from '@/constants/error-codes';
 import { storage } from './storage';
 import { AuthResponse } from '@/types/auth';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3001/api/v2', // 개발 환경 기준
+  baseURL: 'http://localhost:3001/api/v2',
+  params: {
+    encode: true,
+  },
+  paramsSerializer: {
+    encode: (param: string) => encodeURIComponent(param),
+  },
 });
-
-// AsyncStorage 초기화 확인
-const initializeAsyncStorage = async () => {
-  try {
-    await AsyncStorage.getItem('test-key');
-    return true;
-  } catch (error) {
-    console.error('AsyncStorage is not initialized:', error);
-    return false;
-  }
-};
-
-let isStorageInitialized = false;
-
-const getToken = async () => {
-  if (!isStorageInitialized) {
-    isStorageInitialized = await initializeAsyncStorage();
-  }
-
-  if (!isStorageInitialized) {
-    return null;
-  }
-
-  try {
-    return await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-  } catch (error) {
-    console.error('Error getting token:', error);
-    return null;
-  }
-};
-
-const setToken = async (token: string) => {
-  if (!isStorageInitialized) {
-    isStorageInitialized = await initializeAsyncStorage();
-  }
-
-  if (!isStorageInitialized) {
-    return;
-  }
-
-  try {
-    await AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
-  } catch (error) {
-    console.error('Error saving token:', error);
-  }
-};
-
-const removeToken = async () => {
-  if (!isStorageInitialized) {
-    isStorageInitialized = await initializeAsyncStorage();
-  }
-
-  if (!isStorageInitialized) {
-    return;
-  }
-
-  try {
-    await AsyncStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-  } catch (error) {
-    console.error('Error removing token:', error);
-  }
-};
 
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
@@ -121,6 +63,7 @@ if (__DEV__) {
       method: request.method,
       headers: request.headers,
       data: request.data,
+      params: request.params,
     });
     return request;
   });
@@ -132,6 +75,7 @@ if (__DEV__) {
         status: response.status,
         headers: response.headers,
         data: response.data,
+        params: response.config.params,
       });
       return response;
     },
@@ -140,6 +84,7 @@ if (__DEV__) {
         url: error.config?.url,
         status: error.response?.status,
         data: error.response?.data,
+        params: error.config?.params,
       });
       return Promise.reject(error);
     },

@@ -3,14 +3,12 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
   NativeSyntheticEvent,
   TextLayoutEventData,
   Pressable,
 } from 'react-native';
-import { format } from 'date-fns';
 import { Review } from '@/types/review';
 import { UserBase } from '@/types/user';
 import { Book } from '@/types/book';
@@ -18,10 +16,16 @@ import { formatDate } from '@/utils/date';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
 import { UserAvatar } from '@/components/common/UserAvatar';
-import { FeedContent } from './FeedContent';
+import { LexicalContent } from '../common/LexicalContent';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
+import { useMutation } from '@tanstack/react-query';
+import { reviewApi } from '@/apis/review';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useReviewQueryData } from '@/hooks/useReviewQueryData';
+import { BookImage } from '@/components/book/BookImage';
+import { colors } from '@/styles/theme';
 
 interface Props {
   review: Review;
@@ -34,10 +38,9 @@ export function Feed({ review, user, book, expanded }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
+  const currentUser = useCurrentUser();
 
-  const formattedPublicationDate = book.publicationDate
-    ? format(new Date(book.publicationDate), 'yyyy년 M월 d일')
-    : '';
+  const { updateReviewLikeQueryData } = useReviewQueryData();
 
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
     if (!isExpanded) {
@@ -51,14 +54,42 @@ export function Feed({ review, user, book, expanded }: Props) {
     }
   };
 
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: () => reviewApi.toggleReviewLike(review.id),
+    onMutate: () => {
+      updateReviewLikeQueryData({
+        reviewId: review.id,
+        isOptimistic: true,
+      });
+    },
+    onError: () => {
+      updateReviewLikeQueryData({
+        reviewId: review.id,
+        isOptimistic: false,
+        currentStatus: {
+          isLiked: review.isLiked ?? false,
+          likeCount: review.likeCount,
+        },
+      });
+    },
+  });
+
+  const handleLikePress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    toggleLike();
+  };
+
   const handlePress = () => {
-    navigation.navigate('Review', { reviewId: review.id });
+    if (!expanded) {
+      navigation.navigate('Review', { reviewId: review.id });
+    }
   };
 
   return (
-    <Pressable
-      style={styles.container}
-      onPress={() => !expanded && navigation.navigate('Review', { reviewId: review.id })}>
+    <Pressable style={styles.container} onPress={handlePress}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={user} showNickname={true} />
@@ -69,16 +100,25 @@ export function Feed({ review, user, book, expanded }: Props) {
       <View style={styles.mainContent}>
         {/* 왼쪽: 책 정보 */}
         <View style={styles.bookSection}>
-          <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.bookImage} />
-          <View style={styles.bookInfo}>
+          <BookImage imageUrl={book.imageUrl} size="xl" />
+          <Pressable style={styles.bookInfo}>
             <Text style={styles.bookTitle} numberOfLines={2}>
               {book.title}
             </Text>
-            <Text style={styles.bookAuthor} numberOfLines={2}>
-              {book.authorBooks.map(author => author.author.nameInKor).join(', ')} ·{' '}
-              {book.publisher} · {formattedPublicationDate}
-            </Text>
-          </View>
+            {book.authorBooks.length > 0 && (
+              <Text style={styles.bookAuthor} numberOfLines={1}>
+                {book.authorBooks
+                  .map(author => author.author.nameInKor)
+                  .join(', ')
+                  .trim()}
+              </Text>
+            )}
+            {book.publisher && (
+              <Text style={styles.bookPublisher} numberOfLines={1}>
+                {book.publisher}
+              </Text>
+            )}
+          </Pressable>
         </View>
 
         {/* 오른쪽: 리뷰 내용 */}
@@ -91,7 +131,7 @@ export function Feed({ review, user, book, expanded }: Props) {
                 numberOfLines={isExpanded ? undefined : 8}
                 ellipsizeMode="tail"
                 onTextLayout={onTextLayout}>
-                <FeedContent content={review.content} isExpanded={isExpanded} />
+                <LexicalContent content={review.content} isExpanded={isExpanded} />
               </Text>
               {isTruncated && !isExpanded && (
                 <TouchableOpacity
@@ -108,9 +148,9 @@ export function Feed({ review, user, book, expanded }: Props) {
             <LikeButton
               isLiked={review.isLiked ?? false}
               likeCount={review.likeCount}
-              onPress={() => {}}
+              onPress={handleLikePress}
             />
-            <CommentButton commentCount={review.commentCount} />
+            <CommentButton commentCount={review.commentCount} onPress={handlePress} />
           </View>
         </View>
       </View>
@@ -149,6 +189,7 @@ const styles = StyleSheet.create({
   },
   bookSection: {
     width: 120,
+    gap: 8,
   },
   bookImage: {
     width: 120,
@@ -157,16 +198,23 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bookInfo: {
-    maxWidth: 120,
+    gap: 4,
   },
   bookTitle: {
     fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
+    fontWeight: '600',
+    color: colors.gray[900],
+    lineHeight: 18,
   },
   bookAuthor: {
-    fontSize: 12,
-    color: '#666666',
+    fontSize: 13,
+    color: colors.gray[600],
+    lineHeight: 14,
+  },
+  bookPublisher: {
+    fontSize: 13,
+    color: colors.gray[500],
+    marginTop: 2,
   },
   reviewSection: {
     flex: 1,

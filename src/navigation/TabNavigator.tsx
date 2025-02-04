@@ -1,22 +1,25 @@
-import React, { useEffect } from 'react';
+/* eslint-disable react/no-unstable-nested-components */
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Library, User } from '@/components/icons';
-import HomeStack from '@/navigation/HomeStack';
-import BookStack from '@/navigation/BookStack';
-import AuthorStack from '@/navigation/AuthorStack';
-import AuthStack from '@/navigation/AuthStack';
+import { HomeScreen } from '@/screens/home/HomeScreen';
 import { UserScreen } from '@/screens/user/UserScreen';
+import { RootStackParamList, TabParamList } from './types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-
-export type TabParamList = {
-  HomeTab: undefined;
-  BookTab: undefined;
-  AuthorTab: undefined;
-  UserTab: { userId: number };
-  AuthTab: undefined;
-};
+import BookScreen from '@/screens/book/BookScreen';
+import AuthorScreen from '@/screens/author/list/AuthorScreen';
+import LoginScreen from '@/screens/auth/LoginScreen';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from '@react-navigation/native-stack';
+import { ReviewScreen } from '@/screens/review/ReviewScreen';
+import SignUpScreen from '@/screens/auth/SignUpScreen';
+import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
+import { AuthorDetailScreen } from '@/screens/author/AuthorDetailScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function TabNavigator() {
   const currentUser = useCurrentUser();
@@ -30,48 +33,97 @@ export default function TabNavigator() {
       }}>
       <Tab.Screen
         name="HomeTab"
-        component={HomeStack}
         options={{
           tabBarLabel: '홈',
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
-        }}
-      />
+        }}>
+        {() => <StackNavigator initialRouteName="Home" initialComponent={HomeScreen} />}
+      </Tab.Screen>
       <Tab.Screen
         name="BookTab"
-        component={BookStack}
         options={{
           tabBarLabel: '책',
           tabBarIcon: ({ color, size }) => <Library size={size} color={color} />,
-        }}
-      />
+        }}>
+        {() => <StackNavigator initialRouteName="BookList" initialComponent={BookScreen} />}
+      </Tab.Screen>
       <Tab.Screen
         name="AuthorTab"
-        component={AuthorStack}
         options={{
           tabBarLabel: '작가',
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-        }}
-      />
+        }}>
+        {() => <StackNavigator initialRouteName="AuthorList" initialComponent={AuthorScreen} />}
+      </Tab.Screen>
       {currentUser ? (
         <Tab.Screen
           name="UserTab"
-          component={UserScreen}
-          initialParams={{ userId: currentUser.id }}
           options={{
             tabBarLabel: '마이페이지',
             tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-          }}
-        />
+          }}>
+          {() => (
+            <StackNavigator
+              initialRouteName="User"
+              initialComponent={UserScreen}
+              initialParams={{ userId: currentUser.id }}
+            />
+          )}
+        </Tab.Screen>
       ) : (
         <Tab.Screen
           name="AuthTab"
-          component={AuthStack}
           options={{
             tabBarLabel: '로그인',
             tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-          }}
-        />
+          }}>
+          {() => <StackNavigator initialRouteName="Login" initialComponent={LoginScreen} />}
+        </Tab.Screen>
       )}
     </Tab.Navigator>
+  );
+}
+
+interface StackNavigatorProps {
+  initialRouteName: keyof RootStackParamList;
+  initialComponent: React.ComponentType<any>;
+  options?: NativeStackNavigationOptions;
+  initialParams?: Record<string, any>;
+}
+
+function StackNavigator({
+  initialRouteName,
+  initialComponent,
+  options,
+  initialParams,
+}: StackNavigatorProps) {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerBackTitle: '뒤로',
+      }}>
+      <Stack.Screen
+        name={initialRouteName}
+        component={initialComponent}
+        options={{ headerShown: false, ...options }}
+        initialParams={initialParams}
+      />
+      <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
+      {initialRouteName !== 'Login' && (
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
+      )}
+      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerTitle: '회원가입' }} />
+      <Stack.Screen
+        name="BookDetail"
+        component={BookDetailScreen}
+        options={{ headerTitle: '도서 상세' }}
+      />
+      <Stack.Screen
+        name="AuthorDetail"
+        component={AuthorDetailScreen}
+        options={{ headerTitle: '작가 상세' }}
+      />
+    </Stack.Navigator>
   );
 }

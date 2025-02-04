@@ -8,6 +8,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import { format } from 'date-fns';
+import { RelativeBooksSkeleton } from '@/components/common/Skeleton';
 
 interface Props {
   bookId: number;
@@ -15,12 +16,16 @@ interface Props {
 
 export function RelativeBooks({ bookId }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  
-  const { data: books = [] } = useQuery({
+
+  const { data: books = [], isLoading } = useQuery({
     queryKey: ['relative-books', bookId],
     queryFn: () => bookApi.getAllRelatedBooks(bookId),
     select: response => response.data,
   });
+
+  if (isLoading) {
+    return <RelativeBooksSkeleton />;
+  }
 
   if (books.length === 0) {
     return null;
@@ -38,14 +43,12 @@ export function RelativeBooks({ bookId }: Props) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+        contentContainerStyle={styles.scrollContent}>
         {books.map(book => (
           <Pressable
             key={book.id}
             style={styles.bookItem}
-            onPress={() => navigation.push('BookDetail', { bookId: book.id })}
-          >
+            onPress={() => navigation.push('BookDetail', { bookId: book.id })}>
             <View style={styles.imageContainer}>
               <Image
                 source={{ uri: book.imageUrl ?? undefined }}
@@ -81,12 +84,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 0,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
+    paddingHorizontal: spacing.lg,
   },
   badge: {
     backgroundColor: colors.gray[100],
@@ -102,7 +106,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     gap: spacing.md,
     paddingVertical: spacing.xs,
-    paddingRight: spacing.lg,
+    paddingHorizontal: spacing.lg,
   },
   bookItem: {
     width: 130,
@@ -132,4 +136,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.gray[500],
   },
-}); 
+});

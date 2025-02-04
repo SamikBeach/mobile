@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: '#f4f4f5',
     gap: 4,
+    minWidth: 52,
+    justifyContent: 'center',
   },
   likedButton: {
     backgroundColor: '#fef2f2',

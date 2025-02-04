@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  TouchableOpacity, 
-  Text, 
-  StyleSheet, 
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
   ActivityIndicator,
   TouchableOpacityProps,
   StyleProp,
-  TextStyle
+  TextStyle,
 } from 'react-native';
 
 interface Props extends TouchableOpacityProps {
@@ -16,14 +16,14 @@ interface Props extends TouchableOpacityProps {
   textStyle?: StyleProp<TextStyle>;
 }
 
-export function Button({ 
-  children, 
+export function Button({
+  children,
   variant = 'solid',
   loading,
   style,
   disabled,
   textStyle,
-  ...props 
+  ...props
 }: Props) {
   return (
     <TouchableOpacity
@@ -33,22 +33,22 @@ export function Button({
         variant === 'outline' && styles.outlineButton,
         variant === 'text' && styles.textButton,
         disabled && styles.disabled,
-        style
+        style,
       ]}
       disabled={disabled || loading}
-      {...props}
-    >
+      {...props}>
       {loading ? (
         <ActivityIndicator color={variant === 'solid' ? 'white' : '#111827'} />
       ) : (
-        <Text style={[
-          styles.text,
-          variant === 'solid' && styles.solidText,
-          variant === 'outline' && styles.outlineText,
-          variant === 'text' && styles.textButtonText,
-          disabled && styles.disabledText,
-          textStyle
-        ]}>
+        <Text
+          style={[
+            styles.text,
+            variant === 'solid' && styles.solidText,
+            variant === 'outline' && styles.outlineText,
+            variant === 'text' && styles.textButtonText,
+            disabled && styles.disabledText,
+            textStyle,
+          ]}>
           {children}
         </Text>
       )}
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
   disabledText: {
     color: '#666',
   },
-}); 
+});

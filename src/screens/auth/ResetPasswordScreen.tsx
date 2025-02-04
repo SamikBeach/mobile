@@ -1,81 +1,122 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, useController } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
-import { Button, Input, Text } from '@/components/common';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '@/navigation/AuthStack';
-import type { EmailVerificationDto } from '@/types/auth';
+import { Button } from '@/components/common/Button';
+import { Input } from '@/components/common/Input';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { AuthStackParamList, RootStackParamList } from '@/navigation/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Text } from '@/components/common';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
+type ResetPasswordFormData = {
+  newPassword: string;
+  confirmPassword: string;
+};
 
-export default function ResetPasswordScreen({ navigation }: Props) {
-  const { control, handleSubmit, formState: { errors } } = useForm<EmailVerificationDto>({
+type ResetPasswordScreenRouteProp = RouteProp<AuthStackParamList, 'ResetPassword'>;
+
+export function ResetPasswordScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute<ResetPasswordScreenRouteProp>();
+  const { email, token } = route.params;
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<ResetPasswordFormData>({
     defaultValues: {
-      email: '',
+      newPassword: '',
+      confirmPassword: '',
     },
   });
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: authApi.sendPasswordResetEmail,
-    onSuccess: () => {
-      navigation.navigate('Login');
+  const { field: newPasswordField } = useController({
+    name: 'newPassword',
+    control,
+    rules: {
+      required: '새로운 비밀번호를 입력해주세요',
+      minLength: {
+        value: 6,
+        message: '비밀번호는 최소 6자 이상이어야 합니다',
+      },
     },
   });
+
+  const { field: confirmPasswordField } = useController({
+    name: 'confirmPassword',
+    control,
+    rules: {
+      required: '비밀번호를 다시 입력해주세요',
+      validate: value => value === watch('newPassword') || '비밀번호가 일치하지 않습니다',
+    },
+  });
+
+  const { mutate: verifyToken, isPending: isVerifying } = useMutation({
+    mutationFn: () => {
+      if (!email || !token) {
+        throw new Error('이메일 또는 토큰이 없습니다.');
+      }
+      return authApi.verifyPasswordResetToken(email, token);
+    },
+    onError: () => {
+      navigation.navigate('Auth', { screen: 'Login' });
+    },
+  });
+
+  const { mutate: resetPassword, isPending: isResetting } = useMutation({
+    mutationFn: (data: ResetPasswordFormData) => {
+      if (!email || !token) {
+        throw new Error('이메일 또는 토큰이 없습니다.');
+      }
+      return authApi.resetPassword(email, token, data.newPassword);
+    },
+    onSuccess: () => {
+      navigation.navigate('Auth', { screen: 'Login' });
+    },
+  });
+
+  useEffect(() => {
+    verifyToken();
+  }, [verifyToken]);
+
+  const onSubmit = handleSubmit(data => {
+    resetPassword(data);
+  });
+
+  if (isVerifying) {
+    return (
+      <View style={styles.container}>
+        <Text>토큰 검증 중...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>비밀번호 재설정</Text>
-        <Text style={styles.subtitle}>
-          가입하신 이메일로{'\n'}
-          비밀번호 재설정 링크를 보내드립니다
-        </Text>
-      </View>
-
       <View style={styles.form}>
-        <Controller
-          control={control}
-          name="email"
-          rules={{
-            required: '이메일을 입력해주세요',
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: '올바른 이메일 형식이 아닙니다',
-            },
-          }}
-          render={({ field: { onChange, value } }) => (
-            <Input
-              placeholder="이메일"
-              value={value}
-              onChangeText={onChange}
-              error={errors.email?.message}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          )}
+        <Input
+          value={newPasswordField.value}
+          onChangeText={newPasswordField.onChange}
+          placeholder="새로운 비밀번호"
+          secureTextEntry
+          error={errors.newPassword?.message}
         />
 
-        {error && (
-          <Text style={styles.errorText}>
-            {error.response?.data?.message || '이메일 전송에 실패했습니다.'}
-          </Text>
-        )}
+        <Input
+          value={confirmPasswordField.value}
+          onChangeText={confirmPasswordField.onChange}
+          placeholder="비밀번호 확인"
+          secureTextEntry
+          error={errors.confirmPassword?.message}
+        />
 
-        <Button onPress={handleSubmit(data => mutate(data))} loading={isPending}>
-          이메일 보내기
+        <Button onPress={onSubmit} disabled={isResetting} loading={isResetting}>
+          {isResetting ? '변경 중...' : '비밀번호 변경'}
         </Button>
-
-        <View style={styles.links}>
-          <Button 
-            variant="text" 
-            onPress={() => navigation.navigate('Login')}
-            style={styles.linkButton}
-          >
-            <Text style={styles.linkText}>로그인으로 돌아가기</Text>
-          </Button>
-        </View>
       </View>
     </View>
   );
@@ -84,43 +125,10 @@ export default function ResetPasswordScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
     backgroundColor: 'white',
-    padding: 20,
-  },
-  header: {
-    alignItems: 'center',
-    marginVertical: 30,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: 24,
   },
   form: {
     gap: 16,
   },
-  links: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  linkButton: {
-    height: 32,
-  },
-  linkText: {
-    fontSize: 13,
-    color: '#6B7280',
-    fontWeight: '400',
-  },
-  errorText: {
-    color: '#EF4444',
-    fontSize: 13,
-  },
-}); 
+});

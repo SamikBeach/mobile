@@ -4,20 +4,22 @@ import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button, Input, Text } from '@/components/common';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '@/navigation/AuthStack';
 import { currentUserAtom } from '@/atoms/auth';
 import { useSetAtom } from 'jotai';
-
-type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/navigation/types';
 
 interface LoginFormData {
   email: string;
   password: string;
 }
 
-export default function LoginScreen({ navigation }: Props) {
+export default function LoginScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const setCurrentUser = useSetAtom(currentUserAtom);
+
   const {
     control,
     handleSubmit,
@@ -32,15 +34,18 @@ export default function LoginScreen({ navigation }: Props) {
   const { mutate, isPending, error } = useMutation({
     mutationFn: authApi.login,
     onSuccess: response => {
-      const { accessToken, user } = response.data;
-      // TODO: 토큰 저장 로직 구현
+      const { user } = response.data;
       setCurrentUser(user);
+
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.navigate('Tab', {
+          screen: 'HomeTab',
+        });
+      }
     },
   });
-
-  const onSubmit = (data: LoginFormData) => {
-    mutate(data);
-  };
 
   return (
     <View style={styles.container}>

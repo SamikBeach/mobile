@@ -5,7 +5,6 @@ import { useAtomValue } from 'jotai';
 import Icon from 'react-native-vector-icons/Feather';
 
 import { authorApi } from '@/apis/author';
-import { AuthorItem } from './AuthorItem';
 import { Empty } from '@/components/common/Empty';
 import {
   authorGenreAtom,
@@ -17,6 +16,7 @@ import { GENRE_IDS } from '@/constants/genre';
 import type { Author } from '@/types/author';
 import { colors, spacing } from '@/styles/theme';
 import { AuthorListSkeleton } from '@/components/common/Skeleton/AuthorListSkeleton';
+import { AuthorItem } from '@/components/author/AuthorItem';
 
 export function AuthorList() {
   const genre = useAtomValue(authorGenreAtom);

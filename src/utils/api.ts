@@ -6,7 +6,7 @@
  * // { 'filter.name': 'John', 'filter.user.age': 20 }
  */
 export function transformFilterParams<T>(
-  params: T & { filter?: Record<string, unknown> }
+  params: T & { filter?: Record<string, unknown> },
 ): Record<string, unknown> {
   const transformedParams = { ...params } as Record<string, unknown>;
 

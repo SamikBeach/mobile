@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Modal, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useAtom } from 'jotai';
 import { authorIdAtom } from '@/atoms/book';
@@ -46,7 +46,9 @@ export function AuthorSelect() {
   return (
     <>
       <TouchableOpacity onPress={() => setIsOpen(true)} style={styles.button}>
-        <Text style={styles.buttonText}>{selectedAuthor?.nameInKor || '작가'}</Text>
+        <Text numberOfLines={1} style={styles.buttonText}>
+          {selectedAuthor?.nameInKor || '작가'}
+        </Text>
         {selectedAuthor ? (
           <TouchableOpacity
             onPress={handleClear}
@@ -59,7 +61,7 @@ export function AuthorSelect() {
       </TouchableOpacity>
 
       <Modal visible={isOpen} animationType="slide">
-        <View style={styles.modal}>
+        <SafeAreaView style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>작가 선택</Text>
             <TouchableOpacity
@@ -95,7 +97,7 @@ export function AuthorSelect() {
               </TouchableOpacity>
             )}
           />
-        </View>
+        </SafeAreaView>
       </Modal>
     </>
   );
@@ -116,6 +118,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
     color: colors.gray[900],
+    maxWidth: 120,
   },
   modal: {
     flex: 1,
