@@ -17,6 +17,7 @@ import { ReviewScreen } from '@/screens/review/ReviewScreen';
 import SignUpScreen from '@/screens/auth/SignUpScreen';
 import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
 import { AuthorDetailScreen } from '@/screens/author/AuthorDetailScreen';
+import { WriteReviewScreen } from '@/screens/review/WriteReviewScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -123,6 +124,11 @@ function StackNavigator({
         name="AuthorDetail"
         component={AuthorDetailScreen}
         options={{ headerTitle: '작가 상세' }}
+      />
+      <Stack.Screen
+        name="WriteReview"
+        component={WriteReviewScreen}
+        options={{ headerTitle: '리뷰 작성' }}
       />
     </Stack.Navigator>
   );

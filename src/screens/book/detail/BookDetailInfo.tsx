@@ -67,7 +67,8 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
       navigation.navigate('Login');
       return;
     }
-    // TODO: 리뷰 작성 화면으로 이동
+
+    navigation.navigate('WriteReview', { bookId: book.id });
   };
 
   return (
