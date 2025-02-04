@@ -21,6 +21,26 @@ interface Props {
   showAvatar?: boolean;
 }
 
+interface LexicalNode {
+  children?: LexicalNode[];
+  text?: string;
+  type: string;
+  format?: number;
+  style?: string;
+  textFormat?: number;
+  textStyle?: string;
+  key?: string;
+  mode?: string;
+  detail?: number;
+  version?: number;
+  direction?: string;
+  indent?: number;
+}
+
+interface LexicalContent {
+  root: LexicalNode;
+}
+
 export function CommentEditor({
   onSubmit,
   onCancel,
@@ -29,21 +49,35 @@ export function CommentEditor({
   showAvatar = true,
 }: Props) {
   const [text, setText] = useState('');
+  const [mentions, setMentions] = useState<string[]>([]);
   const currentUser = useCurrentUser();
 
   useEffect(() => {
     if (initialContent) {
       try {
-        const parsedContent = JSON.parse(initialContent);
-        const textContent = parsedContent.root.children[0].children
-          .map((node: any) => (node.type === 'text' ? node.text : ''))
-          .join('');
-        setText(textContent);
+        const parsedContent: LexicalContent = JSON.parse(initialContent);
+        const extractedMentions: string[] = [];
+        let fullText = '';
+
+        const children = parsedContent.root.children?.[0]?.children;
+        if (!children) return;
+
+        children.forEach((node: LexicalNode) => {
+          if (node.type === 'mention') {
+            extractedMentions.push(node.text || '');
+          } else if (node.type === 'text') {
+            fullText += node.text || '';
+          }
+        });
+
+        setMentions(extractedMentions);
+        setText(fullText);
       } catch (error) {
         console.warn('Failed to parse initial content:', error);
       }
     } else if (replyToUser) {
       setText(`@${replyToUser.nickname} `);
+      setMentions([replyToUser.nickname]);
     }
   }, [initialContent, replyToUser]);
 
@@ -70,34 +104,28 @@ export function CommentEditor({
   const handleSubmit = () => {
     if (!text.trim()) return;
 
-    const textWithoutMention = replyToUser ? text.replace(`@${replyToUser.nickname} `, '') : text;
-
-    const lexicalContent = {
+    const lexicalContent: LexicalContent = {
       root: {
         children: [
           {
             children: [
-              ...(replyToUser
-                ? [
-                    {
-                      type: 'mention',
-                      text: replyToUser.nickname,
-                      key: '1',
-                    },
-                  ]
-                : []),
+              ...mentions.map((mention, index) => ({
+                type: 'mention',
+                text: mention,
+                key: `mention-${index}`,
+              })),
               {
                 detail: 0,
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: textWithoutMention,
+                text: text.trim(),
                 type: 'text',
                 version: 1,
               },
             ],
             direction: 'ltr',
-            format: '',
+            format: 0,
             indent: 0,
             type: 'paragraph',
             version: 1,
@@ -106,7 +134,7 @@ export function CommentEditor({
           },
         ],
         direction: 'ltr',
-        format: '',
+        format: 0,
         indent: 0,
         type: 'root',
         version: 1,
@@ -115,6 +143,7 @@ export function CommentEditor({
 
     onSubmit(JSON.stringify(lexicalContent));
     setText('');
+    setMentions([]);
   };
 
   const handleCancel = () => {
@@ -128,11 +157,15 @@ export function CommentEditor({
     <View style={[styles.container, !isEditMode && styles.fixedContainer]}>
       {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
       <View style={styles.inputContainer}>
-        {replyToUser && <Text style={styles.mention}>@{replyToUser.nickname}</Text>}
+        {mentions.map((mention, index) => (
+          <Text key={`mention-${index}`} style={styles.mention}>
+            @{mention}
+          </Text>
+        ))}
         <TextInput
-          style={[styles.input, replyToUser && styles.inputWithMention]}
+          style={[styles.input, mentions.length > 0 && styles.inputWithMention]}
           placeholder={!replyToUser ? '댓글을 입력하세요.' : undefined}
-          value={replyToUser ? text.substring(text.indexOf(' ') + 1) : text}
+          value={text}
           onChangeText={handleTextChange}
           onKeyPress={handleKeyPress}
           multiline
