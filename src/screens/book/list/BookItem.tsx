@@ -20,26 +20,32 @@ export function BookItem({ book }: Props) {
   };
 
   return (
-    <Pressable style={styles.container} onPress={handlePress}>
+    <Pressable
+      style={({ pressed }) => [styles.container, pressed && { opacity: 0.8 }]}
+      onPress={handlePress}>
       <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.image} resizeMode="cover" />
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={2}>
-          {book.title}
-        </Text>
-        <Text style={styles.author} numberOfLines={1}>
-          {book.authorBooks.map(author => author.author.nameInKor).join(', ')}
-        </Text>
+        <View style={styles.textContent}>
+          <Text style={styles.title} numberOfLines={2}>
+            {book.title}
+          </Text>
+          <Text style={styles.author} numberOfLines={1}>
+            {book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+          </Text>
+        </View>
         <View style={styles.stats}>
           <View style={styles.statItem}>
-            <Icon name="thumbs-up" size={14} color={colors.gray[500]} />
+            <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
             <Text style={styles.statText}>{book.likeCount}</Text>
           </View>
+          <View style={styles.divider} />
           <View style={styles.statItem}>
-            <Icon name="message-square" size={14} color={colors.gray[500]} />
+            <Icon name="message-square" size={13} color={colors.gray[400]} />
             <Text style={styles.statText}>{book.reviewCount}</Text>
           </View>
+          <View style={styles.divider} />
           <View style={styles.statItem}>
-            <Icon name="book" size={14} color={colors.gray[500]} />
+            <Icon name="book" size={13} color={colors.gray[400]} />
             <Text style={styles.statText}>{book.totalTranslationCount}</Text>
           </View>
         </View>
@@ -53,19 +59,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    gap: spacing.md,
+    padding: spacing.lg,
+    gap: spacing.lg,
     ...shadows.sm,
   },
   image: {
-    width: 90,
-    height: 130,
-    borderRadius: borderRadius.sm,
+    width: 85,
+    height: 120,
+    borderRadius: borderRadius.md,
     backgroundColor: colors.gray[100],
   },
   content: {
     flex: 1,
-    gap: spacing.sm,
+    justifyContent: 'space-between',
+  },
+  textContent: {
+    gap: spacing.xs,
   },
   title: {
     fontSize: 16,
@@ -75,20 +84,26 @@ const styles = StyleSheet.create({
   },
   author: {
     fontSize: 14,
-    color: colors.gray[700],
+    color: colors.gray[600],
   },
   stats: {
     flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing.xs,
+    alignItems: 'center',
+    marginTop: spacing.sm,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
   },
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
+  },
   statText: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.gray[500],
   },
 });
