@@ -110,7 +110,9 @@ function StackNavigator({
         initialParams={initialParams}
       />
       <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
-      <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
+      {initialRouteName !== 'Login' && (
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
+      )}
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerTitle: '회원가입' }} />
       <Stack.Screen
         name="BookDetail"
