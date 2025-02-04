@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    padding: spacing.lg,
     gap: spacing.md,
     ...shadows.sm,
   },
