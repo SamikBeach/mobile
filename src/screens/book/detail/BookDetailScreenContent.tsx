@@ -61,7 +61,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
     }
   };
 
-  if (isLoading || !book) {
+  if (!book) {
     return <BookDetailSkeleton />;
   }
 
@@ -92,10 +92,12 @@ export function BookDetailScreenContent({ bookId }: Props) {
     <FlatList
       data={reviews}
       renderItem={({ item }) => (
-        <ReviewItem
-          review={item}
-          showBookInfo={includeOtherTranslations && item.book.id !== bookId}
-        />
+        <View style={styles.reviewItemContainer}>
+          <ReviewItem
+            review={item}
+            showBookInfo={includeOtherTranslations && item.book.id !== bookId}
+          />
+        </View>
       )}
       ListHeaderComponent={ListHeaderComponent}
       keyExtractor={item => item.id.toString()}
@@ -114,6 +116,7 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: spacing.md,
+    padding: spacing.lg,
   },
   titleRow: {
     flexDirection: 'row',
@@ -152,18 +155,17 @@ const styles = StyleSheet.create({
     color: colors.gray[600],
   },
   emptyContainer: {
-    backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
     padding: spacing.xl,
   },
-  reviewList: {
-    paddingBottom: spacing.lg,
-  },
+  reviewList: {},
   separator: {
     height: spacing.md,
   },
   listHeader: {
     gap: spacing.xl,
-    padding: spacing.lg,
+  },
+  reviewItemContainer: {
+    paddingHorizontal: spacing.lg,
   },
 });

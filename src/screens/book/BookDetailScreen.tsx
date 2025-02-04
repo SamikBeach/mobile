@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BookDetailScreenContent } from './detail/BookDetailScreenContent';
-import { colors, spacing } from '@/styles/theme';
+import { spacing } from '@/styles/theme';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
 
@@ -20,7 +20,7 @@ export function BookDetailScreen({ route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.gray[50],
+    backgroundColor: 'white',
   },
   content: {
     gap: spacing.xl,

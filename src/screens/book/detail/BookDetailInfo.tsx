@@ -125,8 +125,8 @@ export function BookDetailInfo({ book }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: spacing.lg,
     gap: spacing.lg,
+    padding: spacing.lg,
   },
   header: {
     flexDirection: 'row',
@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 180,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[100],
   },
   info: {
     flex: 1,

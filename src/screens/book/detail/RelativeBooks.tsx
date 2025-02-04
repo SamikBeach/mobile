@@ -79,12 +79,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 0,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
+    paddingHorizontal: spacing.lg,
   },
   badge: {
     backgroundColor: colors.gray[100],
