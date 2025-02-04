@@ -5,13 +5,52 @@ import { Button } from '@/components/common/Button';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { useMutation } from '@tanstack/react-query';
+import { bookApi } from '@/apis/book';
 import type { Book } from '@/types/book';
+import { useBookQueryData } from '@/hooks/useBookQueryData';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '@/navigation/types';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 interface Props {
   book: Book;
 }
 
 export function BookDetailInfo({ book }: Props) {
+  const { updateBookLikeQueryData } = useBookQueryData();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const currentUser = useCurrentUser();
+
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: () => bookApi.toggleBookLike(book.id),
+    onMutate: async () => {
+      updateBookLikeQueryData({
+        bookId: book.id,
+        isOptimistic: true,
+      });
+    },
+    onError: () => {
+      updateBookLikeQueryData({
+        bookId: book.id,
+        isOptimistic: false,
+        currentStatus: {
+          isLiked: book.isLiked,
+          likeCount: book.likeCount,
+        },
+      });
+    },
+  });
+
+  const handleLikePress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    toggleLike();
+  };
+
   const formattedPublicationDate = book.publicationDate
     ? format(new Date(book.publicationDate), 'yyyy년 M월 d일')
     : '';
@@ -54,10 +93,16 @@ export function BookDetailInfo({ book }: Props) {
             </View>
 
             <View style={styles.stats}>
-              <View style={styles.statItem}>
-                <Icon name="heart" size={14} color={colors.gray[500]} />
-                <Text style={styles.statText}>{book.likeCount}</Text>
-              </View>
+              <Pressable style={styles.statItem} onPress={handleLikePress}>
+                <Icon
+                  name={book.isLiked ? 'heart' : 'heart'}
+                  size={14}
+                  color={book.isLiked ? colors.primary[500] : colors.gray[500]}
+                />
+                <Text style={[styles.statText, book.isLiked && { color: colors.primary[500] }]}>
+                  {book.likeCount}
+                </Text>
+              </Pressable>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
                 <Icon name="message-circle" size={14} color={colors.gray[500]} />
