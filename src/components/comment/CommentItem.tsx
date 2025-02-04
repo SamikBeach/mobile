@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { colors } from '@/styles/theme';
 import { LexicalContent } from '../common/LexicalContent';
 import { CommentEditor } from './CommentEditor';
+import Toast from 'react-native-toast-message';
 
 interface Props {
   comment: Comment;
@@ -54,8 +55,17 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
     mutationFn: () => reviewApi.deleteComment(reviewId, comment.id),
     onSuccess: () => {
       deleteCommentQueryData({ reviewId, commentId: comment.id });
+      Toast.show({
+        type: 'success',
+        text1: '댓글이 삭제되었습니다.',
+      });
     },
-    onError: () => {},
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '댓글 삭제에 실패했습니다.',
+      });
+    },
   });
 
   const { mutate: updateComment } = useMutation({
@@ -63,8 +73,17 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
     onSuccess: (_, content) => {
       updateCommentQueryData({ reviewId, commentId: comment.id, content });
       setIsEditing(false);
+      Toast.show({
+        type: 'success',
+        text1: '댓글이 수정되었습니다.',
+      });
     },
-    onError: () => {},
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '댓글 수정에 실패했습니다.',
+      });
+    },
   });
 
   return (

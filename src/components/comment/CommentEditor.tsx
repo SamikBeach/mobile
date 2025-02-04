@@ -12,6 +12,7 @@ import { colors } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import Toast from 'react-native-toast-message';
 
 interface Props {
   onSubmit: (content: string) => void;
@@ -164,6 +165,10 @@ export function CommentEditor({
     onSubmit(JSON.stringify(lexicalContent));
     setText('');
     setMentions([]);
+    Toast.show({
+      type: 'success',
+      text1: '댓글이 등록되었습니다.',
+    });
   };
 
   const handleCancel = () => {
