@@ -55,7 +55,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
       <Text style={styles.title}>{review.title}</Text>
 
-      <View style={styles.contentContainer}>
+      <Pressable onPress={() => isTruncated && setIsExpanded(true)} style={styles.contentContainer}>
         <Text
           style={styles.content}
           numberOfLines={isExpanded ? undefined : 3}
@@ -63,15 +63,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           onTextLayout={onTextLayout}>
           <LexicalContent content={review.content} />
         </Text>
-        {isTruncated && !isExpanded && (
-          <Pressable
-            onPress={() => setIsExpanded(true)}
-            style={styles.moreButton}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Text style={styles.more}>더보기</Text>
-          </Pressable>
-        )}
-      </View>
+        {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
+      </Pressable>
 
       <View style={styles.footer}>
         <View style={styles.actions}>
@@ -141,12 +134,10 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: colors.gray[800],
   },
-  moreButton: {
-    marginTop: spacing.xs,
-  },
   more: {
     fontSize: 14,
     color: colors.primary[500],
+    marginTop: spacing.xs,
   },
   footer: {
     marginTop: spacing.xs,
