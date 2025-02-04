@@ -70,7 +70,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
       </View>
 
       <View style={styles.actions}>
-        <Pressable style={styles.actionButton} onPress={() => toggleLike()}>
+        <Pressable style={styles.likeButton} onPress={() => toggleLike()}>
           <Icon
             name="thumbs-up"
             size={14}
@@ -127,6 +127,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     padding: 4,
+  },
+  likeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    padding: 4,
+    minWidth: 34,
   },
   actionText: {
     fontSize: 12,
