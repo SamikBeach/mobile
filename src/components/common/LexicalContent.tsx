@@ -60,13 +60,11 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
 
     if (node.type === 'paragraph') {
       return (
-        <View style={styles.paragraph}>
-          <Text style={styles.content}>
-            {node.children?.map((child, index) => (
-              <React.Fragment key={index}>{renderFormattedContent(child)}</React.Fragment>
-            ))}
-          </Text>
-        </View>
+        <Text style={styles.content}>
+          {node.children?.map((child, index) => (
+            <React.Fragment key={index}>{renderFormattedContent(child)}</React.Fragment>
+          ))}
+        </Text>
       );
     }
 
@@ -120,9 +118,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: colors.gray[700],
-  },
-  paragraph: {
-    marginBottom: 8,
   },
   mention: {
     color: '#3B82F6',
