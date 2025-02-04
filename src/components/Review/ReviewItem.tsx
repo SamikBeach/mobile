@@ -14,7 +14,7 @@ import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
 import { formatDate } from '@/utils/date';
 import { UserAvatar } from '@/components/common/UserAvatar';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -39,8 +39,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
 
   const currentUser = useCurrentUser();
-
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const queryClient = useQueryClient();
   const { updateReviewLikeQueryData } = useReviewQueryData();
   const isMyReview = currentUser?.id === review.user.id;
 
@@ -84,6 +84,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   const { mutate: createComment } = useMutation({
     mutationFn: (content: string) => reviewApi.createComment(review.id, { content }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', review.id] });
+      queryClient.invalidateQueries({ queryKey: ['book-reviews', review.book.id] });
       Toast.show({
         type: 'success',
         text1: '댓글이 등록되었습니다.',
@@ -101,6 +103,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   const { mutate: deleteReview } = useMutation({
     mutationFn: () => reviewApi.deleteReview(review.id),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['book-reviews', review.book.id] });
       Toast.show({
         type: 'success',
         text1: '리뷰가 삭제되었습니다.',
@@ -131,6 +134,17 @@ export function ReviewItem({ review, showBookInfo }: Props) {
     setIsReplying(prev => !prev);
   };
 
+  const handleEditPress = () => {
+    navigation.navigate('WriteReview', { reviewId: review.id });
+  };
+
+  const handleDeletePress = () => {
+    Alert.alert('리뷰 삭제', '정말로 이 리뷰를 삭제하시겠습니까?', [
+      { text: '취소', style: 'cancel' },
+      { text: '삭제', style: 'destructive', onPress: () => deleteReview() },
+    ]);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -141,7 +155,10 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         </View>
         <View style={styles.headerActions}>
           {showBookInfo && (
-            <Pressable style={styles.bookInfo}>
+            <Pressable 
+              style={styles.bookInfo}
+              onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}
+            >
               <Icon name="book-open" size={14} color={colors.gray[500]} />
               <Text style={styles.bookTitle} numberOfLines={1}>
                 {review.book.title}
@@ -149,15 +166,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
             </Pressable>
           )}
           {isMyReview && (
-            <ReviewActions
-              onEdit={() => navigation.navigate('WriteReview', { reviewId: review.id })}
-              onDelete={() => {
-                Alert.alert('리뷰 삭제', '정말로 이 리뷰를 삭제하시겠습니까?', [
-                  { text: '취소', style: 'cancel' },
-                  { text: '삭제', style: 'destructive', onPress: () => deleteReview() },
-                ]);
-              }}
-            />
+            <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
           )}
         </View>
       </View>
