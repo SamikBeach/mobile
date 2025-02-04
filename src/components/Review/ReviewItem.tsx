@@ -12,6 +12,7 @@ import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
 import { formatDate } from '@/utils/date';
+import { UserAvatar } from '@/components/common/UserAvatar';
 
 interface Props {
   review: Review;
@@ -38,7 +39,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
-          <View style={styles.avatar} />
+          <UserAvatar user={review.user} showNickname={false} size="sm" />
           <Text style={styles.username}>{review.user.nickname}</Text>
           <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
         </View>
@@ -105,12 +106,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-  },
-  avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.gray[200],
   },
   username: {
     fontSize: 14,
