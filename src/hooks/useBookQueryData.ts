@@ -15,11 +15,7 @@ interface UpdateLikeParams {
 export function useBookQueryData() {
   const queryClient = useQueryClient();
 
-  function updateBookLikeQueryData({
-    bookId,
-    isOptimistic,
-    currentStatus,
-  }: UpdateLikeParams) {
+  function updateBookLikeQueryData({ bookId, isOptimistic, currentStatus }: UpdateLikeParams) {
     // 책 목록 쿼리 데이터 업데이트
     queryClient.setQueriesData<InfiniteData<AxiosResponse<PaginatedResponse<Book>>>>(
       {
@@ -85,4 +81,4 @@ export function useBookQueryData() {
   }
 
   return { updateBookLikeQueryData };
-} 
+}
