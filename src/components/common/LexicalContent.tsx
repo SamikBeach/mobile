@@ -1,11 +1,11 @@
 import React from 'react';
-import { Text, StyleSheet, View, TextStyle, StyleProp } from 'react-native';
+import { Text, StyleSheet, View, TextStyle } from 'react-native';
 import { colors } from '@/styles/theme';
 
 interface Props {
   content: string;
   isExpanded?: boolean;
-  mentionStyle?: StyleProp<TextStyle>;
+  isComment?: boolean;
 }
 
 interface LexicalNode {
@@ -22,7 +22,7 @@ interface LexicalContent {
   root: LexicalNode;
 }
 
-export function LexicalContent({ content, isExpanded = false, mentionStyle }: Props) {
+export function LexicalContent({ content, isExpanded = false, isComment = false }: Props) {
   const extractPlainText = (node: LexicalNode): string => {
     if (node.type === 'text') {
       return node.text || '';
@@ -51,7 +51,7 @@ export function LexicalContent({ content, isExpanded = false, mentionStyle }: Pr
 
     if (node.type === 'mention') {
       return (
-        <Text key={node.text} style={[styles.content, mentionStyle]}>
+        <Text key={node.text} style={styles.mention}>
           @{node.text}
         </Text>
       );
@@ -92,7 +92,7 @@ export function LexicalContent({ content, isExpanded = false, mentionStyle }: Pr
 
     const parsedContent: LexicalContent = JSON.parse(content);
 
-    if (!isExpanded) {
+    if (!isExpanded && !isComment) {
       const plainText = extractPlainText(parsedContent.root);
       return (
         <Text style={styles.content} numberOfLines={8}>
@@ -120,5 +120,8 @@ const styles = StyleSheet.create({
   },
   paragraph: {
     marginBottom: 8,
+  },
+  mention: {
+    color: '#3B82F6',
   },
 });

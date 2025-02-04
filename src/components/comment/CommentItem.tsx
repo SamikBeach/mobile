@@ -66,7 +66,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
       </View>
 
       <View style={styles.content}>
-        <LexicalContent content={comment.content} mentionStyle={styles.mention} />
+        <LexicalContent content={comment.content} isComment />
       </View>
 
       <View style={styles.actions}>
@@ -141,8 +141,5 @@ const styles = StyleSheet.create({
   },
   activeActionText: {
     color: colors.primary[500],
-  },
-  mention: {
-    color: '#3B82F6', // 파란색 (Tailwind blue-500)
   },
 });
