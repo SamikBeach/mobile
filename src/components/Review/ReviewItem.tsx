@@ -40,7 +40,6 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
   const currentUser = useCurrentUser();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const queryClient = useQueryClient();
   const { updateReviewLikeQueryData } = useReviewQueryData();
   const isMyReview = currentUser?.id === review.user.id;
 
@@ -84,8 +83,6 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   const { mutate: createComment } = useMutation({
     mutationFn: (content: string) => reviewApi.createComment(review.id, { content }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', review.id] });
-      queryClient.invalidateQueries({ queryKey: ['book-reviews', review.book.id] });
       Toast.show({
         type: 'success',
         text1: '댓글이 등록되었습니다.',
@@ -103,7 +100,6 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   const { mutate: deleteReview } = useMutation({
     mutationFn: () => reviewApi.deleteReview(review.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['book-reviews', review.book.id] });
       Toast.show({
         type: 'success',
         text1: '리뷰가 삭제되었습니다.',
@@ -155,19 +151,16 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         </View>
         <View style={styles.headerActions}>
           {showBookInfo && (
-            <Pressable 
+            <Pressable
               style={styles.bookInfo}
-              onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}
-            >
+              onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
               <Icon name="book-open" size={14} color={colors.gray[500]} />
               <Text style={styles.bookTitle} numberOfLines={1}>
                 {review.book.title}
               </Text>
             </Pressable>
           )}
-          {isMyReview && (
-            <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
-          )}
+          {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
         </View>
       </View>
 
@@ -215,10 +208,6 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         <View style={styles.replySection}>
           <CommentEditor
             onSubmit={content => {
-              if (!currentUser) {
-                navigation.navigate('Login');
-                return;
-              }
               createComment(content);
             }}
             onCancel={() => {

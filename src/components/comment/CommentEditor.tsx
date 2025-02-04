@@ -202,13 +202,14 @@ export function CommentEditor({
         <TextInput
           ref={inputRef}
           style={[styles.input, mentions.length > 0 && styles.inputWithMention]}
-          placeholder={!replyToUser ? '댓글을 입력하세요.' : undefined}
+          placeholder={currentUser ? '댓글을 입력하세요.' : '로그인 후 댓글을 작성할 수 있습니다.'}
+          placeholderTextColor={colors.gray[400]}
           value={displayText}
           onChangeText={handleTextChange}
           onKeyPress={handleKeyPress}
           multiline
           maxLength={1000}
-          placeholderTextColor={colors.gray[400]}
+          editable={Boolean(currentUser)}
         />
         {replyToUser && !isEditMode && (
           <Pressable onPress={handleCancel} hitSlop={8} style={styles.closeButton}>
@@ -223,10 +224,17 @@ export function CommentEditor({
           </Pressable>
         )}
         <Pressable
-          style={[styles.submitButton, !text.trim() && styles.submitButtonDisabled]}
+          style={[
+            styles.submitButton,
+            (!text.trim() || !currentUser) && styles.submitButtonDisabled,
+          ]}
           onPress={handleSubmit}
-          disabled={!text.trim()}>
-          <Text style={[styles.submitButtonText, !text.trim() && styles.submitButtonTextDisabled]}>
+          disabled={!text.trim() || !currentUser}>
+          <Text
+            style={[
+              styles.submitButtonText,
+              (!text.trim() || !currentUser) && styles.submitButtonTextDisabled,
+            ]}>
             등록
           </Text>
         </Pressable>
