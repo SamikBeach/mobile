@@ -37,10 +37,7 @@ export function useCommentQueryData() {
     queryClient.setQueryData<InfiniteData<AxiosResponse<PaginatedResponse<Comment>>>>(
       ['comments', reviewId],
       commentListData => {
-        if (!commentListData) {
-          return commentListData;
-        }
-
+        if (!commentListData) return commentListData;
         return {
           ...commentListData,
           pages: commentListData.pages.map(commentPage => ({
@@ -48,9 +45,7 @@ export function useCommentQueryData() {
             data: {
               ...commentPage.data,
               data: commentPage.data.data.map(comment => {
-                if (comment.id !== commentId) {
-                  return comment;
-                }
+                if (comment.id !== commentId) return comment;
                 return {
                   ...comment,
                   isLiked: isOptimistic
@@ -73,9 +68,7 @@ export function useCommentQueryData() {
     queryClient.setQueryData<InfiniteData<AxiosResponse<PaginatedResponse<Comment>>>>(
       ['comments', reviewId],
       commentListData => {
-        if (!commentListData) {
-          return commentListData;
-        }
+        if (!commentListData) return commentListData;
         return {
           ...commentListData,
           pages: commentListData.pages.map(commentPage => ({

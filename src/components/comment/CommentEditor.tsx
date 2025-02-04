@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Pressable, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  NativeSyntheticEvent,
+  TextInputKeyPressEventData,
+} from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
@@ -27,7 +34,11 @@ export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = tr
   }, [replyToUser]);
 
   const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-    if (replyToUser && e.nativeEvent.key === 'Backspace' && !text.substring(text.indexOf(' ') + 1)) {
+    if (
+      replyToUser &&
+      e.nativeEvent.key === 'Backspace' &&
+      !text.substring(text.indexOf(' ') + 1)
+    ) {
       setText('');
       onCancel();
     }

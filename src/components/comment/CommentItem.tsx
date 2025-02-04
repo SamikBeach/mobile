@@ -24,7 +24,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
   const currentUser = useCurrentUser();
   const isMyComment = comment.user.id === currentUser?.id;
 
-  const { updateCommentLikeQueryData } = useCommentQueryData();
+  const { updateCommentLikeQueryData, deleteCommentQueryData } = useCommentQueryData();
 
   const { mutate: toggleLike } = useMutation({
     mutationFn: () => reviewApi.toggleCommentLike(reviewId, comment.id),
@@ -48,6 +48,14 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
     },
   });
 
+  const { mutate: deleteComment } = useMutation({
+    mutationFn: () => reviewApi.deleteComment(reviewId, comment.id),
+    onSuccess: () => {
+      deleteCommentQueryData({ reviewId, commentId: comment.id });
+    },
+    onError: () => {},
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -56,12 +64,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
           <Text style={styles.date}>{formatDate(comment.createdAt)}</Text>
         </View>
         {isMyComment && (
-          <CommentActions
-            onEdit={() => setIsEditing(true)}
-            onDelete={() => {
-              /* TODO */
-            }}
-          />
+          <CommentActions onEdit={() => setIsEditing(true)} onDelete={() => deleteComment()} />
         )}
       </View>
 
