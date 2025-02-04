@@ -12,6 +12,8 @@ import type { AxiosResponse } from 'axios';
 import { BookDetailSkeleton, ReviewItemSkeleton } from '@/components/common/Skeleton';
 import { BookDetailInfo } from './BookDetailInfo';
 import { RelativeBooks } from './RelativeBooks';
+import { Empty } from '@/components/common/Empty';
+import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   bookId: number;
@@ -98,6 +100,16 @@ export function BookDetailScreenContent({ bookId }: Props) {
     </View>
   );
 
+  const ListEmptyComponent = (
+    <View style={styles.emptyContainer}>
+      <Empty
+        icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
+        message="아직 리뷰가 없어요"
+        description="첫 번째 리뷰를 작성해보세요"
+      />
+    </View>
+  );
+
   return (
     <FlatList
       ref={flatListRef}
@@ -111,6 +123,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
         </View>
       )}
       ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={ListEmptyComponent}
       keyExtractor={item => item.id.toString()}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       onEndReached={handleLoadMore}
@@ -169,8 +182,10 @@ const styles = StyleSheet.create({
     color: colors.gray[600],
   },
   emptyContainer: {
+    backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
     padding: spacing.xl,
+    marginHorizontal: spacing.lg,
   },
   reviewList: {
     paddingBottom: spacing.lg,
