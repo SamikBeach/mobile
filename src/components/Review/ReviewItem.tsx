@@ -207,14 +207,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           <Pressable
             style={[styles.actionButton, isReplying && styles.activeActionButton]}
             onPress={handleReplyPress}>
-            <Icon
-              name="message-circle"
-              size={16}
-              color={isReplying ? colors.primary[500] : colors.gray[400]}
-            />
-            <Text style={[styles.actionText, isReplying && styles.activeActionText]}>
-              {review.commentCount}
-            </Text>
+            <Icon name="message-circle" size={16} color={colors.gray[400]} />
+            <Text style={styles.actionText}>{review.commentCount}</Text>
           </Pressable>
         </View>
       </View>
