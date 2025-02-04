@@ -22,6 +22,26 @@ import Icon from 'react-native-vector-icons/Feather';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WriteReview'>;
 
+interface LexicalNode {
+  children?: LexicalNode[];
+  text?: string;
+  type: string;
+  format?: number;
+  style?: string;
+  textFormat?: number;
+  textStyle?: string;
+  key?: string;
+  mode?: string;
+  detail?: number;
+  version?: number;
+  direction?: string;
+  indent?: number;
+}
+
+interface LexicalContent {
+  root: LexicalNode;
+}
+
 export function WriteReviewScreen({ route, navigation }: Props) {
   const { bookId, reviewId } = route.params;
   const currentUser = useCurrentUser();
@@ -36,8 +56,48 @@ export function WriteReviewScreen({ route, navigation }: Props) {
     enabled: !!reviewId,
   });
 
+  const createLexicalContent = (text: string): string => {
+    const lexicalContent: LexicalContent = {
+      root: {
+        children: [
+          {
+            children: [
+              {
+                detail: 0,
+                format: 0,
+                mode: 'normal',
+                style: '',
+                text: text.trim(),
+                type: 'text',
+                version: 1,
+              },
+            ],
+            direction: 'ltr',
+            format: 0,
+            indent: 0,
+            type: 'paragraph',
+            version: 1,
+            textFormat: 0,
+            textStyle: '',
+          },
+        ],
+        direction: 'ltr',
+        format: 0,
+        indent: 0,
+        type: 'root',
+        version: 1,
+      },
+    };
+
+    return JSON.stringify(lexicalContent);
+  };
+
   const { mutate: updateReview, isPending: isUpdatePending } = useMutation({
-    mutationFn: () => reviewApi.updateReview(reviewId!, { title, content }),
+    mutationFn: () =>
+      reviewApi.updateReview(reviewId!, {
+        title,
+        content: createLexicalContent(content),
+      }),
     onSuccess: response => {
       updateReviewDataQueryData({
         reviewId: reviewId!,
@@ -53,7 +113,11 @@ export function WriteReviewScreen({ route, navigation }: Props) {
   });
 
   const { mutate: createReview, isPending: isCreatePending } = useMutation({
-    mutationFn: () => reviewApi.createReview(bookId, { title, content }),
+    mutationFn: () =>
+      reviewApi.createReview(bookId, {
+        title,
+        content: createLexicalContent(content),
+      }),
     onSuccess: response => {
       if (currentUser) {
         createReviewDataQueryData({
@@ -118,7 +182,14 @@ export function WriteReviewScreen({ route, navigation }: Props) {
   useEffect(() => {
     if (reviewData) {
       setTitle(reviewData.data.title);
-      setContent(reviewData.data.content);
+      try {
+        const parsedContent: LexicalContent = JSON.parse(reviewData.data.content);
+        const plainText = parsedContent.root.children?.[0]?.children?.[0]?.text || '';
+        setContent(plainText);
+      } catch (error) {
+        console.warn('Failed to parse review content:', error);
+        setContent('');
+      }
     }
   }, [reviewData]);
 
