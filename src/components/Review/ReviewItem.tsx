@@ -142,7 +142,10 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   };
 
   const handleEditPress = () => {
-    // navigation.navigate('WriteReview', { reviewId: review.id });
+    navigation.navigate('WriteReview', {
+      bookId: review.book.id,
+      reviewId: review.id,
+    });
   };
 
   const handleDeletePress = () => {
