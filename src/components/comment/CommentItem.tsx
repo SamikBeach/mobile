@@ -14,6 +14,7 @@ import { colors } from '@/styles/theme';
 import { LexicalContent } from '../common/LexicalContent';
 import { CommentEditor } from './CommentEditor';
 import Toast from 'react-native-toast-message';
+import Animated, { FadeInRight, FadeOutRight, Layout } from 'react-native-reanimated';
 
 interface Props {
   comment: Comment;
@@ -87,7 +88,11 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
   });
 
   return (
-    <View style={styles.container}>
+    <Animated.View
+      entering={FadeInRight.duration(300)}
+      exiting={FadeOutRight.duration(300)}
+      layout={Layout.duration(300)}
+      style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={comment.user} size="sm" showNickname />
@@ -126,7 +131,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
           <Text style={styles.actionText}>답글 달기</Text>
         </Pressable>
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
