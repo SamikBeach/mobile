@@ -26,6 +26,7 @@ import Toast from 'react-native-toast-message';
 import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
+import Animated, { FadeInRight, FadeOutRight, Layout } from 'react-native-reanimated';
 
 interface Props {
   review: Review;
@@ -152,7 +153,11 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   };
 
   return (
-    <View style={styles.container}>
+    <Animated.View
+      entering={FadeInRight.duration(300)}
+      exiting={FadeOutRight.duration(300)}
+      layout={Layout.duration(300)}
+      style={styles.container}>
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <UserAvatar user={review.user} showNickname={false} size="sm" />
@@ -173,9 +178,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
         </View>
       </View>
-
       <Text style={styles.title}>{review.title}</Text>
-
       <Pressable onPress={() => isTruncated && setIsExpanded(true)} style={styles.contentContainer}>
         <Text
           style={styles.content}
@@ -186,7 +189,6 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         </Text>
         {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
       </Pressable>
-
       <View style={styles.footer}>
         <View style={styles.actions}>
           <Pressable style={styles.actionButton} onPress={handleLikePress}>
@@ -213,7 +215,6 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           </Pressable>
         </View>
       </View>
-
       {isReplying && (
         <View style={styles.replySection}>
           <CommentEditor
@@ -230,7 +231,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           <CommentList reviewId={review.id} onReply={handleReply} />
         </View>
       )}
-    </View>
+    </Animated.View>
   );
 }
 

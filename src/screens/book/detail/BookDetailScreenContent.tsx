@@ -14,6 +14,7 @@ import { BookDetailInfo } from './BookDetailInfo';
 import { RelativeBooks } from './RelativeBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
+import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 
 interface Props {
   bookId: number;
@@ -111,7 +112,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
   );
 
   return (
-    <FlatList
+    <Animated.FlatList
       ref={flatListRef}
       data={reviews}
       renderItem={({ item }) => (
@@ -122,6 +123,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
           />
         </View>
       )}
+      itemLayoutAnimation={Layout.springify()}
       ListHeaderComponent={ListHeaderComponent}
       ListEmptyComponent={ListEmptyComponent}
       keyExtractor={item => item.id.toString()}
