@@ -20,7 +20,7 @@ import { format } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigation } from '@react-navigation/native';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
-import { CommentList } from './CommentList';
+import { ReviewScreenContent } from './ReviewScreenContent';
 import { CommentEditor } from '@/components/comment/CommentEditor';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 
@@ -137,7 +137,7 @@ export function ReviewScreen({ route }: Props) {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <CommentList
+      <ReviewScreenContent
         reviewId={reviewId}
         onReply={user => setReplyToUser(user)}
         ListHeaderComponent={renderHeader()}

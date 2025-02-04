@@ -16,7 +16,7 @@ interface Props {
   ListHeaderComponent?: ReactNode;
 }
 
-export function CommentList({ reviewId, onReply, ListHeaderComponent }: Props) {
+export function ReviewScreenContent({ reviewId, onReply, ListHeaderComponent }: Props) {
   const { data: review } = useQuery({
     queryKey: ['review', reviewId],
     queryFn: () => reviewApi.getReviewDetail(reviewId),
