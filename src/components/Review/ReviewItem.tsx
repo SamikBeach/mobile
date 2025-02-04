@@ -26,7 +26,13 @@ import Toast from 'react-native-toast-message';
 import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
-import Animated, { FadeInRight, FadeOutRight, Layout } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  FadeInRight,
+  FadeOut,
+  FadeOutRight,
+  Layout,
+} from 'react-native-reanimated';
 
 interface Props {
   review: Review;
@@ -48,11 +54,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
     if (!isExpanded) {
       const { lines } = event.nativeEvent;
-      if (lines.length >= 3) {
-        setIsTruncated(true);
-      } else {
-        setIsTruncated(false);
-      }
+      setIsTruncated(lines.length > 3 && event.nativeEvent.lines[2].text.endsWith('...'));
     }
   };
 
@@ -154,8 +156,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
   return (
     <Animated.View
-      entering={FadeInRight.duration(300)}
-      exiting={FadeOutRight.duration(300)}
+      entering={FadeIn.duration(300)}
+      exiting={FadeOut.duration(300)}
       layout={Layout.duration(300)}
       style={styles.container}>
       <View style={styles.header}>
