@@ -4,7 +4,6 @@ import { Text } from '@/components/common/Text';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { CommentItem } from '@/components/comment/CommentItem';
-import { EmptyComments } from './EmptyComments';
 import { CommentSkeleton } from '@/components/comment/CommentSkeleton';
 import { AxiosResponse } from 'axios';
 import { PaginatedResponse } from '@/types/common';
@@ -69,48 +68,32 @@ export const ReviewScreenContent = forwardRef<{ scrollToComments: () => void }, 
 
     return (
       <View style={styles.container}>
-        {comments.length === 0 ? (
-          <>
-            <View
-              style={styles.header}
-              onLayout={e => {
-                commentHeaderYRef.current = e.nativeEvent.layout.y;
-              }}>
-              <Text style={styles.title}>댓글</Text>
-              <View style={styles.countBadge}>
-                <Text style={styles.countText}>{review?.commentCount}</Text>
-              </View>
-            </View>
-            <EmptyComments />
-          </>
-        ) : (
-          <FlatList
-            ref={flatListRef}
-            ListHeaderComponent={
-              <Fragment>
-                {ListHeaderComponent}
-                <View
-                  style={styles.header}
-                  onLayout={e => {
-                    commentHeaderYRef.current = e.nativeEvent.layout.y;
-                  }}>
-                  <Text style={styles.title}>댓글</Text>
-                  <View style={styles.countBadge}>
-                    <Text style={styles.countText}>{review?.commentCount}</Text>
-                  </View>
+        <FlatList
+          ref={flatListRef}
+          ListHeaderComponent={
+            <Fragment>
+              {ListHeaderComponent}
+              <View
+                style={styles.header}
+                onLayout={e => {
+                  commentHeaderYRef.current = e.nativeEvent.layout.y;
+                }}>
+                <Text style={styles.title}>댓글</Text>
+                <View style={styles.countBadge}>
+                  <Text style={styles.countText}>{review?.commentCount}</Text>
                 </View>
-              </Fragment>
-            }
-            data={comments}
-            renderItem={({ item }) => (
-              <CommentItem comment={item} reviewId={reviewId} onReply={onReply} />
-            )}
-            keyExtractor={item => item.id.toString()}
-            onEndReached={() => hasNextPage && fetchNextPage()}
-            onEndReachedThreshold={0.5}
-            contentContainerStyle={styles.listContent}
-          />
-        )}
+              </View>
+            </Fragment>
+          }
+          data={comments}
+          renderItem={({ item }) => (
+            <CommentItem comment={item} reviewId={reviewId} onReply={onReply} />
+          )}
+          keyExtractor={item => item.id.toString()}
+          onEndReached={() => hasNextPage && fetchNextPage()}
+          onEndReachedThreshold={0.5}
+          contentContainerStyle={styles.listContent}
+        />
       </View>
     );
   },
