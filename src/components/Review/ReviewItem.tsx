@@ -1,10 +1,17 @@
-import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  NativeSyntheticEvent,
+  TextLayoutEventData,
+} from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import type { Review } from '@/types/review';
+import { LexicalContent } from '@/components/common/LexicalContent';
 
 interface Props {
   review: Review;
@@ -12,7 +19,20 @@ interface Props {
 }
 
 export function ReviewItem({ review, showBookInfo }: Props) {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
+    if (!isExpanded) {
+      const { lines } = event.nativeEvent;
+      // 3줄 이상일 때 더보기 버튼 표시
+      if (lines.length >= 3) {
+        setIsTruncated(true);
+      } else {
+        setIsTruncated(false);
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -34,12 +54,23 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
       <Text style={styles.title}>{review.title}</Text>
 
-      <Pressable onPress={() => setIsExpanded(!isExpanded)}>
-        <Text style={styles.content} numberOfLines={isExpanded ? undefined : 3}>
-          {review.content}
+      <View style={styles.contentContainer}>
+        <Text
+          style={styles.content}
+          numberOfLines={isExpanded ? undefined : 3}
+          ellipsizeMode="tail"
+          onTextLayout={onTextLayout}>
+          <LexicalContent content={review.content} />
         </Text>
-        {!isExpanded && review.content.length > 100 && <Text style={styles.more}>더보기</Text>}
-      </Pressable>
+        {isTruncated && !isExpanded && (
+          <Pressable
+            onPress={() => setIsExpanded(true)}
+            style={styles.moreButton}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Text style={styles.more}>더보기</Text>
+          </Pressable>
+        )}
+      </View>
 
       <View style={styles.footer}>
         <View style={styles.actions}>
@@ -109,15 +140,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.gray[900],
   },
+  contentContainer: {
+    position: 'relative',
+  },
   content: {
     fontSize: 15,
     lineHeight: 22,
     color: colors.gray[800],
   },
+  moreButton: {
+    marginTop: spacing.xs,
+  },
   more: {
     fontSize: 14,
     color: colors.primary[500],
-    marginTop: spacing.xs,
   },
   footer: {
     marginTop: spacing.xs,

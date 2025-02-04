@@ -3,14 +3,12 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
   NativeSyntheticEvent,
   TextLayoutEventData,
   Pressable,
 } from 'react-native';
-import { format } from 'date-fns';
 import { Review } from '@/types/review';
 import { UserBase } from '@/types/user';
 import { Book } from '@/types/book';
@@ -43,10 +41,6 @@ export function Feed({ review, user, book, expanded }: Props) {
   const currentUser = useCurrentUser();
 
   const { updateReviewLikeQueryData } = useReviewQueryData();
-
-  const formattedPublicationDate = book.publicationDate
-    ? format(new Date(book.publicationDate), 'yyyy년 M월 d일')
-    : '';
 
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
     if (!isExpanded) {
