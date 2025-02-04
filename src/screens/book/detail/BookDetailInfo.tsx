@@ -62,6 +62,14 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
     }
   };
 
+  const handleWriteReviewPress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    // TODO: 리뷰 작성 화면으로 이동
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -114,10 +122,12 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
         </View>
       </View>
 
-      <Button variant="outline" style={styles.writeButton}>
+      <Button variant="outline" style={styles.writeButton} onPress={handleWriteReviewPress}>
         <View style={styles.writeButtonContent}>
           <Icon name="edit-2" size={16} color={colors.gray[700]} />
-          <Text style={styles.writeButtonText}>리뷰 작성하기</Text>
+          <Text style={styles.writeButtonText}>
+            {currentUser ? '리뷰 작성하기' : '로그인하고 리뷰 작성하기'}
+          </Text>
         </View>
       </Button>
     </View>
