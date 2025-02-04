@@ -17,105 +17,104 @@ interface Props {
   onCommentButtonPress?: () => void;
 }
 
-export const ReviewScreenContent = forwardRef<
-  { scrollToComments: () => void },
-  Props
->(({ reviewId, onReply, ListHeaderComponent }, ref) => {
-  const flatListRef = useRef<FlatList>(null);
-  const commentHeaderYRef = useRef(0);
+export const ReviewScreenContent = forwardRef<{ scrollToComments: () => void }, Props>(
+  ({ reviewId, onReply, ListHeaderComponent }, ref) => {
+    const flatListRef = useRef<FlatList>(null);
+    const commentHeaderYRef = useRef(0);
 
-  useImperativeHandle(ref, () => ({
-    scrollToComments: () => {
-      flatListRef.current?.scrollToOffset({
-        offset: commentHeaderYRef.current,
-        animated: true,
-      });
-    },
-  }));
+    useImperativeHandle(ref, () => ({
+      scrollToComments: () => {
+        flatListRef.current?.scrollToOffset({
+          offset: commentHeaderYRef.current,
+          animated: true,
+        });
+      },
+    }));
 
-  const { data: review } = useQuery({
-    queryKey: ['review', reviewId],
-    queryFn: () => reviewApi.getReviewDetail(reviewId),
-    select: response => response.data,
-  });
+    const { data: review } = useQuery({
+      queryKey: ['review', reviewId],
+      queryFn: () => reviewApi.getReviewDetail(reviewId),
+      select: response => response.data,
+    });
 
-  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery<
-    AxiosResponse<PaginatedResponse<Comment>>,
-    Error
-  >({
-    queryKey: ['comments', reviewId],
-    queryFn: ({ pageParam = 1 }) => {
-      return reviewApi.searchComments(reviewId, {
-        page: pageParam as number,
-        limit: 20,
-      });
-    },
-    initialPageParam: 1,
-    getNextPageParam: param => {
-      const nextParam = param.data.links.next;
-      const query = nextParam?.split('?')[1];
-      const pageParam = query
-        ?.split('&')
-        .find(q => q.startsWith('page'))
-        ?.split('=')[1];
+    const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery<
+      AxiosResponse<PaginatedResponse<Comment>>,
+      Error
+    >({
+      queryKey: ['comments', reviewId],
+      queryFn: ({ pageParam = 1 }) => {
+        return reviewApi.searchComments(reviewId, {
+          page: pageParam as number,
+          limit: 20,
+        });
+      },
+      initialPageParam: 1,
+      getNextPageParam: param => {
+        const nextParam = param.data.links.next;
+        const query = nextParam?.split('?')[1];
+        const pageParam = query
+          ?.split('&')
+          .find(q => q.startsWith('page'))
+          ?.split('=')[1];
 
-      return pageParam;
-    },
-  });
+        return pageParam;
+      },
+    });
 
-  const comments = data?.pages.flatMap(page => page.data.data) ?? [];
+    const comments = data?.pages.flatMap(page => page.data.data) ?? [];
 
-  if (isLoading) {
-    return <CommentSkeleton />;
-  }
+    if (isLoading) {
+      return <CommentSkeleton />;
+    }
 
-  return (
-    <View style={styles.container}>
-      {comments.length === 0 ? (
-        <>
-          <View 
-            style={styles.header}
-            onLayout={e => {
-              commentHeaderYRef.current = e.nativeEvent.layout.y;
-            }}>
-            <Text style={styles.title}>댓글</Text>
-            <View style={styles.countBadge}>
-              <Text style={styles.countText}>{review?.commentCount}</Text>
-            </View>
-          </View>
-          <EmptyComments />
-        </>
-      ) : (
-        <FlatList
-          ref={flatListRef}
-          ListHeaderComponent={
-            <Fragment>
-              {ListHeaderComponent}
-              <View 
-                style={styles.header}
-                onLayout={e => {
-                  commentHeaderYRef.current = e.nativeEvent.layout.y;
-                }}>
-                <Text style={styles.title}>댓글</Text>
-                <View style={styles.countBadge}>
-                  <Text style={styles.countText}>{review?.commentCount}</Text>
-                </View>
+    return (
+      <View style={styles.container}>
+        {comments.length === 0 ? (
+          <>
+            <View
+              style={styles.header}
+              onLayout={e => {
+                commentHeaderYRef.current = e.nativeEvent.layout.y;
+              }}>
+              <Text style={styles.title}>댓글</Text>
+              <View style={styles.countBadge}>
+                <Text style={styles.countText}>{review?.commentCount}</Text>
               </View>
-            </Fragment>
-          }
-          data={comments}
-          renderItem={({ item }) => (
-            <CommentItem comment={item} reviewId={reviewId} onReply={onReply} />
-          )}
-          keyExtractor={item => item.id.toString()}
-          onEndReached={() => hasNextPage && fetchNextPage()}
-          onEndReachedThreshold={0.5}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
-    </View>
-  );
-});
+            </View>
+            <EmptyComments />
+          </>
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            ListHeaderComponent={
+              <Fragment>
+                {ListHeaderComponent}
+                <View
+                  style={styles.header}
+                  onLayout={e => {
+                    commentHeaderYRef.current = e.nativeEvent.layout.y;
+                  }}>
+                  <Text style={styles.title}>댓글</Text>
+                  <View style={styles.countBadge}>
+                    <Text style={styles.countText}>{review?.commentCount}</Text>
+                  </View>
+                </View>
+              </Fragment>
+            }
+            data={comments}
+            renderItem={({ item }) => (
+              <CommentItem comment={item} reviewId={reviewId} onReply={onReply} />
+            )}
+            keyExtractor={item => item.id.toString()}
+            onEndReached={() => hasNextPage && fetchNextPage()}
+            onEndReachedThreshold={0.5}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
+      </View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

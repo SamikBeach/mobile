@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -51,6 +51,7 @@ export function CommentEditor({
   const [text, setText] = useState('');
   const [mentions, setMentions] = useState<string[]>([]);
   const currentUser = useCurrentUser();
+  const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     if (initialContent) {
@@ -72,6 +73,11 @@ export function CommentEditor({
 
         setMentions(extractedMentions);
         setText(fullText);
+
+        // 수정 모드 진입 시 포커스
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 100);
       } catch (error) {
         console.warn('Failed to parse initial content:', error);
       }
@@ -179,6 +185,7 @@ export function CommentEditor({
           </Text>
         ))}
         <TextInput
+          ref={inputRef}
           style={[styles.input, mentions.length > 0 && styles.inputWithMention]}
           placeholder={!replyToUser ? '댓글을 입력하세요.' : undefined}
           value={displayText}
