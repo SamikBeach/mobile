@@ -47,12 +47,16 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
       }
 
       const textWithoutMention = node.text?.replace(/@[\w가-힣ㄱ-ㅎㅏ-ㅣ]+\s?/g, '') || '';
-      return textWithoutMention ? <Text style={style}>{textWithoutMention}</Text> : null;
+      return textWithoutMention ? (
+        <Text key={`text-${textWithoutMention}`} style={style}>
+          {textWithoutMention}
+        </Text>
+      ) : null;
     }
 
     if (node.type === 'mention') {
       return (
-        <Text key={node.text} style={styles.mention}>
+        <Text key={`mention-${node.text}`} style={[styles.content, styles.mention]}>
           @{node.text}
         </Text>
       );
@@ -60,9 +64,11 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
 
     if (node.type === 'paragraph') {
       return (
-        <Text style={styles.content}>
+        <Text key="paragraph" style={styles.content}>
           {node.children?.map((child, index) => (
-            <React.Fragment key={index}>{renderFormattedContent(child)}</React.Fragment>
+            <React.Fragment key={`child-${index}`}>
+              {renderFormattedContent(child)}
+            </React.Fragment>
           ))}
         </Text>
       );
@@ -70,7 +76,9 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
 
     if (node.children) {
       return node.children.map((child, index) => (
-        <React.Fragment key={index}>{renderFormattedContent(child)}</React.Fragment>
+        <React.Fragment key={`fragment-${index}`}>
+          {renderFormattedContent(child)}
+        </React.Fragment>
       ));
     }
 

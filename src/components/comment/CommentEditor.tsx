@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Pressable } from 'react-native';
+import { View, StyleSheet, TextInput, Pressable, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
@@ -21,8 +21,26 @@ export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = tr
   useEffect(() => {
     if (replyToUser) {
       setText(`@${replyToUser.nickname} `);
+    } else {
+      setText('');
     }
   }, [replyToUser]);
+
+  const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+    if (replyToUser && e.nativeEvent.key === 'Backspace' && !text.substring(text.indexOf(' ') + 1)) {
+      setText('');
+      onCancel();
+    }
+  };
+
+  const handleTextChange = (newText: string) => {
+    if (replyToUser) {
+      const mentionText = `@${replyToUser.nickname} `;
+      setText(mentionText + newText);
+    } else {
+      setText(newText);
+    }
+  };
 
   const handleSubmit = () => {
     if (!text.trim()) return;
@@ -87,10 +105,9 @@ export function CommentEditor({ onSubmit, onCancel, replyToUser, showAvatar = tr
         <TextInput
           style={[styles.input, replyToUser && styles.inputWithMention]}
           placeholder={!replyToUser ? '댓글을 입력하세요.' : undefined}
-          value={replyToUser ? text.replace(`@${replyToUser.nickname} `, '') : text}
-          onChangeText={newText => {
-            setText(replyToUser ? `@${replyToUser.nickname} ${newText}` : newText);
-          }}
+          value={replyToUser ? text.substring(text.indexOf(' ') + 1) : text}
+          onChangeText={handleTextChange}
+          onKeyPress={handleKeyPress}
           multiline
           maxLength={1000}
           placeholderTextColor={colors.gray[400]}
