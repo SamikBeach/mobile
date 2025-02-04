@@ -58,9 +58,9 @@ export function AuthorDetailInfo({ authorId }: Props) {
           <View style={styles.actions}>
             <Pressable style={styles.actionButton}>
               <Icon
-                name="heart"
+                name="thumbs-up"
                 size={20}
-                color={author.isLiked ? colors.primary[500] : colors.gray[400]}
+                color={author.isLiked ? colors.red[500] : colors.gray[500]}
               />
               <Text style={styles.actionText}>{author.likeCount}</Text>
             </Pressable>

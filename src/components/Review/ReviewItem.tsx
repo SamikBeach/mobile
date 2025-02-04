@@ -196,9 +196,9 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         <View style={styles.actions}>
           <Pressable style={styles.actionButton} onPress={handleLikePress}>
             <Icon
-              name="heart"
+              name="thumbs-up"
               size={16}
-              color={review.isLiked ? colors.primary[500] : colors.gray[400]}
+              color={review.isLiked ? colors.red[500] : colors.gray[400]}
             />
             <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
               {review.likeCount}
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     color: colors.gray[500],
   },
   activeActionText: {
-    color: colors.primary[500],
+    color: colors.red[500],
   },
   replySection: {
     marginTop: spacing.md,

@@ -1,6 +1,7 @@
+import { colors } from '@/styles/theme';
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Feather';
 
 interface LikeButtonProps {
   isLiked: boolean;
@@ -11,11 +12,7 @@ interface LikeButtonProps {
 export function LikeButton({ isLiked, likeCount, onPress }: LikeButtonProps) {
   return (
     <TouchableOpacity style={[styles.button, isLiked && styles.likedButton]} onPress={onPress}>
-      <Icon
-        name={isLiked ? 'heart' : 'heart-outline'}
-        size={16}
-        color={isLiked ? '#ef4444' : '#71717a'}
-      />
+      <Icon name="thumbs-up" size={16} color={isLiked ? colors.red[500] : colors.gray[500]} />
       <Text style={[styles.text, isLiked && styles.likedText]}>{likeCount}</Text>
     </TouchableOpacity>
   );

@@ -105,11 +105,11 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
             <View style={styles.stats}>
               <Pressable style={styles.statItem} onPress={handleLikePress}>
                 <Icon
-                  name={book.isLiked ? 'heart' : 'heart'}
+                  name={book.isLiked ? 'thumbs-up' : 'thumbs-up'}
                   size={14}
-                  color={book.isLiked ? colors.primary[500] : colors.gray[500]}
+                  color={book.isLiked ? colors.red[500] : colors.gray[500]}
                 />
-                <Text style={[styles.statText, book.isLiked && { color: colors.primary[500] }]}>
+                <Text style={[styles.statText, book.isLiked && { color: colors.red[500] }]}>
                   {book.likeCount}
                 </Text>
               </Pressable>

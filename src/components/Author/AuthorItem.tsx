@@ -64,9 +64,9 @@ export function AuthorItem({ author }: Props) {
           </View>
           <View style={styles.stat}>
             <Icon
-              name={author.isLiked ? 'heart' : 'heart'}
+              name={author.isLiked ? 'thumbs-up' : 'thumbs-up'}
               size={14}
-              color={author.isLiked ? colors.primary[500] : colors.gray[500]}
+              color={author.isLiked ? colors.red[500] : colors.gray[500]}
             />
             <Text style={styles.statText}>{author.likeCount}</Text>
           </View>
