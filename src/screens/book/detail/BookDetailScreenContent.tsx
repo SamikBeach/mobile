@@ -3,24 +3,24 @@ import { View, StyleSheet, FlatList, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
-import { Empty } from '@/components/common/Empty';
-import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { ReviewItem } from '@/components/review/ReviewItem';
 import { Checkbox } from '@/components/common/Checkbox';
 import type { Review } from '@/types/review';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
-import { ReviewItemSkeleton } from '@/components/common/Skeleton';
+import { BookDetailSkeleton, ReviewItemSkeleton } from '@/components/common/Skeleton';
+import { BookDetailInfo } from './BookDetailInfo';
+import { RelativeBooks } from './RelativeBooks';
 
 interface Props {
   bookId: number;
 }
 
-export function ReviewList({ bookId }: Props) {
+export function BookDetailScreenContent({ bookId }: Props) {
   const [includeOtherTranslations, setIncludeOtherTranslations] = useState(false);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
     Error
   >({
@@ -61,8 +61,14 @@ export function ReviewList({ bookId }: Props) {
     }
   };
 
-  return (
-    <View style={styles.container}>
+  if (isLoading || !book) {
+    return <BookDetailSkeleton />;
+  }
+
+  const ListHeaderComponent = (
+    <View style={styles.listHeader}>
+      <BookDetailInfo book={book} />
+      <RelativeBooks bookId={bookId} />
       <View style={styles.header}>
         <View style={styles.titleRow}>
           <View style={styles.titleSection}>
@@ -79,33 +85,26 @@ export function ReviewList({ bookId }: Props) {
           </Pressable>
         </View>
       </View>
+    </View>
+  );
 
-      {reviews.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Empty
-            icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
-            message="아직 리뷰가 없어요"
-            description="첫 번째 리뷰를 작성해보세요"
-          />
-        </View>
-      ) : (
-        <FlatList
-          data={reviews}
-          renderItem={({ item }) => (
-            <ReviewItem
-              review={item}
-              showBookInfo={includeOtherTranslations && item.book.id !== bookId}
-            />
-          )}
-          keyExtractor={item => item.id.toString()}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
-          contentContainerStyle={styles.reviewList}
+  return (
+    <FlatList
+      data={reviews}
+      renderItem={({ item }) => (
+        <ReviewItem
+          review={item}
+          showBookInfo={includeOtherTranslations && item.book.id !== bookId}
         />
       )}
-    </View>
+      ListHeaderComponent={ListHeaderComponent}
+      keyExtractor={item => item.id.toString()}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
+      contentContainerStyle={styles.reviewList}
+    />
   );
 }
 
@@ -158,9 +157,13 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
   },
   reviewList: {
-    gap: spacing.md,
+    paddingBottom: spacing.lg,
   },
   separator: {
     height: spacing.md,
+  },
+  listHeader: {
+    gap: spacing.xl,
+    padding: spacing.lg,
   },
 });
