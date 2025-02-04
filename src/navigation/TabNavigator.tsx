@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Library, User } from '@/components/icons';

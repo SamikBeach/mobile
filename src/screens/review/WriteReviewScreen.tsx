@@ -20,7 +20,6 @@ export function WriteReviewScreen({ route, navigation }: Props) {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const { data: reviewData } = useQuery({
     queryKey: ['review', reviewId],
@@ -34,29 +33,6 @@ export function WriteReviewScreen({ route, navigation }: Props) {
       setContent(reviewData.data.content);
     }
   }, [reviewData]);
-
-  useEffect(() => {
-    const hasChanges = title.trim() !== '' || content.trim() !== '';
-    setHasUnsavedChanges(hasChanges);
-
-    navigation.addListener('beforeRemove', e => {
-      if (!hasChanges) return;
-
-      e.preventDefault();
-      Alert.alert(
-        '작성 중인 내용이 있습니다',
-        '페이지를 나가면 작성 중인 내용이 모두 사라집니다. 정말 나가시겠습니까?',
-        [
-          { text: '취소', style: 'cancel', onPress: () => {} },
-          {
-            text: '나가기',
-            style: 'destructive',
-            onPress: () => navigation.dispatch(e.data.action),
-          },
-        ],
-      );
-    });
-  }, [title, content, navigation]);
 
   const { mutate: updateReview, isPending: isUpdatePending } = useMutation({
     mutationFn: () => reviewApi.updateReview(reviewId!, { title, content }),
@@ -92,6 +68,33 @@ export function WriteReviewScreen({ route, navigation }: Props) {
     },
   });
 
+  const checkUnsavedChanges = () => {
+    const hasChanges = title.trim() !== '' || content.trim() !== '';
+    if (!hasChanges) return false;
+
+    return new Promise((resolve) => {
+      Alert.alert(
+        '작성 중인 내용이 있습니다',
+        '페이지를 나가면 작성 중인 내용이 모두 사라집니다. 정말 나가시겠습니까?',
+        [
+          { text: '취소', style: 'cancel', onPress: () => resolve(false) },
+          {
+            text: '나가기',
+            style: 'destructive',
+            onPress: () => resolve(true),
+          },
+        ],
+      );
+    });
+  };
+
+  const handleCancel = async () => {
+    const shouldGoBack = await checkUnsavedChanges();
+    if (shouldGoBack) {
+      navigation.goBack();
+    }
+  };
+
   const handleSubmit = () => {
     if (!title.trim()) {
       Toast.show({ type: 'error', text1: '제목을 입력해주세요.' });
@@ -108,10 +111,6 @@ export function WriteReviewScreen({ route, navigation }: Props) {
     } else {
       createReview();
     }
-  };
-
-  const handleCancel = () => {
-    navigation.goBack();
   };
 
   return (
@@ -173,6 +172,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
     borderRadius: 8,
     color: colors.gray[900],
+    height: 48,
   },
   contentInput: {
     flex: 1,
