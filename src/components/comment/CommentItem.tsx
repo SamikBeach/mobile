@@ -91,7 +91,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 6,
-    gap: 8,
+    gap: 4,
   },
   header: {
     flexDirection: 'row',

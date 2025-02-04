@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment, ReactNode } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -13,9 +13,10 @@ import { Comment } from '@/types/review';
 interface Props {
   reviewId: number;
   onReply: (user: { nickname: string }) => void;
+  ListHeaderComponent?: ReactNode;
 }
 
-export function CommentList({ reviewId, onReply }: Props) {
+export function CommentList({ reviewId, onReply, ListHeaderComponent }: Props) {
   const { data: review } = useQuery({
     queryKey: ['review', reviewId],
     queryFn: () => reviewApi.getReviewDetail(reviewId),
@@ -54,17 +55,29 @@ export function CommentList({ reviewId, onReply }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>댓글</Text>
-        <View style={styles.countBadge}>
-          <Text style={styles.countText}>{review?.commentCount}</Text>
-        </View>
-      </View>
-
       {comments.length === 0 ? (
-        <EmptyComments />
+        <>
+          <View style={styles.header}>
+            <Text style={styles.title}>댓글</Text>
+            <View style={styles.countBadge}>
+              <Text style={styles.countText}>{review?.commentCount}</Text>
+            </View>
+          </View>
+          <EmptyComments />
+        </>
       ) : (
         <FlatList
+          ListHeaderComponent={
+            <Fragment>
+              {ListHeaderComponent}
+              <View style={styles.header}>
+                <Text style={styles.title}>댓글</Text>
+                <View style={styles.countBadge}>
+                  <Text style={styles.countText}>{review?.commentCount}</Text>
+                </View>
+              </View>
+            </Fragment>
+          }
           data={comments}
           renderItem={({ item }) => (
             <CommentItem comment={item} reviewId={reviewId} onReply={onReply} />
@@ -72,6 +85,7 @@ export function CommentList({ reviewId, onReply }: Props) {
           keyExtractor={item => item.id.toString()}
           onEndReached={() => hasNextPage && fetchNextPage()}
           onEndReachedThreshold={0.5}
+          contentContainerStyle={styles.listContent}
         />
       )}
     </View>
@@ -81,12 +95,13 @@ export function CommentList({ reviewId, onReply }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 16,
+    paddingTop: 16,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    marginBottom: 10,
   },
   title: {
     fontSize: 16,
@@ -103,5 +118,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     color: '#6B7280',
+  },
+  listContent: {
+    paddingHorizontal: 20,
   },
 });
