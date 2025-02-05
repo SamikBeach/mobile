@@ -58,10 +58,11 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
   const { mutate: toggleLike } = useMutation({
     mutationFn: () => reviewApi.toggleReviewLike(review.id),
-    onMutate: () => {
+    onMutate: async () => {
       updateReviewLikeQueryData({
         reviewId: review.id,
         bookId: review.book.id,
+        authorId: review.book.authorBooks?.[0]?.author.id,
         isOptimistic: true,
       });
     },
@@ -69,6 +70,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
       updateReviewLikeQueryData({
         reviewId: review.id,
         bookId: review.book.id,
+        authorId: review.book.authorBooks?.[0]?.author.id,
         isOptimistic: false,
         currentStatus: {
           isLiked: review.isLiked ?? false,

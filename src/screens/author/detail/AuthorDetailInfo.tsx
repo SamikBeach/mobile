@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import Toast from 'react-native-toast-message';
 
 interface Props {
   author: Author;
@@ -39,6 +40,10 @@ export function AuthorDetailInfo({ author, onReviewPress }: Props) {
           isLiked: author.isLiked,
           likeCount: author.likeCount,
         },
+      });
+      Toast.show({
+        type: 'error',
+        text1: '좋아요 처리에 실패했습니다.',
       });
     },
   });
