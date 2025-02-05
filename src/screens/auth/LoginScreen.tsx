@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
@@ -147,8 +147,15 @@ export default function LoginScreen() {
             로그인
           </Button>
 
-          <Button variant="outline" onPress={handleGoogleLogin} loading={isGoogleLoginPending}>
-            구글 계정으로 로그인
+          <Button
+            variant="outline"
+            onPress={handleGoogleLogin}
+            loading={isGoogleLoginPending}
+            style={styles.googleButtonContainer}>
+            <View style={styles.googleButton}>
+              <Image source={require('@/assets/images/google.png')} style={styles.googleIcon} />
+              <Text style={styles.googleText}>구글 계정으로 로그인</Text>
+            </View>
           </Button>
 
           <View style={styles.links}>
@@ -216,5 +223,24 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#EF4444',
     fontSize: 13,
+  },
+  googleButtonContainer: {
+    borderColor: '#E5E7EB',
+    backgroundColor: 'white',
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  googleIcon: {
+    width: 18,
+    height: 18,
+  },
+  googleText: {
+    color: '#3C4043',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
