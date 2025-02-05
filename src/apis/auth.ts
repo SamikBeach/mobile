@@ -21,8 +21,11 @@ export const authApi = {
     return response;
   },
 
-  googleLogin: async (code: string) => {
-    const response = await axios.post<AuthResponse>('/auth/login/google', { code });
+  googleLogin: async ({ code, clientType }: { code: string; clientType: 'ios' | 'android' }) => {
+    const response = await axios.post<AuthResponse>('/auth/login/google', {
+      code,
+      clientType,
+    });
     await saveAuthTokens(response.data.accessToken, response.data.refreshToken);
     return response;
   },

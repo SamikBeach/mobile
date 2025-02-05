@@ -11,7 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
 import { AxiosError } from 'axios';
 import Toast from 'react-native-toast-message';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { GOOGLE_IOS_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '@env';
 
 interface LoginFormData {
@@ -22,6 +22,7 @@ interface LoginFormData {
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT_ID,
   iosClientId: GOOGLE_IOS_CLIENT_ID,
+  forceCodeForRefreshToken: true,
 });
 
 export default function LoginScreen() {
@@ -67,6 +68,7 @@ export default function LoginScreen() {
   const { mutate: googleLogin, isPending: isGoogleLoginPending } = useMutation({
     mutationFn: authApi.googleLogin,
     onSuccess: response => {
+      console.log('Google Login Success:', response);
       setCurrentUser(response.data.user);
       Toast.show({
         type: 'success',
@@ -85,12 +87,24 @@ export default function LoginScreen() {
   const handleGoogleLogin = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const { serverAuthCode } = await GoogleSignin.signIn();
-      if (serverAuthCode) {
-        googleLogin(serverAuthCode);
+      await GoogleSignin.signOut();
+      const result = await GoogleSignin.signIn();
+      console.log('Google Sign In Result:', result);
+
+      if (result.data?.idToken) {
+        googleLogin({ code: result.data.idToken, clientType: 'ios' });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google Sign In Error:', error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('User cancelled the login flow');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('Sign in is in progress');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('Play services not available');
+      } else {
+        console.log('Some other error:', error);
+      }
     }
   };
 
