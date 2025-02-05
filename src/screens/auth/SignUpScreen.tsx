@@ -69,13 +69,29 @@ export default function SignUpScreen({ navigation }: Props) {
           회원가입
         </Button>
 
-        <View style={styles.links}>
+        <View style={[styles.links]}>
           <Text style={styles.linkText}>이미 계정이 있으신가요?</Text>
           <Button
             variant="text"
             onPress={() => navigation.navigate('Login')}
             style={styles.linkButton}>
-            <Text style={[styles.linkText, styles.linkButton]}>로그인</Text>
+            <Text style={styles.linkText}>로그인</Text>
+          </Button>
+        </View>
+
+        <View style={styles.links}>
+          <Button
+            variant="text"
+            onPress={() => navigation.navigate('Terms')}
+            style={styles.linkButton}>
+            <Text style={styles.linkText}>이용약관</Text>
+          </Button>
+          <View style={styles.divider} />
+          <Button
+            variant="text"
+            onPress={() => navigation.navigate('Privacy')}
+            style={styles.linkButton}>
+            <Text style={styles.linkText}>개인정보처리방침</Text>
           </Button>
         </View>
       </View>
@@ -104,7 +120,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
     gap: 4,
   },
   linkButton: {
@@ -115,8 +130,11 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontWeight: '400',
   },
-  linkButtonText: {
-    color: '#111827',
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: '#D1D5DB',
+    marginHorizontal: 8,
   },
   errorText: {
     color: '#EF4444',

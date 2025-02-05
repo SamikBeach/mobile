@@ -19,6 +19,8 @@ import { ResetPasswordScreen } from '@/screens/auth/ResetPasswordScreen';
 import InitiateRegistrationScreen from '@/screens/auth/InitiateRegistrationScreen';
 import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
 import RequestResetPasswordScreen from '@/screens/auth/RequestResetPasswordScreen';
+import { TermsScreen } from '@/screens/auth/TermsScreen';
+import { PrivacyScreen } from '@/screens/auth/PrivacyScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -156,6 +158,16 @@ function StackNavigator({
         options={{ headerTitle: '리뷰 작성' }}
       />
       <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerTitle: '설정' }} />
+      <Stack.Screen
+        name="Terms"
+        component={TermsScreen}
+        options={{ headerTitle: '이용약관' }}
+      />
+      <Stack.Screen
+        name="Privacy"
+        component={PrivacyScreen}
+        options={{ headerTitle: '개인정보처리방침' }}
+      />
     </Stack.Navigator>
   );
 }
