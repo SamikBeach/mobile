@@ -23,6 +23,12 @@ export function AuthorBooks({ authorId }: Props) {
     select: response => response.data,
   });
 
+  const { data: author } = useQuery({
+    queryKey: ['author', authorId],
+    queryFn: () => authorApi.getAuthorDetail(authorId),
+    select: response => response.data,
+  });
+
   if (isLoading) {
     return <AuthorBooksSkeleton />;
   }
@@ -34,7 +40,7 @@ export function AuthorBooks({ authorId }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>도서</Text>
+        <Text style={styles.title}>{author?.nameInKor.trim()}의 다른 책</Text>
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{books.length}</Text>
         </View>
