@@ -29,165 +29,119 @@ import { SearchModal } from '@/components/common/Search/SearchModal';
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export default function TabNavigator() {
-  const currentUser = useCurrentUser();
-
+export default function RootNavigator() {
   return (
-    <Tab.Navigator
+    <Stack.Navigator
       screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#666',
+        headerTitleAlign: 'center',
+        headerBackTitle: '뒤로',
       }}>
-      <Tab.Screen
-        name="HomeTab"
-        options={{
-          tabBarLabel: '홈',
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
-        }}>
-        {() => <StackNavigator initialRouteName="Home" />}
-      </Tab.Screen>
-      <Tab.Screen
-        name="BookTab"
-        options={{
-          tabBarLabel: '책',
-          tabBarIcon: ({ color, size }) => <Library size={size} color={color} />,
-        }}>
-        {() => <StackNavigator initialRouteName="BookList" />}
-      </Tab.Screen>
-      <Tab.Screen
-        name="AuthorTab"
-        options={{
-          tabBarLabel: '작가',
-          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-        }}>
-        {() => <StackNavigator initialRouteName="AuthorList" />}
-      </Tab.Screen>
-      {currentUser ? (
-        <Tab.Screen
-          name="UserTab"
-          options={{
-            tabBarLabel: '마이페이지',
-            tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-          }}>
-          {() => (
-            <StackNavigator initialRouteName="User" initialParams={{ userId: currentUser.id }} />
-          )}
-        </Tab.Screen>
-      ) : (
-        <Tab.Screen
-          name="AuthTab"
-          options={{
-            tabBarLabel: '로그인',
-            tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-          }}>
-          {() => <StackNavigator initialRouteName="Login" />}
-        </Tab.Screen>
-      )}
-    </Tab.Navigator>
+      <Stack.Screen name="Tabs" component={TabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="BookDetail"
+        component={BookDetailScreen}
+        options={{ headerTitle: '도서 상세' }}
+      />
+      <Stack.Screen
+        name="AuthorDetail"
+        component={AuthorDetailScreen}
+        options={{ headerTitle: '작가 상세' }}
+      />
+      <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
+      <Stack.Screen
+        name="WriteReview"
+        component={WriteReviewScreen}
+        options={{ headerTitle: '리뷰 작성' }}
+      />
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerTitle: '설정' }} />
+      <Stack.Screen name="Terms" component={TermsScreen} options={{ headerTitle: '이용약관' }} />
+      <Stack.Screen
+        name="Privacy"
+        component={PrivacyScreen}
+        options={{ headerTitle: '개인정보처리방침' }}
+      />
+      <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerTitle: '회원가입' }} />
+      <Stack.Screen
+        name="RequestResetPassword"
+        component={RequestResetPasswordScreen}
+        options={{ headerTitle: '비밀번호 재설정' }}
+      />
+      <Stack.Screen
+        name="ResetPassword"
+        component={ResetPasswordScreen}
+        options={{ headerTitle: '비밀번호 변경' }}
+      />
+      <Stack.Screen
+        name="InitiateRegistration"
+        component={InitiateRegistrationScreen}
+        options={{ headerTitle: '회원정보 입력' }}
+      />
+      <Stack.Screen
+        name="VerifyCode"
+        component={VerifyCodeScreen}
+        options={{ headerTitle: '이메일 인증' }}
+      />
+    </Stack.Navigator>
   );
 }
 
-function StackNavigator({
-  initialRouteName,
-  initialParams,
-}: {
-  initialRouteName: keyof RootStackParamList;
-  initialParams?: Record<string, any>;
-}) {
+function TabNavigator() {
+  const currentUser = useCurrentUser();
   const [searchVisible, setSearchVisible] = useState(false);
 
   return (
     <>
-      <Stack.Navigator
+      <Tab.Navigator
         screenOptions={{
-          headerTitleAlign: 'center',
-          headerBackTitle: '뒤로',
-        }}
-        initialRouteName={initialRouteName}>
-        <Stack.Screen
-          name="Home"
+          headerShown: false,
+          tabBarActiveTintColor: '#007AFF',
+          tabBarInactiveTintColor: '#666',
+        }}>
+        <Tab.Screen
+          name="HomeTab"
           component={HomeScreen}
           options={{
-            headerLeft: () => <Logo size="sm" />,
-            headerTitle: '',
-            headerRight: () => (
-              <TouchableOpacity onPress={() => setSearchVisible(true)}>
-                <Icon name="search" size={24} color="#000" />
-              </TouchableOpacity>
-            ),
+            tabBarLabel: '홈',
+            tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
           }}
         />
-        <Stack.Screen
-          name="BookList"
+        <Tab.Screen
+          name="BookTab"
           component={BookScreen}
-          options={{ headerTitle: '책', headerShown: false }}
+          options={{
+            tabBarLabel: '책',
+            tabBarIcon: ({ color, size }) => <Library size={size} color={color} />,
+          }}
         />
-        <Stack.Screen
-          name="AuthorList"
+        <Tab.Screen
+          name="AuthorTab"
           component={AuthorScreen}
-          options={{ headerTitle: '작가', headerShown: false }}
+          options={{
+            tabBarLabel: '작가',
+            tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+          }}
         />
-        <Stack.Screen
-          name="User"
-          component={UserScreen}
-          options={{ headerTitle: '마이페이지', headerShown: false }}
-          initialParams={initialParams}
-        />
-        <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{ headerTitle: '회원가입' }}
-        />
-        <Stack.Screen
-          name="RequestResetPassword"
-          component={RequestResetPasswordScreen}
-          options={{ headerTitle: '비밀번호 재설정' }}
-        />
-        <Stack.Screen
-          name="ResetPassword"
-          component={ResetPasswordScreen}
-          options={{ headerTitle: '비밀번호 변경' }}
-        />
-        <Stack.Screen
-          name="InitiateRegistration"
-          component={InitiateRegistrationScreen}
-          options={{ headerTitle: '회원정보 입력' }}
-        />
-        <Stack.Screen
-          name="VerifyCode"
-          component={VerifyCodeScreen}
-          options={{ headerTitle: '이메일 인증' }}
-        />
-        <Stack.Screen
-          name="BookDetail"
-          component={BookDetailScreen}
-          options={{ headerTitle: '도서 상세' }}
-        />
-        <Stack.Screen
-          name="AuthorDetail"
-          component={AuthorDetailScreen}
-          options={{ headerTitle: '작가 상세' }}
-        />
-        <Stack.Screen
-          name="WriteReview"
-          component={WriteReviewScreen}
-          options={{ headerTitle: '리뷰 작성' }}
-        />
-        <Stack.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={{ headerTitle: '설정' }}
-        />
-        <Stack.Screen name="Terms" component={TermsScreen} options={{ headerTitle: '이용약관' }} />
-        <Stack.Screen
-          name="Privacy"
-          component={PrivacyScreen}
-          options={{ headerTitle: '개인정보처리방침' }}
-        />
-      </Stack.Navigator>
+        {currentUser ? (
+          <Tab.Screen
+            name="UserTab"
+            component={UserScreen}
+            options={{
+              tabBarLabel: '마이페이지',
+              tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+            }}
+          />
+        ) : (
+          <Tab.Screen
+            name="AuthTab"
+            component={LoginScreen}
+            options={{
+              tabBarLabel: '로그인',
+              tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+            }}
+          />
+        )}
+      </Tab.Navigator>
       <SearchModal visible={searchVisible} onClose={() => setSearchVisible(false)} />
     </>
   );

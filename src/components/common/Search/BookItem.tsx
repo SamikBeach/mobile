@@ -5,8 +5,10 @@ import { colors, spacing } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation, useNavigationContainerRef } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '@/navigation/types';
+import type { RootStackParamList, TabParamList } from '@/navigation/types';
 import { Book } from '@/types/book';
+import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 interface Props {
   book: Book;
@@ -15,8 +17,13 @@ interface Props {
   searchValue?: string;
 }
 
+type BookItemNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<RootStackParamList>,
+  BottomTabNavigationProp<TabParamList>
+>;
+
 export default function BookItem({ book, onClose, onDelete, searchValue = '' }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<BookItemNavigationProp>();
 
   const handlePress = () => {
     onClose();

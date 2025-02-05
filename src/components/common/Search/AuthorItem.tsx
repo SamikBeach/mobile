@@ -7,6 +7,9 @@ import { useNavigation, useNavigationContainerRef } from '@react-navigation/nati
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { Author } from '@/types/author';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { TabParamList } from '@/navigation/types';
 
 interface Props {
   author: Author;
@@ -15,9 +18,14 @@ interface Props {
   searchValue?: string;
 }
 
+type AuthorItemNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<RootStackParamList>,
+  BottomTabNavigationProp<TabParamList>
+>;
+
 export default function AuthorItem({ author, onClose, onDelete, searchValue = '' }: Props) {
   const rootNavigation = useNavigationContainerRef();
-  const navigation = useNavigation();
+  const navigation = useNavigation<AuthorItemNavigationProp>();
 
   const handlePress = () => {
     onClose();
