@@ -68,7 +68,6 @@ export default function LoginScreen() {
   const { mutate: googleLogin, isPending: isGoogleLoginPending } = useMutation({
     mutationFn: authApi.googleLogin,
     onSuccess: response => {
-      console.log('Google Login Success:', response);
       setCurrentUser(response.data.user);
       Toast.show({
         type: 'success',
@@ -77,8 +76,6 @@ export default function LoginScreen() {
       navigation.navigate('Home');
     },
     onError: (error: any) => {
-      console.error('Google Login Error:', error);
-      console.error('Error response:', error.response?.data);
       Toast.show({
         type: 'error',
         text1: '구글 로그인에 실패했습니다.',
@@ -92,22 +89,12 @@ export default function LoginScreen() {
       await GoogleSignin.hasPlayServices();
       await GoogleSignin.signOut();
       const result = await GoogleSignin.signIn();
-      console.log('Google Sign In Result:', result);
 
       if (result.data?.idToken) {
         googleLogin({ code: result.data.idToken, clientType: 'ios' });
       }
     } catch (error: any) {
       console.error('Google Sign In Error:', error);
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('User cancelled the login flow');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('Sign in is in progress');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('Play services not available');
-      } else {
-        console.log('Some other error:', error);
-      }
     }
   };
 
