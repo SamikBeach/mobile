@@ -30,10 +30,10 @@ export default function AuthorItem({ author, onClose, onDelete, searchValue = ''
       <View style={styles.content}>
         <View>
           <Text style={styles.name} numberOfLines={1}>
-            {author.nameInKor}
+            {author.nameInKor.trim()}
           </Text>
           <Text style={styles.originalName} numberOfLines={1}>
-            {author.name}
+            {author.name.trim()}
           </Text>
         </View>
         <View style={styles.stats}>
