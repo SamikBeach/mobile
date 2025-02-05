@@ -7,7 +7,7 @@ import { DeleteAccountModal } from './components/DeleteAccountModal';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import { userApi } from '@/apis/user';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RootStackParamList } from '@/navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
@@ -16,6 +16,8 @@ export function SettingsScreen() {
   const [isChangePasswordVisible, setIsChangePasswordVisible] = useState(false);
   const [isDeleteAccountVisible, setIsDeleteAccountVisible] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const queryClient = useQueryClient();
 
   const { mutate: changePassword, isPending: isChangingPassword } = useMutation({
     mutationFn: (data: { currentPassword: string; newPassword: string }) =>
@@ -53,6 +55,23 @@ export function SettingsScreen() {
     },
   });
 
+  const { mutate: deleteProfileImage, isPending: isDeletingImage } = useMutation({
+    mutationFn: () => userApi.deleteProfileImage(),
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '프로필 이미지가 삭제되었습니다.',
+      });
+      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '프로필 이미지 삭제 중 오류가 발생했습니다.',
+      });
+    },
+  });
+
   const handleChangePassword = (data: { currentPassword: string; newPassword: string }) => {
     changePassword(data);
   };
@@ -75,11 +94,39 @@ export function SettingsScreen() {
     );
   };
 
+  const handleDeleteProfileImage = () => {
+    Alert.alert(
+      '프로필 이미지 삭제',
+      '프로필 이미지를 삭제하시겠습니까?',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => deleteProfileImage(),
+        },
+      ],
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.title}>계정 설정</Text>
         <View style={styles.cardContainer}>
+          <SettingsCard
+            icon={<Icon name="image" size={20} color={colors.gray[500]} />}
+            title="프로필 이미지"
+            description="프로필 이미지를 삭제할 수 있습니다."
+            buttonText="이미지 삭제"
+            variant="destructive"
+            onPress={handleDeleteProfileImage}
+            loading={isDeletingImage}
+          />
+
           <SettingsCard
             icon={<Icon name="key" size={20} color={colors.gray[500]} />}
             title="비밀번호 변경"

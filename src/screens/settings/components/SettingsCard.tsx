@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { colors } from '@/styles/theme';
 
 interface SettingsCardProps {
@@ -9,6 +9,7 @@ interface SettingsCardProps {
   buttonText: string;
   variant?: 'default' | 'destructive';
   onPress: () => void;
+  loading?: boolean;
 }
 
 export function SettingsCard({
@@ -18,6 +19,7 @@ export function SettingsCard({
   buttonText,
   variant = 'default',
   onPress,
+  loading,
 }: SettingsCardProps) {
   const isDestructive = variant === 'destructive';
 
@@ -32,10 +34,15 @@ export function SettingsCard({
       </Text>
       <TouchableOpacity
         style={[styles.button, isDestructive && styles.destructiveButton]}
-        onPress={onPress}>
-        <Text style={[styles.buttonText, isDestructive && styles.destructiveButtonText]}>
-          {buttonText}
-        </Text>
+        onPress={onPress}
+        disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color={colors.white} />
+        ) : (
+          <Text style={[styles.buttonText, isDestructive && styles.destructiveButtonText]}>
+            {buttonText}
+          </Text>
+        )}
       </TouchableOpacity>
     </View>
   );
