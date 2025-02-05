@@ -8,7 +8,6 @@ export type TabParamList = {
 
 export type RootStackParamList = {
   Tabs: undefined;
-  // Screens
   Home: undefined;
   BookList: undefined;
   AuthorList: undefined;
@@ -17,15 +16,15 @@ export type RootStackParamList = {
   AuthorDetail: { authorId: number };
   Review: { reviewId: number };
   WriteReview: { bookId: number; reviewId?: number };
-  // Auth screens
   Login: undefined;
   SignUp: undefined;
   RequestResetPassword: undefined;
   ResetPassword: undefined;
   InitiateRegistration: { email: string };
   VerifyCode: { email: string };
-  // Settings screens
   Settings: undefined;
   Terms: undefined;
   Privacy: undefined;
 };
+
+export type ParamList = RootStackParamList & TabParamList;

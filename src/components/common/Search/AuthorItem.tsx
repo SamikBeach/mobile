@@ -13,6 +13,7 @@ import type { TabParamList } from '@/navigation/types';
 
 interface Props {
   author: Author;
+
   onClose: () => void;
   onDelete?: () => void;
   searchValue?: string;
@@ -28,7 +29,9 @@ export default function AuthorItem({ author, onClose, onDelete }: Props) {
 
   const handlePress = () => {
     onClose();
-    navigation.navigate('AuthorDetail', { authorId: author.id });
+    navigation.navigate('AuthorDetail', {
+      authorId: author.id,
+    });
   };
 
   return (
