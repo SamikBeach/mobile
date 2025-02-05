@@ -18,6 +18,7 @@ import { SettingsScreen } from '@/screens/settings/SettingsScreen';
 import { ResetPasswordScreen } from '@/screens/auth/ResetPasswordScreen';
 import InitiateRegistrationScreen from '@/screens/auth/InitiateRegistrationScreen';
 import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
+import RequestResetPasswordScreen from '@/screens/auth/RequestResetPasswordScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -119,6 +120,11 @@ function StackNavigator({
       <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerTitle: '회원가입' }} />
+      <Stack.Screen
+        name="RequestResetPassword"
+        component={RequestResetPasswordScreen}
+        options={{ headerTitle: '비밀번호 재설정' }}
+      />
       <Stack.Screen
         name="ResetPassword"
         component={ResetPasswordScreen}

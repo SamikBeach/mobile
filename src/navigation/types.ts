@@ -12,10 +12,11 @@ export type RootStackParamList = {
   AuthorList: undefined;
   Review: { reviewId: number };
   Login: undefined;
-  SignUp: undefined;
-  ResetPassword: undefined;
   InitiateRegistration: { email: string };
   VerifyCode: { email: string };
+  SignUp: undefined;
+  RequestResetPassword: undefined;
+  ResetPassword: undefined;
   User: { userId: number };
   BookDetail: { bookId: number };
   AuthorDetail: { authorId: number };

@@ -109,7 +109,7 @@ export default function LoginScreen() {
           <View style={styles.links}>
             <Button
               variant="text"
-              onPress={() => navigation.navigate('ResetPassword')}
+              onPress={() => navigation.navigate('RequestResetPassword')}
               style={styles.linkButton}>
               <Text style={styles.linkText}>비밀번호를 잊으셨나요?</Text>
             </Button>
