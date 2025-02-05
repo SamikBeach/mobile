@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -74,6 +74,12 @@ export function BookDetailScreenContent({ bookId }: Props) {
     });
   };
 
+  useEffect(() => {
+    if (!isLoading && flatListRef.current) {
+      flatListRef.current.scrollToOffset({ offset: 0, animated: false });
+    }
+  }, [isLoading]);
+
   if (isLoading || !book) {
     return <BookDetailSkeleton />;
   }
@@ -132,9 +138,6 @@ export function BookDetailScreenContent({ bookId }: Props) {
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
       contentContainerStyle={styles.reviewList}
-      maintainVisibleContentPosition={{
-        minIndexForVisible: 0,
-      }}
     />
   );
 }
