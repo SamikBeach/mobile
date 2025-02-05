@@ -58,14 +58,14 @@ export function ReviewList({ userId }: Props) {
           <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
         ) : null
       }
+      style={styles.list}
     />
   );
 }
 
 const styles = StyleSheet.create({
   list: {
-    padding: spacing.lg,
-    gap: spacing.md,
+    gap: spacing.xl,
   },
   spinner: {
     marginVertical: spacing.lg,

@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   header: {
     gap: spacing.xs,
@@ -300,9 +300,7 @@ const styles = StyleSheet.create({
     color: colors.primary[500],
     marginTop: spacing.xs,
   },
-  footer: {
-    marginTop: spacing.xs,
-  },
+  footer: {},
   actions: {
     flexDirection: 'row',
     gap: spacing.md,
