@@ -98,12 +98,10 @@ export function UserInfo({ userId, rightElement }: UserInfoProps) {
   };
 
   const handleImagePress = () => {
-    if (isUploading || isDeleting) return;
+    if (!isMyProfile || isUploading || isDeleting) return;
 
-    Alert.alert(
-      '프로필 이미지',
-      '프로필 이미지를 변경하거나 삭제할 수 있습니다.',
-      [
+    if (user?.imageUrl) {
+      Alert.alert('프로필 이미지', '프로필 이미지를 변경하거나 삭제할 수 있습니다.', [
         {
           text: '취소',
           style: 'cancel',
@@ -117,24 +115,29 @@ export function UserInfo({ userId, rightElement }: UserInfoProps) {
           text: '변경',
           onPress: handleImagePick,
         },
-      ],
-    );
+      ]);
+    } else {
+      Alert.alert('프로필 이미지', '프로필 이미지를 추가하시겠습니까?', [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '이미지 선택',
+          onPress: handleImagePick,
+        },
+      ]);
+    }
   };
 
   if (!user) return null;
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        {rightElement}
-      </View>
+      <View style={styles.header}>{rightElement}</View>
       <View style={styles.profileSection}>
         <TouchableOpacity onPress={isMyProfile ? handleImagePress : undefined}>
-          <Avatar
-            uri={user.imageUrl}
-            size={120}
-            loading={isUploading || isDeleting}
-          />
+          <Avatar uri={user.imageUrl} size={120} loading={isUploading || isDeleting} />
         </TouchableOpacity>
         <View style={styles.userInfo}>
           <Text style={styles.nickname}>{user.nickname}</Text>
