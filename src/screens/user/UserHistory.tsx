@@ -26,30 +26,25 @@ export function UserHistory({ userId }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.stats}>
+      <View style={styles.tabs}>
         <Pressable
-          style={[styles.statItem, activeSection === 'review' && styles.activeStatItem]}
+          style={[styles.tab, activeSection === 'review' && styles.activeTab]}
           onPress={() => setActiveSection('review')}>
-          <Text style={styles.statValue}>0</Text>
-          <Text style={[styles.statLabel, activeSection === 'review' && styles.activeStatLabel]}>
+          <Text style={[styles.tabText, activeSection === 'review' && styles.activeTabText]}>
             리뷰
           </Text>
         </Pressable>
-        <View style={styles.statDivider} />
         <Pressable
-          style={[styles.statItem, activeSection === 'books' && styles.activeStatItem]}
+          style={[styles.tab, activeSection === 'books' && styles.activeTab]}
           onPress={() => setActiveSection('books')}>
-          <Text style={styles.statValue}>0</Text>
-          <Text style={[styles.statLabel, activeSection === 'books' && styles.activeStatLabel]}>
+          <Text style={[styles.tabText, activeSection === 'books' && styles.activeTabText]}>
             좋아요한 책
           </Text>
         </Pressable>
-        <View style={styles.statDivider} />
         <Pressable
-          style={[styles.statItem, activeSection === 'authors' && styles.activeStatItem]}
+          style={[styles.tab, activeSection === 'authors' && styles.activeTab]}
           onPress={() => setActiveSection('authors')}>
-          <Text style={styles.statValue}>0</Text>
-          <Text style={[styles.statLabel, activeSection === 'authors' && styles.activeStatLabel]}>
+          <Text style={[styles.tabText, activeSection === 'authors' && styles.activeTabText]}>
             좋아요한 작가
           </Text>
         </Pressable>
@@ -63,41 +58,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  stats: {
+  tabs: {
     flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: colors.gray[50],
     borderRadius: 12,
     padding: spacing.sm,
     marginHorizontal: spacing.lg,
   },
-  statItem: {
+  tab: {
     flex: 1,
     alignItems: 'center',
-    gap: spacing.xs,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
     borderRadius: 8,
   },
-  activeStatItem: {
+  activeTab: {
     backgroundColor: colors.white,
     ...shadows.sm,
   },
-  statDivider: {
-    width: 1,
-    height: '60%',
-    backgroundColor: colors.gray[200],
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.gray[900],
-  },
-  statLabel: {
-    fontSize: 13,
+  tabText: {
+    fontSize: 14,
     color: colors.gray[600],
     fontWeight: '400',
   },
-  activeStatLabel: {
+  activeTabText: {
     color: colors.gray[900],
     fontWeight: '500',
   },
