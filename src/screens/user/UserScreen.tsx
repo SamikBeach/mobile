@@ -23,7 +23,7 @@ import { useSetAtom } from 'jotai';
 
 export function UserScreen() {
   const route = useRoute<RouteProp<TabParamList, 'UserTab'>>();
-  const { userId } = route.params;
+  const userId = route.params?.userId;
   const currentUser = useCurrentUser();
   const setCurrentUser = useSetAtom(currentUserAtom);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

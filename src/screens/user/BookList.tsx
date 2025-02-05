@@ -44,7 +44,7 @@ export function BookList({ userId }: Props) {
   return (
     <FlatList
       data={books}
-      renderItem={({ item }) => <BookItem book={item.book} showPublisher showPublicationDate />}
+      renderItem={({ item }) => <BookItem book={item.book} />}
       keyExtractor={item => String(item.book.id)}
       contentContainerStyle={styles.list}
       horizontal={false}

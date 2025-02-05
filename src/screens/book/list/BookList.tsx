@@ -12,7 +12,7 @@ import { GENRE_IDS } from '@/constants/genre';
 import type { Book } from '@/types/book';
 import { BookListSkeleton } from '@/components/common/Skeleton/BookListSkeleton';
 import { spacing } from '@/styles/theme';
-import { BookItem } from './BookItem';
+import { BookItem } from '@/components/book/BookItem';
 
 interface PaginationMeta {
   currentPage: number;
