@@ -1,5 +1,3 @@
-import type { NavigatorScreenParams } from '@react-navigation/native';
-
 export type TabParamList = {
   HomeTab: undefined;
   BookTab: undefined;
