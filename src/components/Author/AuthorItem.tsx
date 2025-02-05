@@ -33,10 +33,9 @@ export function AuthorItem({ author }: Props) {
   };
 
   return (
-    <Pressable 
-      style={({ pressed }) => [styles.container, pressed && { opacity: 0.8 }]} 
-      onPress={handlePress}
-    >
+    <Pressable
+      style={({ pressed }) => [styles.container, pressed && { opacity: 0.8 }]}
+      onPress={handlePress}>
       <View style={styles.imageWrapper}>
         {author.imageUrl ? (
           <Image source={{ uri: author.imageUrl }} style={styles.image} />
