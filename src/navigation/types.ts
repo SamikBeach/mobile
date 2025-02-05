@@ -18,8 +18,7 @@ export type RootStackParamList = {
   WriteReview: { bookId: number; reviewId?: number };
   Login: undefined;
   SignUp: undefined;
-  RequestResetPassword: undefined;
-  ResetPassword: undefined;
+  ResetPasswordRequest: undefined;
   InitiateRegistration: { email: string };
   VerifyCode: { email: string };
   Settings: undefined;

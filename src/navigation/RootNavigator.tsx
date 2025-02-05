@@ -15,10 +15,8 @@ import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
 import { AuthorDetailScreen } from '@/screens/author/AuthorDetailScreen';
 import { WriteReviewScreen } from '@/screens/review/WriteReviewScreen';
 import { SettingsScreen } from '@/screens/settings/SettingsScreen';
-import { ResetPasswordScreen } from '@/screens/auth/ResetPasswordScreen';
 import InitiateRegistrationScreen from '@/screens/auth/InitiateRegistrationScreen';
 import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
-import RequestResetPasswordScreen from '@/screens/auth/RequestResetPasswordScreen';
 import { TermsScreen } from '@/screens/auth/TermsScreen';
 import { PrivacyScreen } from '@/screens/auth/PrivacyScreen';
 import { Logo } from '@/components/common/Logo';
@@ -26,6 +24,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
 import { SearchModal } from '@/components/common/Search/SearchModal';
 import { NavigationContainer } from '@react-navigation/native';
+import { ResetPasswordRequestScreen } from '@/screens/auth/reset-password/ResetPasswordRequestScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -168,14 +167,9 @@ function StackNavigator({
           options={{ headerTitle: '회원가입' }}
         />
         <Stack.Screen
-          name="RequestResetPassword"
-          component={RequestResetPasswordScreen}
+          name="ResetPasswordRequest"
+          component={ResetPasswordRequestScreen}
           options={{ headerTitle: '비밀번호 재설정' }}
-        />
-        <Stack.Screen
-          name="ResetPassword"
-          component={ResetPasswordScreen}
-          options={{ headerTitle: '비밀번호 변경' }}
         />
         <Stack.Screen
           name="InitiateRegistration"
