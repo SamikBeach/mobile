@@ -1,39 +1,45 @@
-import React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { BookItem } from '@/components/book/BookItem';
 import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';
-import { spacing } from '@/styles/theme';
+import { spacing, colors } from '@/styles/theme';
+import type { Book } from '@/types/book';
+import { PaginatedResponse } from '@/types/common';
+import { AxiosResponse } from 'axios';
 
 interface Props {
   userId: number;
 }
 
-const LIMIT = 10;
-
 export function BookList({ userId }: Props) {
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ['user', userId, 'likedBooks'],
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
+    AxiosResponse<PaginatedResponse<{ book: Book }>>,
+    Error
+  >({
+    queryKey: ['user-liked-books', userId],
     queryFn: ({ pageParam = 1 }) =>
-      userApi.getUserLikedBooks(userId, { page: pageParam, limit: LIMIT }),
-    getNextPageParam: lastPage => {
-      const totalPages = Math.ceil(lastPage.data.meta.totalItems / LIMIT);
-      const nextPage = lastPage.data.meta.currentPage + 1;
-      return nextPage <= totalPages ? nextPage : undefined;
-    },
+      userApi.getUserLikedBooks(userId, {
+        page: pageParam as number,
+        limit: 20,
+      }),
     initialPageParam: 1,
+    getNextPageParam: param => {
+      const nextParam = param.data.links.next;
+      const query = nextParam?.split('?')[1];
+      const pageParam = query
+        ?.split('&')
+        .find(q => q.startsWith('page'))
+        ?.split('=')[1];
+
+      return pageParam;
+    },
   });
 
-  const books = data?.pages.flatMap(page => page.data.data) ?? [];
+  const books = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);
 
   if (!books.length) return <Empty message="좋아요한 책이 없습니다" />;
-
-  const handleEndReached = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
 
   return (
     <FlatList
@@ -44,8 +50,17 @@ export function BookList({ userId }: Props) {
       horizontal={false}
       numColumns={2}
       columnWrapperStyle={styles.row}
-      onEndReached={handleEndReached}
+      onEndReached={() => {
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }}
       onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
+        ) : null
+      }
     />
   );
 }
@@ -57,5 +72,8 @@ const styles = StyleSheet.create({
   row: {
     justifyContent: 'space-between',
     marginBottom: spacing.lg,
+  },
+  spinner: {
+    marginVertical: spacing.lg,
   },
 });
