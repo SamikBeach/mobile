@@ -76,10 +76,13 @@ export default function LoginScreen() {
       });
       navigation.navigate('Home');
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Google Login Error:', error);
+      console.error('Error response:', error.response?.data);
       Toast.show({
         type: 'error',
         text1: '구글 로그인에 실패했습니다.',
+        text2: error.response?.data?.message || '알 수 없는 오류가 발생했습니다.',
       });
     },
   });

@@ -46,7 +46,8 @@ export const authApi = {
     return response;
   },
 
-  refresh: () => axios.post<AuthResponse>('/auth/refresh'),
+  refresh: ({ refreshToken }: { refreshToken: string }) =>
+    axios.post<AuthResponse>('/auth/refresh', { refreshToken }),
 
   sendPasswordResetEmail: (email: string) =>
     axios.post<{ message: string }>('/auth/password/reset-request', { email }),

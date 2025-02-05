@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { ERROR_CODES } from '@/constants/error-codes';
 import { storage } from './storage';
-import { AuthResponse } from '@/types/auth';
+import { authApi } from '@/apis/auth';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3001/api/v2',
+  baseURL: process.env.API_URL,
   params: {
     encode: true,
   },
@@ -25,13 +25,12 @@ const refreshAccessToken = async () => {
   try {
     // 리프레시 토큰 가져오기
     const refreshToken = await storage.getRefreshToken();
+
     if (!refreshToken) {
       throw new Error('No refresh token');
     }
 
-    const response = await instance.post<AuthResponse>('/auth/refresh', {
-      refreshToken,
-    });
+    const response = await authApi.refresh({ refreshToken });
 
     const { accessToken, refreshToken: newRefreshToken } = response.data;
 
