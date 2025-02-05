@@ -20,4 +20,5 @@ export type RootStackParamList = {
   BookDetail: { bookId: number };
   AuthorDetail: { authorId: number };
   WriteReview: { bookId: number; reviewId?: number };
+  Settings: undefined;
 };

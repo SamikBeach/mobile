@@ -17,6 +17,7 @@ import SignUpScreen from '@/screens/auth/SignUpScreen';
 import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
 import { AuthorDetailScreen } from '@/screens/author/AuthorDetailScreen';
 import { WriteReviewScreen } from '@/screens/review/WriteReviewScreen';
+import { SettingsScreen } from '@/screens/settings/SettingsScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -129,6 +130,7 @@ function StackNavigator({
         component={WriteReviewScreen}
         options={{ headerTitle: '리뷰 작성' }}
       />
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerTitle: '설정' }} />
     </Stack.Navigator>
   );
 }
