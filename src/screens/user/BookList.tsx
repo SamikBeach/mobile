@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, FlatList, View } from 'react-native';
 import { BookItem } from '@/components/book/BookItem';
 import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';
-import { spacing, colors } from '@/styles/theme';
+import { spacing } from '@/styles/theme';
+import { BookListSkeleton } from '@/components/common/Skeleton/BookListSkeleton';
 import type { Book } from '@/types/book';
 import { PaginatedResponse } from '@/types/common';
 import { AxiosResponse } from 'axios';
@@ -14,7 +15,7 @@ interface Props {
 }
 
 export function BookList({ userId }: Props) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<{ book: Book }>>,
     Error
   >({
@@ -39,6 +40,10 @@ export function BookList({ userId }: Props) {
 
   const books = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);
 
+  if (isLoading) {
+    return <BookListSkeleton />;
+  }
+
   if (!books.length) return <Empty message="좋아요한 책이 없습니다" />;
 
   return (
@@ -47,20 +52,14 @@ export function BookList({ userId }: Props) {
       renderItem={({ item }) => <BookItem book={item.book} />}
       keyExtractor={item => String(item.book.id)}
       contentContainerStyle={styles.list}
-      horizontal={false}
-      numColumns={2}
-      columnWrapperStyle={styles.row}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
       onEndReached={() => {
         if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       }}
       onEndReachedThreshold={0.5}
-      ListFooterComponent={
-        isFetchingNextPage ? (
-          <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
-        ) : null
-      }
+      ListFooterComponent={isFetchingNextPage ? <BookListSkeleton /> : null}
     />
   );
 }
@@ -69,11 +68,7 @@ const styles = StyleSheet.create({
   list: {
     padding: spacing.lg,
   },
-  row: {
-    justifyContent: 'space-between',
-    marginBottom: spacing.lg,
-  },
-  spinner: {
-    marginVertical: spacing.lg,
+  separator: {
+    height: spacing.md,
   },
 });
