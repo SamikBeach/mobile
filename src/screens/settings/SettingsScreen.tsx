@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import { colors } from '@/styles/theme';
 import { SettingsCard } from './components/SettingsCard';
 import { ChangePasswordModal } from './components/ChangePasswordModal';
@@ -10,6 +10,7 @@ import { userApi } from '@/apis/user';
 import { useMutation } from '@tanstack/react-query';
 import { RootStackParamList } from '@/navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Toast from 'react-native-toast-message';
 
 export function SettingsScreen() {
   const [isChangePasswordVisible, setIsChangePasswordVisible] = useState(false);
@@ -20,14 +21,35 @@ export function SettingsScreen() {
     mutationFn: (data: { currentPassword: string; newPassword: string }) =>
       userApi.changePassword(data),
     onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '비밀번호가 변경되었습니다.',
+      });
       setIsChangePasswordVisible(false);
+      navigation.goBack();
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '비밀번호 변경 중 오류가 발생했습니다.',
+      });
     },
   });
 
   const { mutate: deleteAccount, isPending: isDeletingAccount } = useMutation({
     mutationFn: () => userApi.deleteAccount(),
     onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '계정이 삭제되었습니다.',
+      });
       navigation.navigate('Home');
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '계정 삭제 중 오류가 발생했습니다.',
+      });
     },
   });
 
@@ -36,7 +58,21 @@ export function SettingsScreen() {
   };
 
   const handleDeleteAccount = () => {
-    deleteAccount();
+    Alert.alert(
+      '계정 삭제',
+      '정말 계정을 삭제하시겠습니까?\n삭제된 계정은 복구할 수 없습니다.',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => deleteAccount(),
+        },
+      ],
+    );
   };
 
   return (

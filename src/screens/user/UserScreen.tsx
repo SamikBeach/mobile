@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActionSheetIOS,
   SectionList,
+  Alert,
 } from 'react-native';
 import { colors } from '@/styles/theme';
 import { UserInfo } from './UserInfo';
@@ -17,6 +18,7 @@ import { RootStackParamList } from '@/navigation/types';
 import Icon from 'react-native-vector-icons/Feather';
 import { authApi } from '@/apis/auth';
 import { useMutation } from '@tanstack/react-query';
+import Toast from 'react-native-toast-message';
 
 export function UserScreen() {
   const route = useRoute<RouteProp<TabParamList, 'UserTab'>>();
@@ -27,7 +29,17 @@ export function UserScreen() {
   const { mutate: logout } = useMutation({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '로그아웃 되었습니다.',
+      });
       navigation.navigate('Home');
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '로그아웃 중 오류가 발생했습니다.',
+      });
     },
   });
 
@@ -52,7 +64,17 @@ export function UserScreen() {
             navigation.navigate('Settings');
             break;
           case 2:
-            logout();
+            Alert.alert('로그아웃', '정말 로그아웃 하시겠습니까?', [
+              {
+                text: '취소',
+                style: 'cancel',
+              },
+              {
+                text: '로그아웃',
+                style: 'destructive',
+                onPress: () => logout(),
+              },
+            ]);
             break;
         }
       },
