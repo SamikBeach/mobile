@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, TouchableOpacity, ActionSheetIOS } from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  ActionSheetIOS,
+  SectionList,
+} from 'react-native';
 import { colors } from '@/styles/theme';
 import { UserInfo } from './UserInfo';
 import { UserHistory } from './UserHistory';
@@ -53,21 +59,45 @@ export function UserScreen() {
     );
   };
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+  const sections = [
+    {
+      type: 'header',
+      data: [{ userId: targetUserId, isMyProfile }],
+    },
+    {
+      type: 'content',
+      data: [{ userId: targetUserId }],
+    },
+  ];
+
+  const renderItem = ({ item, section }: any) => {
+    if (section.type === 'header') {
+      return (
         <UserInfo
-          userId={targetUserId}
+          userId={item.userId}
           rightElement={
-            isMyProfile && (
+            item.isMyProfile && (
               <TouchableOpacity onPress={handleShowMenu}>
                 <Icon name="settings" size={24} color={colors.gray[600]} />
               </TouchableOpacity>
             )
           }
         />
-        <UserHistory userId={targetUserId} />
-      </View>
+      );
+    }
+    return <UserHistory userId={item.userId} />;
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <SectionList
+        sections={sections}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        renderSectionHeader={() => null}
+        stickySectionHeadersEnabled={false}
+        contentContainerStyle={styles.container}
+      />
     </SafeAreaView>
   );
 }
@@ -78,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: colors.white,
   },
 });
