@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Library, User } from '@/components/icons';
@@ -23,7 +24,7 @@ import { TermsScreen } from '@/screens/auth/TermsScreen';
 import { PrivacyScreen } from '@/screens/auth/PrivacyScreen';
 import { Logo } from '@/components/common/Logo';
 import Icon from 'react-native-vector-icons/Feather';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { SearchModal } from '@/components/common/Search/SearchModal';
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -102,8 +103,22 @@ function TabNavigator() {
           name="HomeTab"
           component={HomeScreen}
           options={{
+            headerShown: true,
             tabBarLabel: '홈',
             tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+            headerLeft: () => (
+              <View style={{ paddingLeft: 20 }}>
+                <Logo size="sm" />
+              </View>
+            ),
+            headerTitle: '',
+            headerRight: () => (
+              <View style={{ paddingRight: 20 }}>
+                <TouchableOpacity onPress={() => setSearchVisible(true)}>
+                  <Icon name="search" size={24} color="#000" />
+                </TouchableOpacity>
+              </View>
+            ),
           }}
         />
         <Tab.Screen

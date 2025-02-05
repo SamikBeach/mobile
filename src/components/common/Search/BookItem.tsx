@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Text } from '@/components/common';
 import { colors, spacing } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation, useNavigationContainerRef } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList, TabParamList } from '@/navigation/types';
 import { Book } from '@/types/book';
@@ -22,7 +22,7 @@ type BookItemNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList>
 >;
 
-export default function BookItem({ book, onClose, onDelete, searchValue = '' }: Props) {
+export default function BookItem({ book, onClose, onDelete }: Props) {
   const navigation = useNavigation<BookItemNavigationProp>();
 
   const handlePress = () => {
