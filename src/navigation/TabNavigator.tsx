@@ -21,6 +21,9 @@ import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
 import RequestResetPasswordScreen from '@/screens/auth/RequestResetPasswordScreen';
 import { TermsScreen } from '@/screens/auth/TermsScreen';
 import { PrivacyScreen } from '@/screens/auth/PrivacyScreen';
+import { Logo } from '@/components/common/Logo';
+import Icon from 'react-native-vector-icons/Feather';
+import { TouchableOpacity } from 'react-native';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -101,7 +104,15 @@ function StackNavigator({
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerTitle: '홈', headerShown: false }}
+        options={{
+          headerLeft: () => <Logo size="sm" />,
+          headerTitle: '',
+          headerRight: () => (
+            <TouchableOpacity>
+              <Icon name="search" size={24} color="#000" />
+            </TouchableOpacity>
+          ),
+        }}
       />
       <Stack.Screen
         name="BookList"
@@ -158,11 +169,7 @@ function StackNavigator({
         options={{ headerTitle: '리뷰 작성' }}
       />
       <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerTitle: '설정' }} />
-      <Stack.Screen
-        name="Terms"
-        component={TermsScreen}
-        options={{ headerTitle: '이용약관' }}
-      />
+      <Stack.Screen name="Terms" component={TermsScreen} options={{ headerTitle: '이용약관' }} />
       <Stack.Screen
         name="Privacy"
         component={PrivacyScreen}
