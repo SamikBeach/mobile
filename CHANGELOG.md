@@ -1,5 +1,56 @@
 # 🚦 CHANGELOG
 
+# [1.3.0](https://github.com/SamikBeach/mobile/compare/1.2.0...1.3.0) (2025-02-05)
+
+
+### Bug Fixes
+
+* BookDetailInfo 리뷰 작성 버튼 개선 ([2fa12e2](https://github.com/SamikBeach/mobile/commit/2fa12e2707c7aacdfb9f89dad8af7989b6c02c60))
+* fix lint ([6e2c4cc](https://github.com/SamikBeach/mobile/commit/6e2c4cc0839b535dba2fd61456bf298d390b5f46))
+* fix styles ([1c78ffa](https://github.com/SamikBeach/mobile/commit/1c78ffa8c270b1e2fe06c52f9ce5c9481d7ad456))
+* handleCancel 함수 메모이제이션 추가 ([e01542f](https://github.com/SamikBeach/mobile/commit/e01542f8cfc1c354cb824ad5a47258527ef5eb4e))
+* Header 스타일 수정 ([7b1034f](https://github.com/SamikBeach/mobile/commit/7b1034ff94255499ad7868ee55c0958b9d9d09c4))
+* LoginScreen 레이아웃 개선 ([447dff8](https://github.com/SamikBeach/mobile/commit/447dff8eccadc57e7d7725bc91659df338a1c59a))
+* ReviewItem 수정 버튼 네비게이션 추가 ([6e12726](https://github.com/SamikBeach/mobile/commit/6e12726ee595cf91347ea888bc3045823d444cf4))
+* RootNavigator 수정 ([c2efe59](https://github.com/SamikBeach/mobile/commit/c2efe59ca6a9a05a648243946a2d83d69fe3ed1b))
+* UI 레이아웃 개선 ([6c38cb2](https://github.com/SamikBeach/mobile/commit/6c38cb2bc4711376fee5ef1253203ffde5e4fa0f))
+* UserInfo 컴포넌트에서 중복된 설정 아이콘 제거 ([1b4cb60](https://github.com/SamikBeach/mobile/commit/1b4cb6047124b740d769a555c7b49d426ff70170))
+* WriteReviewScreen Lexical 형식 지원 추가 ([480e600](https://github.com/SamikBeach/mobile/commit/480e600831ad41191024193cb63616cd50e535d6))
+* WriteReviewScreen 버튼 스타일 및 동작 개선 ([a4a7845](https://github.com/SamikBeach/mobile/commit/a4a7845430e0a0f48e573c2446ced8656a2fd4aa))
+* WriteReviewScreen 변경사항 체크 로직 개선 ([2b77c79](https://github.com/SamikBeach/mobile/commit/2b77c795a23246eefd76c60094de7425a35a6cac))
+* 내비게이터 구조 변경 ([963be1a](https://github.com/SamikBeach/mobile/commit/963be1ac93f05043875925f22a973591469a8a7f))
+* 네비게이션 구조 수정 ([71763ac](https://github.com/SamikBeach/mobile/commit/71763ac8310932db3789aeffb5fb745a6ea4c23c))
+* 따봉 아이콘 컬러 수정 ([a02e3cc](https://github.com/SamikBeach/mobile/commit/a02e3cc44e2a4b461cadd4db9d0bab413c17c60a))
+* 리뷰 아이템 간 간격 조정 ([b248dee](https://github.com/SamikBeach/mobile/commit/b248dee5f61ec9d16a41dfb8d5f2dd36355229de))
+* 리스트 컴포넌트 여백 조정 ([2eec313](https://github.com/SamikBeach/mobile/commit/2eec31366b7a022d9b9d73e204ab5219c2a9c7a2))
+* 문구 수정 ([d356793](https://github.com/SamikBeach/mobile/commit/d3567930b9fef3f05490a608e47bc799f1b18dbe))
+* 스타일 수정 ([81c6453](https://github.com/SamikBeach/mobile/commit/81c64538fb8d3a6dc2f3336cf75e7f2cdd505a3a))
+* 작가 좋아요 토글 시 undefined 객체 접근 오류 수정 ([6007bd9](https://github.com/SamikBeach/mobile/commit/6007bd9a9c88b2a9b74d2990b5f2b110840e7d45))
+* 좋아요 토글 기능 수정 ([b043cc2](https://github.com/SamikBeach/mobile/commit/b043cc2d522b063777b07e4e68a3bb993a03a033))
+* 탭 네비게이션 구조 개선 ([31ff096](https://github.com/SamikBeach/mobile/commit/31ff096e20afc9724ef588c8925ef21c430d3e44))
+* 프로필 이미지 관리 메뉴 개선 ([b90d846](https://github.com/SamikBeach/mobile/commit/b90d846dae96866a3ef66892fc4a1877d754ddde))
+
+
+### Features
+
+* **auth:** iOS 구글 로그인 설정 변경 및 로직 수정 ([e91dc14](https://github.com/SamikBeach/mobile/commit/e91dc149a1d48c2794a4ba4f0e3d0c8c81b299cd))
+* AuthorDetailSkeleton 컴포넌트 구현 ([03b6534](https://github.com/SamikBeach/mobile/commit/03b6534f4bbf40d275ae5087ef4dfc5fcb5f0ac5))
+* AuthorItem 컴포넌트 디자인 개선 및 통계 정보 추가 ([a6bdadf](https://github.com/SamikBeach/mobile/commit/a6bdadfb7820c4dc2058d154827036c172d65dda))
+* EraSelect 컴포넌트 UI/UX 개선 및 API 연동 최적화 ([81fcfaf](https://github.com/SamikBeach/mobile/commit/81fcfaf0185b4c642b810ca7f23c1243b59e054f))
+* useAuthorQueryData 훅 구현 ([0d28069](https://github.com/SamikBeach/mobile/commit/0d2806939ca342f1eb1557f7681989b86be00c10))
+* UserScreen에 메뉴 추가 ([c00212a](https://github.com/SamikBeach/mobile/commit/c00212aae00994b28de002f524c92c340a0b1f6e))
+* withTabNavigator 추가 ([97d39ff](https://github.com/SamikBeach/mobile/commit/97d39fff16401377b9efeeea8e96e5d1e5613f2e))
+* 검색 구현 ([9eea4f7](https://github.com/SamikBeach/mobile/commit/9eea4f78b794b9d9132ff4a86129b8365abc39b4))
+* 계정 관련 작업 시 토스트 메시지 추가 ([20663f8](https://github.com/SamikBeach/mobile/commit/20663f823d927cce2b4bf9210479adf138c4979c))
+* 구글 로그인 추가 ([84f0e16](https://github.com/SamikBeach/mobile/commit/84f0e1621a5bd3afdc6e6a40c6a01c09afd4956d))
+* 리뷰 작성 화면 추가 ([aaf9815](https://github.com/SamikBeach/mobile/commit/aaf9815bf9574cb00a4141b16571280b2bf60f3d))
+* 비밀번호 재설정 요청 화면 추가 ([80a15e9](https://github.com/SamikBeach/mobile/commit/80a15e9981cb52ca8bb33623328fc2320348ea92))
+* 사용자 프로필 리스트 무한 스크롤 구현 ([6f4de73](https://github.com/SamikBeach/mobile/commit/6f4de738c1d606d8f1b16bd4a8c580589a1092dc))
+* 이메일 인증 후 자동 로그인 추가 ([5b132ad](https://github.com/SamikBeach/mobile/commit/5b132adb367af6390098085a49bd3294ce25b8b8))
+* 이용약관과 개인정보처리방침 화면 추가 ([457ae2e](https://github.com/SamikBeach/mobile/commit/457ae2e902430288bd61057da0976d8cbfb3ae8b))
+* 프로필 이미지 업로드/삭제 기능 추가 ([36b20a2](https://github.com/SamikBeach/mobile/commit/36b20a20b05b90e5dcac60fce799a5f01efffcfc))
+* 프로필 이미지 업로드/삭제 기능 추가 ([f8664ec](https://github.com/SamikBeach/mobile/commit/f8664ec05459d888bcd7e7bfaa5a42a6ba31d2ae))
+
 # [1.2.0](https://github.com/SamikBeach/mobile/compare/1.1.0...1.2.0) (2025-02-04)
 
 
