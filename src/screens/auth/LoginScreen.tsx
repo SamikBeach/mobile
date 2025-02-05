@@ -11,11 +11,18 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
 import { AxiosError } from 'axios';
 import Toast from 'react-native-toast-message';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GOOGLE_IOS_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '@env';
 
 interface LoginFormData {
   email: string;
   password: string;
 }
+
+GoogleSignin.configure({
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+  iosClientId: GOOGLE_IOS_CLIENT_ID,
+});
 
 export default function LoginScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -56,6 +63,36 @@ export default function LoginScreen() {
       }
     },
   });
+
+  const { mutate: googleLogin, isPending: isGoogleLoginPending } = useMutation({
+    mutationFn: authApi.googleLogin,
+    onSuccess: response => {
+      setCurrentUser(response.data.user);
+      Toast.show({
+        type: 'success',
+        text1: '구글 계정으로 로그인되었습니다.',
+      });
+      navigation.navigate('Home');
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '구글 로그인에 실패했습니다.',
+      });
+    },
+  });
+
+  const handleGoogleLogin = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const { serverAuthCode } = await GoogleSignin.signIn();
+      if (serverAuthCode) {
+        googleLogin(serverAuthCode);
+      }
+    } catch (error) {
+      console.error('Google Sign In Error:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -104,6 +141,10 @@ export default function LoginScreen() {
 
           <Button onPress={handleSubmit(data => login(data))} loading={isPending}>
             로그인
+          </Button>
+
+          <Button variant="outline" onPress={handleGoogleLogin} loading={isGoogleLoginPending}>
+            구글 계정으로 로그인
           </Button>
 
           <View style={styles.links}>

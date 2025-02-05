@@ -33,3 +33,5 @@ target 'mobile' do
     )
   end
 end
+
+pod 'GoogleSignIn'
