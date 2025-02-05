@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ActionSheetIOS,
   SectionList,
-  Alert,
 } from 'react-native';
 import { colors } from '@/styles/theme';
 import { UserInfo } from './UserInfo';
@@ -19,21 +18,26 @@ import Icon from 'react-native-vector-icons/Feather';
 import { authApi } from '@/apis/auth';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
+import { currentUserAtom } from '@/atoms/auth';
+import { useSetAtom } from 'jotai';
 
 export function UserScreen() {
   const route = useRoute<RouteProp<TabParamList, 'UserTab'>>();
   const { userId } = route.params;
   const currentUser = useCurrentUser();
+  const setCurrentUser = useSetAtom(currentUserAtom);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const { mutate: logout } = useMutation({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
+      setCurrentUser(null);
+
       Toast.show({
         type: 'success',
         text1: '로그아웃 되었습니다.',
       });
-      navigation.navigate('Home');
+      navigation.replace('Home');
     },
     onError: () => {
       Toast.show({
@@ -64,17 +68,7 @@ export function UserScreen() {
             navigation.navigate('Settings');
             break;
           case 2:
-            Alert.alert('로그아웃', '정말 로그아웃 하시겠습니까?', [
-              {
-                text: '취소',
-                style: 'cancel',
-              },
-              {
-                text: '로그아웃',
-                style: 'destructive',
-                onPress: () => logout(),
-              },
-            ]);
+            logout();
             break;
         }
       },

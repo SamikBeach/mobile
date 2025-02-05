@@ -8,10 +8,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import BookScreen from '@/screens/book/BookScreen';
 import AuthorScreen from '@/screens/author/list/AuthorScreen';
 import LoginScreen from '@/screens/auth/LoginScreen';
-import {
-  createNativeStackNavigator,
-  NativeStackNavigationOptions,
-} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ReviewScreen } from '@/screens/review/ReviewScreen';
 import SignUpScreen from '@/screens/auth/SignUpScreen';
 import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
@@ -38,7 +35,7 @@ export default function TabNavigator() {
           tabBarLabel: '홈',
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}>
-        {() => <StackNavigator initialRouteName="Home" initialComponent={HomeScreen} />}
+        {() => <StackNavigator initialRouteName="Home" />}
       </Tab.Screen>
       <Tab.Screen
         name="BookTab"
@@ -46,7 +43,7 @@ export default function TabNavigator() {
           tabBarLabel: '책',
           tabBarIcon: ({ color, size }) => <Library size={size} color={color} />,
         }}>
-        {() => <StackNavigator initialRouteName="BookList" initialComponent={BookScreen} />}
+        {() => <StackNavigator initialRouteName="BookList" />}
       </Tab.Screen>
       <Tab.Screen
         name="AuthorTab"
@@ -54,7 +51,7 @@ export default function TabNavigator() {
           tabBarLabel: '작가',
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}>
-        {() => <StackNavigator initialRouteName="AuthorList" initialComponent={AuthorScreen} />}
+        {() => <StackNavigator initialRouteName="AuthorList" />}
       </Tab.Screen>
       {currentUser ? (
         <Tab.Screen
@@ -64,11 +61,7 @@ export default function TabNavigator() {
             tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
           }}>
           {() => (
-            <StackNavigator
-              initialRouteName="User"
-              initialComponent={UserScreen}
-              initialParams={{ userId: currentUser.id }}
-            />
+            <StackNavigator initialRouteName="User" initialParams={{ userId: currentUser.id }} />
           )}
         </Tab.Screen>
       ) : (
@@ -78,42 +71,50 @@ export default function TabNavigator() {
             tabBarLabel: '로그인',
             tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
           }}>
-          {() => <StackNavigator initialRouteName="Login" initialComponent={LoginScreen} />}
+          {() => <StackNavigator initialRouteName="Login" />}
         </Tab.Screen>
       )}
     </Tab.Navigator>
   );
 }
 
-interface StackNavigatorProps {
-  initialRouteName: keyof RootStackParamList;
-  initialComponent: React.ComponentType<any>;
-  options?: NativeStackNavigationOptions;
-  initialParams?: Record<string, any>;
-}
-
 function StackNavigator({
   initialRouteName,
-  initialComponent,
-  options,
   initialParams,
-}: StackNavigatorProps) {
+}: {
+  initialRouteName: keyof RootStackParamList;
+  initialParams?: Record<string, any>;
+}) {
   return (
     <Stack.Navigator
       screenOptions={{
         headerTitleAlign: 'center',
         headerBackTitle: '뒤로',
-      }}>
+      }}
+      initialRouteName={initialRouteName}>
       <Stack.Screen
-        name={initialRouteName}
-        component={initialComponent}
-        options={{ headerShown: false, ...options }}
+        name="Home"
+        component={HomeScreen}
+        options={{ headerTitle: '홈', headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookList"
+        component={BookScreen}
+        options={{ headerTitle: '책', headerShown: false }}
+      />
+      <Stack.Screen
+        name="AuthorList"
+        component={AuthorScreen}
+        options={{ headerTitle: '작가', headerShown: false }}
+      />
+      <Stack.Screen
+        name="User"
+        component={UserScreen}
+        options={{ headerTitle: '마이페이지', headerShown: false }}
         initialParams={initialParams}
       />
       <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
-      {initialRouteName !== 'Login' && (
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
-      )}
+      <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerTitle: '회원가입' }} />
       <Stack.Screen
         name="BookDetail"

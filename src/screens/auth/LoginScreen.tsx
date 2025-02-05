@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
 import { AxiosError } from 'axios';
+import Toast from 'react-native-toast-message';
 
 interface LoginFormData {
   email: string;
@@ -31,16 +32,27 @@ export default function LoginScreen() {
     },
   });
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: authApi.login,
+  const { mutate: login, isPending } = useMutation({
+    mutationFn: (data: LoginFormData) => authApi.login(data),
     onSuccess: response => {
-      const { user } = response.data;
-      setCurrentUser(user);
-
-      if (navigation.canGoBack()) {
-        navigation.goBack();
+      setCurrentUser(response.data.user);
+      Toast.show({
+        type: 'success',
+        text1: '로그인되었습니다.',
+      });
+      navigation.navigate('Home');
+    },
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 401) {
+        Toast.show({
+          type: 'error',
+          text1: '이메일 또는 비밀번호가 일치하지 않습니다.',
+        });
       } else {
-        navigation.navigate('Home');
+        Toast.show({
+          type: 'error',
+          text1: '로그인 중 오류가 발생했습니다.',
+        });
       }
     },
   });
@@ -90,13 +102,7 @@ export default function LoginScreen() {
             )}
           />
 
-          {error && (
-            <Text style={styles.errorText}>
-              {error.response?.data?.message || '로그인에 실패했습니다.'}
-            </Text>
-          )}
-
-          <Button onPress={handleSubmit(data => mutate(data))} loading={isPending}>
+          <Button onPress={handleSubmit(data => login(data))} loading={isPending}>
             로그인
           </Button>
 
