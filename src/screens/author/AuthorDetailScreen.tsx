@@ -1,24 +1,18 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import type { RouteProp } from '@react-navigation/native';
-import type { AuthorStackParamList } from '@/navigation/types';
-import { AuthorDetailInfo } from './detail/AuthorDetailInfo';
-import { AuthorBooks } from './detail/AuthorBooks';
-import { ReviewList } from './detail/ReviewList';
-import { colors } from '@/styles/theme';
+import { AuthorDetailScreenContent } from './detail/AuthorDetailScreenContent';
+import { spacing } from '@/styles/theme';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/navigation/types';
 
-type AuthorDetailScreenRouteProp = RouteProp<AuthorStackParamList, 'AuthorDetail'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'AuthorDetail'>;
 
-export function AuthorDetailScreen() {
-  const route = useRoute<AuthorDetailScreenRouteProp>();
+export function AuthorDetailScreen({ route }: Props) {
   const { authorId } = route.params;
 
   return (
     <View style={styles.container}>
-      <AuthorDetailInfo authorId={authorId} />
-      <AuthorBooks authorId={authorId} />
-      <ReviewList authorId={authorId} />
+      <AuthorDetailScreenContent authorId={authorId} />
     </View>
   );
 }
@@ -26,6 +20,9 @@ export function AuthorDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: 'white',
+  },
+  content: {
+    gap: spacing.xl,
   },
 });
