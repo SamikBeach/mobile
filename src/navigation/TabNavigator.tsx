@@ -15,6 +15,9 @@ import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
 import { AuthorDetailScreen } from '@/screens/author/AuthorDetailScreen';
 import { WriteReviewScreen } from '@/screens/review/WriteReviewScreen';
 import { SettingsScreen } from '@/screens/settings/SettingsScreen';
+import { ResetPasswordScreen } from '@/screens/auth/ResetPasswordScreen';
+import InitiateRegistrationScreen from '@/screens/auth/InitiateRegistrationScreen';
+import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -116,6 +119,21 @@ function StackNavigator({
       <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerTitle: '회원가입' }} />
+      <Stack.Screen
+        name="ResetPassword"
+        component={ResetPasswordScreen}
+        options={{ headerTitle: '비밀번호 변경' }}
+      />
+      <Stack.Screen
+        name="InitiateRegistration"
+        component={InitiateRegistrationScreen}
+        options={{ headerTitle: '회원정보 입력' }}
+      />
+      <Stack.Screen
+        name="VerifyCode"
+        component={VerifyCodeScreen}
+        options={{ headerTitle: '이메일 인증' }}
+      />
       <Stack.Screen
         name="BookDetail"
         component={BookDetailScreen}

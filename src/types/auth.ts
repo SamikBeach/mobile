@@ -13,7 +13,7 @@ export interface RegisterDto {
 
 export interface RegisterCompleteDto {
   email: string;
-  code: string;
+  verificationCode: string;
 }
 
 export interface AuthResponse {

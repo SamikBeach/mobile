@@ -5,10 +5,11 @@ import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button, Input, Text } from '@/components/common';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '@/navigation/types';
+import type { RootStackParamList } from '@/navigation/types';
 import type { EmailVerificationDto } from '@/types/auth';
+import { AxiosError } from 'axios';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
 export default function SignUpScreen({ navigation }: Props) {
   const {
@@ -24,8 +25,7 @@ export default function SignUpScreen({ navigation }: Props) {
   const { mutate, isPending, error } = useMutation({
     mutationFn: authApi.checkEmail,
     onSuccess: () => {
-      // 이메일 확인 성공 시 UserInfo 화면으로 이동
-      navigation.navigate('UserInfo', { email: control._getWatch('email') });
+      navigation.navigate('InitiateRegistration', { email: control._getWatch('email') });
     },
   });
 
@@ -60,7 +60,8 @@ export default function SignUpScreen({ navigation }: Props) {
 
         {error && (
           <Text style={styles.errorText}>
-            {error.response?.data?.message || '이메일 확인에 실패했습니다.'}
+            {(error as AxiosError<{ message: string }>)?.response?.data?.message ||
+              '이메일 확인에 실패했습니다.'}
           </Text>
         )}
 

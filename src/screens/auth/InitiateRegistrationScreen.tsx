@@ -5,15 +5,20 @@ import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button, Input, Text } from '@/components/common';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '@/navigation/AuthStack';
 import type { RegisterDto } from '@/types/auth';
+import { RootStackParamList } from '@/navigation/types';
+import { AxiosError } from 'axios';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'UserInfo'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'InitiateRegistration'>;
 
-export default function UserInfoScreen({ route, navigation }: Props) {
+export default function InitiateRegistrationScreen({ route, navigation }: Props) {
   const { email } = route.params;
 
-  const { control, handleSubmit, watch, formState: { errors } } = useForm<RegisterDto>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterDto>({
     defaultValues: {
       email,
       nickname: '',
@@ -78,7 +83,8 @@ export default function UserInfoScreen({ route, navigation }: Props) {
 
         {error && (
           <Text style={styles.errorText}>
-            {error.response?.data?.message || '회원가입에 실패했습니다.'}
+            {(error as AxiosError<{ message: string }>)?.response?.data?.message ||
+              '회원가입에 실패했습니다.'}
           </Text>
         )}
 
@@ -111,4 +117,4 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
   },
-}); 
+});
