@@ -165,4 +165,4 @@ const styles = StyleSheet.create({
   reviewItemContainer: {
     paddingHorizontal: spacing.lg,
   },
-}); 
+});
