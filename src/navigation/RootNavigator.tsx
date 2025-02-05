@@ -41,12 +41,12 @@ export default function RootNavigator() {
         <Stack.Screen name="Tabs" component={TabNavigator} options={{ headerShown: false }} />
         <Stack.Screen
           name="BookDetail"
-          component={BookDetailScreen}
+          component={withTabNavigator(BookDetailScreen)}
           options={{ headerTitle: '도서 상세' }}
         />
         <Stack.Screen
           name="AuthorDetail"
-          component={AuthorDetailScreen}
+          component={withTabNavigator(AuthorDetailScreen)}
           options={{ headerTitle: '작가 상세' }}
         />
         {/* ... other common screens */}
@@ -217,4 +217,63 @@ function StackNavigator({
       <SearchModal visible={searchVisible} onClose={() => setSearchVisible(false)} />
     </>
   );
+}
+
+function withTabNavigator(Component: React.ComponentType<any>) {
+  return function TabWrappedScreen(props: any) {
+    const currentUser = useCurrentUser();
+
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: '#007AFF',
+          tabBarInactiveTintColor: '#666',
+        }}>
+        <Tab.Screen
+          name="HomeTab"
+          options={{
+            tabBarLabel: '홈',
+            tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+          }}>
+          {() => <Component {...props} />}
+        </Tab.Screen>
+        <Tab.Screen
+          name="BookTab"
+          component={BookScreen}
+          options={{
+            tabBarLabel: '책',
+            tabBarIcon: ({ color, size }) => <Library size={size} color={color} />,
+          }}
+        />
+        <Tab.Screen
+          name="AuthorTab"
+          component={AuthorScreen}
+          options={{
+            tabBarLabel: '작가',
+            tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+          }}
+        />
+        {currentUser ? (
+          <Tab.Screen
+            name="UserTab"
+            component={UserScreen}
+            options={{
+              tabBarLabel: '마이페이지',
+              tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+            }}
+          />
+        ) : (
+          <Tab.Screen
+            name="AuthTab"
+            component={LoginScreen}
+            options={{
+              tabBarLabel: '로그인',
+              tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+            }}
+          />
+        )}
+      </Tab.Navigator>
+    );
+  };
 }
