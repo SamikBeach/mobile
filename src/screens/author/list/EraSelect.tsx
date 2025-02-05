@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Modal, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, StyleSheet, Modal, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useAtom } from 'jotai';
 import { eraIdAtom } from '@/atoms/author';
@@ -20,25 +20,36 @@ export function EraSelect() {
     select: response => response.data,
   });
 
-  const selectedEra = eras?.find(era => era.id.toString() === selectedEraId);
-
-  const filteredEras = eras?.filter(era =>
-    era.eraInKor.toLowerCase().includes(search.trim().toLowerCase()),
+  const selectedEra = useMemo(
+    () => eras?.find(era => era.id.toString() === selectedEraId),
+    [eras, selectedEraId],
   );
+
+  const filteredEras = useMemo(() => {
+    if (!search.trim()) return eras;
+    return eras?.filter(era => era.eraInKor.toLowerCase().includes(search.trim().toLowerCase()));
+  }, [eras, search]);
 
   const handleSelect = (eraId: string) => {
     setSelectedEraId(eraId);
     setIsOpen(false);
+    setSearch('');
   };
 
   const handleClear = () => {
     setSelectedEraId(undefined);
   };
 
+  const handleSearch = (value: string) => {
+    setSearch(value.trim());
+  };
+
   return (
     <>
       <TouchableOpacity onPress={() => setIsOpen(true)} style={styles.button}>
-        <Text style={styles.buttonText}>{selectedEra?.eraInKor || '시대'}</Text>
+        <Text numberOfLines={1} style={styles.buttonText}>
+          {selectedEra?.eraInKor || '시대'}
+        </Text>
         {selectedEra ? (
           <TouchableOpacity
             onPress={handleClear}
@@ -51,11 +62,16 @@ export function EraSelect() {
       </TouchableOpacity>
 
       <Modal visible={isOpen} animationType="slide">
-        <View style={styles.modal}>
+        <SafeAreaView style={styles.modal}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>시대 선택</Text>
-            <TouchableOpacity onPress={() => setIsOpen(false)}>
-              <Icon name="x" size={24} color={colors.gray[500]} />
+            <TouchableOpacity
+              onPress={() => {
+                setIsOpen(false);
+                setSearch('');
+              }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Icon name="x" size={20} color={colors.gray[500]} />
             </TouchableOpacity>
           </View>
 
@@ -66,7 +82,7 @@ export function EraSelect() {
               placeholder="시대 검색..."
               placeholderTextColor={colors.gray[400]}
               value={search}
-              onChangeText={setSearch}
+              onChangeText={handleSearch}
             />
           </View>
 
@@ -79,13 +95,13 @@ export function EraSelect() {
                 style={styles.eraItem}
                 onPress={() => handleSelect(item.id.toString())}>
                 <Text style={styles.eraName}>{item.eraInKor}</Text>
-                {selectedEraId === item.id.toString() && (
-                  <Icon name="check" size={16} color={colors.primary[500]} />
+                {item.id.toString() === selectedEraId && (
+                  <Icon name="check" size={16} color={colors.primary[600]} />
                 )}
               </TouchableOpacity>
             )}
           />
-        </View>
+        </SafeAreaView>
       </Modal>
     </>
   );
@@ -106,6 +122,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
     color: colors.gray[900],
+    maxWidth: 120,
   },
   modal: {
     flex: 1,
@@ -152,4 +169,4 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.gray[900],
   },
-}); 
+});
