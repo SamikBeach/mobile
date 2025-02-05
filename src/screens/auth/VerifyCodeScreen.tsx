@@ -5,13 +5,19 @@ import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button, Input, Text } from '@/components/common';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '@/navigation/AuthStack';
+import type { RootStackParamList } from '@/navigation/types';
 import type { RegisterCompleteDto } from '@/types/auth';
+import { AxiosError } from 'axios';
+import { currentUserAtom } from '@/atoms/auth';
+import { useSetAtom } from 'jotai';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '@/constants/storage-keys';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'VerifyCode'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'VerifyCode'>;
 
 export default function VerifyCodeScreen({ route, navigation }: Props) {
   const { email } = route.params;
+  const setCurrentUser = useSetAtom(currentUserAtom);
 
   const {
     control,
@@ -20,14 +26,17 @@ export default function VerifyCodeScreen({ route, navigation }: Props) {
   } = useForm<RegisterCompleteDto>({
     defaultValues: {
       email,
-      code: '',
+      verificationCode: '',
     },
   });
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: authApi.completeRegistration,
-    onSuccess: () => {
-      navigation.navigate('Login');
+    onSuccess: response => {
+      const { accessToken, user } = response.data;
+      AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+      setCurrentUser(user);
+      navigation.navigate('Home');
     },
   });
 
@@ -44,12 +53,12 @@ export default function VerifyCodeScreen({ route, navigation }: Props) {
       <View style={styles.form}>
         <Controller
           control={control}
-          name="code"
+          name="verificationCode"
           rules={{
             required: '인증 코드를 입력해주세요',
             pattern: {
-              value: /^[0-9]{6}$/,
-              message: '6자리 숫자를 입력해주세요',
+              value: /^[A-Za-z0-9]{6}$/,
+              message: '6자리 문자를 입력해주세요',
             },
           }}
           render={({ field: { onChange, value } }) => (
@@ -57,8 +66,8 @@ export default function VerifyCodeScreen({ route, navigation }: Props) {
               placeholder="인증 코드 6자리"
               value={value}
               onChangeText={onChange}
-              error={errors.code?.message}
-              keyboardType="number-pad"
+              error={errors.verificationCode?.message}
+              autoCapitalize="none"
               maxLength={6}
             />
           )}
@@ -66,7 +75,8 @@ export default function VerifyCodeScreen({ route, navigation }: Props) {
 
         {error && (
           <Text style={styles.errorText}>
-            {error.response?.data?.message || '인증에 실패했습니다.'}
+            {(error as AxiosError<{ message: string }>)?.response?.data?.message ||
+              '인증에 실패했습니다.'}
           </Text>
         )}
 

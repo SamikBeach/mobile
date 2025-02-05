@@ -5,10 +5,11 @@ import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
 import { Button, Input, Text } from '@/components/common';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '@/navigation/types';
+import type { RootStackParamList } from '@/navigation/types';
 import type { EmailVerificationDto } from '@/types/auth';
+import { AxiosError } from 'axios';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
 export default function SignUpScreen({ navigation }: Props) {
   const {
@@ -24,8 +25,7 @@ export default function SignUpScreen({ navigation }: Props) {
   const { mutate, isPending, error } = useMutation({
     mutationFn: authApi.checkEmail,
     onSuccess: () => {
-      // 이메일 확인 성공 시 UserInfo 화면으로 이동
-      navigation.navigate('UserInfo', { email: control._getWatch('email') });
+      navigation.navigate('InitiateRegistration', { email: control._getWatch('email') });
     },
   });
 
@@ -60,7 +60,8 @@ export default function SignUpScreen({ navigation }: Props) {
 
         {error && (
           <Text style={styles.errorText}>
-            {error.response?.data?.message || '이메일 확인에 실패했습니다.'}
+            {(error as AxiosError<{ message: string }>)?.response?.data?.message ||
+              '이메일 확인에 실패했습니다.'}
           </Text>
         )}
 
@@ -68,13 +69,29 @@ export default function SignUpScreen({ navigation }: Props) {
           회원가입
         </Button>
 
-        <View style={styles.links}>
+        <View style={[styles.links]}>
           <Text style={styles.linkText}>이미 계정이 있으신가요?</Text>
           <Button
             variant="text"
             onPress={() => navigation.navigate('Login')}
             style={styles.linkButton}>
-            <Text style={[styles.linkText, styles.linkButton]}>로그인</Text>
+            <Text style={styles.linkText}>로그인</Text>
+          </Button>
+        </View>
+
+        <View style={styles.links}>
+          <Button
+            variant="text"
+            onPress={() => navigation.navigate('Terms')}
+            style={styles.linkButton}>
+            <Text style={styles.linkText}>이용약관</Text>
+          </Button>
+          <View style={styles.divider} />
+          <Button
+            variant="text"
+            onPress={() => navigation.navigate('Privacy')}
+            style={styles.linkButton}>
+            <Text style={styles.linkText}>개인정보처리방침</Text>
           </Button>
         </View>
       </View>
@@ -103,7 +120,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
     gap: 4,
   },
   linkButton: {
@@ -114,8 +130,11 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontWeight: '400',
   },
-  linkButtonText: {
-    color: '#111827',
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: '#D1D5DB',
+    marginHorizontal: 8,
   },
   errorText: {
     color: '#EF4444',

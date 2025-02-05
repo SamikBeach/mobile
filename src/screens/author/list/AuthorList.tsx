@@ -80,7 +80,7 @@ export function AuthorList() {
   if (authors.length === 0 && (searchKeyword || selectedEraId)) {
     return (
       <Empty
-        icon={<Icon name="search-x" size={48} color={colors.gray[400]} />}
+        icon={<Icon name="search" size={48} color={colors.gray[400]} />}
         message="검색 결과가 없어요."
         description={
           searchKeyword

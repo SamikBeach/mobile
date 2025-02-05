@@ -4,7 +4,7 @@ import { Text } from '@/components/common/Text';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
-import type { AuthorStackParamList } from '@/navigation/types';
+import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 
 interface Props {
@@ -20,19 +20,22 @@ interface Props {
     bookCount: number;
     likeCount: number;
     isLiked: boolean;
+    reviewCount?: number;
+    translationCount?: number;
   };
 }
 
 export function AuthorItem({ author }: Props) {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AuthorStackParamList, 'AuthorDetail'>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
     navigation.navigate('AuthorDetail', { authorId: author.id });
   };
 
   return (
-    <Pressable style={styles.container} onPress={handlePress}>
+    <Pressable
+      style={({ pressed }) => [styles.container, pressed && { opacity: 0.8 }]}
+      onPress={handlePress}>
       <View style={styles.imageWrapper}>
         {author.imageUrl ? (
           <Image source={{ uri: author.imageUrl }} style={styles.image} />
@@ -43,33 +46,46 @@ export function AuthorItem({ author }: Props) {
         )}
       </View>
       <View style={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.nameSection}>
-            <Text style={styles.name}>{author.nameInKor?.trim()}</Text>
-            <Text style={styles.originalName}>{author.name?.trim()}</Text>
-          </View>
-          {author.era && (
-            <View style={styles.eraBadge}>
-              <Text style={styles.eraText}>{author.era.eraInKor}</Text>
+        <View style={styles.textContent}>
+          <View style={styles.header}>
+            <View style={styles.nameSection}>
+              <Text style={styles.name}>{author.nameInKor?.trim()}</Text>
+              <Text style={styles.originalName}>{author.name?.trim()}</Text>
             </View>
-          )}
-        </View>
-        <Text style={styles.description} numberOfLines={2}>
-          {author.description}
-        </Text>
-        <View style={styles.stats}>
-          <View style={styles.stat}>
-            <Icon name="book" size={14} color={colors.gray[500]} />
-            <Text style={styles.statText}>{author.bookCount}</Text>
+            {author.era && (
+              <View style={styles.eraBadge}>
+                <Text style={styles.eraText}>{author.era.eraInKor}</Text>
+              </View>
+            )}
           </View>
-          <View style={styles.stat}>
-            <Icon
-              name={author.isLiked ? 'heart' : 'heart'}
-              size={14}
-              color={author.isLiked ? colors.primary[500] : colors.gray[500]}
-            />
+          <Text style={styles.description} numberOfLines={2}>
+            {author.description}
+          </Text>
+        </View>
+        <View style={styles.stats}>
+          <View style={styles.statItem}>
+            <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
             <Text style={styles.statText}>{author.likeCount}</Text>
           </View>
+          <View style={styles.divider} />
+          <View style={styles.statItem}>
+            <Icon name="message-square" size={13} color={colors.gray[400]} />
+            <Text style={styles.statText}>{author.reviewCount ?? 0}</Text>
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.statItem}>
+            <Icon name="book" size={13} color={colors.gray[400]} />
+            <Text style={styles.statText}>{author.bookCount}</Text>
+          </View>
+          {author.translationCount !== undefined && (
+            <>
+              <View style={styles.divider} />
+              <View style={styles.statItem}>
+                <Icon name="edit-2" size={13} color={colors.gray[400]} />
+                <Text style={styles.statText}>{author.translationCount}</Text>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </Pressable>
@@ -81,16 +97,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    gap: spacing.md,
+    padding: spacing.lg,
+    gap: spacing.lg,
     ...shadows.sm,
   },
   imageWrapper: {
-    width: 80,
-    height: 80,
+    width: 85,
+    height: 85,
     borderRadius: borderRadius.full,
     overflow: 'hidden',
-    ...shadows.sm,
   },
   image: {
     width: '100%',
@@ -105,6 +120,9 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    justifyContent: 'space-between',
+  },
+  textContent: {
     gap: spacing.xs,
   },
   header: {
@@ -120,16 +138,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.gray[900],
-    marginBottom: 2,
+    lineHeight: 22,
   },
   originalName: {
-    fontSize: 13,
-    color: colors.gray[500],
+    fontSize: 14,
+    color: colors.gray[600],
   },
   eraBadge: {
     backgroundColor: colors.primary[50],
     paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
+    paddingVertical: 2,
     borderRadius: borderRadius.full,
   },
   eraText: {
@@ -144,16 +162,22 @@ const styles = StyleSheet.create({
   },
   stats: {
     flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing.xs,
+    alignItems: 'center',
+    marginTop: spacing.sm,
   },
-  stat: {
+  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
   },
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
+  },
   statText: {
     fontSize: 13,
-    color: colors.gray[700],
+    color: colors.gray[500],
   },
 });

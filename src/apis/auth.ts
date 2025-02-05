@@ -21,8 +21,11 @@ export const authApi = {
     return response;
   },
 
-  googleLogin: async (code: string) => {
-    const response = await axios.post<AuthResponse>('/auth/login/google', { code });
+  googleLogin: async ({ code, clientType }: { code: string; clientType: 'ios' | 'android' }) => {
+    const response = await axios.post<AuthResponse>('/auth/login/google', {
+      code,
+      clientType,
+    });
     await saveAuthTokens(response.data.accessToken, response.data.refreshToken);
     return response;
   },
@@ -37,8 +40,11 @@ export const authApi = {
 
   initiateRegistration: (data: RegisterDto) => axios.post<void>('/auth/register/initiate', data),
 
-  completeRegistration: (data: RegisterCompleteDto) =>
-    axios.post<AuthResponse>('/auth/register/complete', data),
+  completeRegistration: async (data: RegisterCompleteDto) => {
+    const response = await axios.post<AuthResponse>('/auth/register/complete', data);
+    await saveAuthTokens(response.data.accessToken, response.data.refreshToken);
+    return response;
+  },
 
   refresh: () => axios.post<AuthResponse>('/auth/refresh'),
 

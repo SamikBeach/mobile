@@ -6,7 +6,7 @@ import { authApi } from '@/apis/auth';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { AuthStackParamList, RootStackParamList } from '@/navigation/types';
+import { RootStackParamList } from '@/navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Text } from '@/components/common';
 
@@ -15,7 +15,7 @@ type ResetPasswordFormData = {
   confirmPassword: string;
 };
 
-type ResetPasswordScreenRouteProp = RouteProp<AuthStackParamList, 'ResetPassword'>;
+type ResetPasswordScreenRouteProp = RouteProp<RootStackParamList, 'ResetPassword'>;
 
 export function ResetPasswordScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -63,7 +63,7 @@ export function ResetPasswordScreen() {
       return authApi.verifyPasswordResetToken(email, token);
     },
     onError: () => {
-      navigation.navigate('Auth', { screen: 'Login' });
+      navigation.navigate('Login');
     },
   });
 
@@ -75,7 +75,7 @@ export function ResetPasswordScreen() {
       return authApi.resetPassword(email, token, data.newPassword);
     },
     onSuccess: () => {
-      navigation.navigate('Auth', { screen: 'Login' });
+      navigation.navigate('Login');
     },
   });
 

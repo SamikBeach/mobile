@@ -1,47 +1,54 @@
-import React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { ReviewItem } from '@/components/review/ReviewItem';
 import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';
-import { spacing } from '@/styles/theme';
-import { ActivityIndicator } from 'react-native';
-import { colors } from '@/styles/theme';
-import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { spacing, colors } from '@/styles/theme';
+import type { Review } from '@/types/review';
+import { PaginatedResponse } from '@/types/common';
+import { AxiosResponse } from 'axios';
 
 interface Props {
   userId: number;
 }
 
 export function ReviewList({ userId }: Props) {
-  const currentUser = useCurrentUser();
-
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ['user', userId, 'reviews'],
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
+    AxiosResponse<PaginatedResponse<Review>>,
+    Error
+  >({
+    queryKey: ['user-reviews', userId],
     queryFn: ({ pageParam = 1 }) =>
-      userId === currentUser?.id
-        ? userApi.getMyReviews({ page: pageParam, limit: 20 })
-        : userApi.getUserReviews(userId, { page: pageParam, limit: 20 }),
+      userApi.getUserReviews(userId, {
+        page: pageParam as number,
+        limit: 20,
+      }),
     initialPageParam: 1,
-    getNextPageParam: lastPage => {
-      if (!lastPage.data.links.next) return undefined;
-      const nextPage = new URLSearchParams(lastPage.data.links.next.split('?')[1]).get('page');
-      return nextPage ? Number(nextPage) : undefined;
+    getNextPageParam: param => {
+      const nextParam = param.data.links.next;
+      const query = nextParam?.split('?')[1];
+      const pageParam = query
+        ?.split('&')
+        .find(q => q.startsWith('page'))
+        ?.split('=')[1];
+
+      return pageParam;
     },
   });
 
-  const reviews = data?.pages.flatMap(page => page.data.data) ?? [];
+  const reviews = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);
 
   if (!reviews.length) return <Empty message="작성한 리뷰가 없습니다" />;
 
   return (
     <FlatList
       data={reviews}
-      renderItem={({ item }) => <ReviewItem review={item} showBook />}
+      renderItem={({ item }) => <ReviewItem review={item} showBookInfo />}
       keyExtractor={item => String(item.id)}
       contentContainerStyle={styles.list}
       onEndReached={() => {
-        if (hasNextPage) {
+        if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       }}
@@ -51,14 +58,14 @@ export function ReviewList({ userId }: Props) {
           <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
         ) : null
       }
+      style={styles.list}
     />
   );
 }
 
 const styles = StyleSheet.create({
   list: {
-    padding: spacing.lg,
-    gap: spacing.md,
+    gap: spacing.xl,
   },
   spinner: {
     marginVertical: spacing.lg,

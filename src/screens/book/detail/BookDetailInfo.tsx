@@ -62,6 +62,15 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
     }
   };
 
+  const handleWriteReviewPress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+
+    navigation.navigate('WriteReview', { bookId: book.id });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -96,11 +105,11 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
             <View style={styles.stats}>
               <Pressable style={styles.statItem} onPress={handleLikePress}>
                 <Icon
-                  name={book.isLiked ? 'heart' : 'heart'}
+                  name={book.isLiked ? 'thumbs-up' : 'thumbs-up'}
                   size={14}
-                  color={book.isLiked ? colors.primary[500] : colors.gray[500]}
+                  color={book.isLiked ? colors.red[500] : colors.gray[500]}
                 />
-                <Text style={[styles.statText, book.isLiked && { color: colors.primary[500] }]}>
+                <Text style={[styles.statText, book.isLiked && { color: colors.red[500] }]}>
                   {book.likeCount}
                 </Text>
               </Pressable>
@@ -114,10 +123,12 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
         </View>
       </View>
 
-      <Button variant="outline" style={styles.writeButton}>
+      <Button variant="outline" style={styles.writeButton} onPress={handleWriteReviewPress}>
         <View style={styles.writeButtonContent}>
           <Icon name="edit-2" size={16} color={colors.gray[700]} />
-          <Text style={styles.writeButtonText}>리뷰 작성하기</Text>
+          <Text style={styles.writeButtonText}>
+            {currentUser ? '리뷰 작성하기' : '로그인하고 리뷰 작성하기'}
+          </Text>
         </View>
       </Button>
     </View>

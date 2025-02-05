@@ -1,0 +1,183 @@
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { colors } from '@/styles/theme';
+import { SettingsCard } from './components/SettingsCard';
+import { ChangePasswordModal } from './components/ChangePasswordModal';
+import { DeleteAccountModal } from './components/DeleteAccountModal';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Feather';
+import { userApi } from '@/apis/user';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { RootStackParamList } from '@/navigation/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Toast from 'react-native-toast-message';
+
+export function SettingsScreen() {
+  const [isChangePasswordVisible, setIsChangePasswordVisible] = useState(false);
+  const [isDeleteAccountVisible, setIsDeleteAccountVisible] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const queryClient = useQueryClient();
+
+  const { mutate: changePassword, isPending: isChangingPassword } = useMutation({
+    mutationFn: (data: { currentPassword: string; newPassword: string }) =>
+      userApi.changePassword(data),
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '비밀번호가 변경되었습니다.',
+      });
+      setIsChangePasswordVisible(false);
+      navigation.goBack();
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '비밀번호 변경 중 오류가 발생했습니다.',
+      });
+    },
+  });
+
+  const { mutate: deleteAccount, isPending: isDeletingAccount } = useMutation({
+    mutationFn: () => userApi.deleteAccount(),
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '계정이 삭제되었습니다.',
+      });
+      navigation.navigate('Home');
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '계정 삭제 중 오류가 발생했습니다.',
+      });
+    },
+  });
+
+  const { mutate: deleteProfileImage, isPending: isDeletingImage } = useMutation({
+    mutationFn: () => userApi.deleteProfileImage(),
+    onSuccess: () => {
+      Toast.show({
+        type: 'success',
+        text1: '프로필 이미지가 삭제되었습니다.',
+      });
+      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '프로필 이미지 삭제 중 오류가 발생했습니다.',
+      });
+    },
+  });
+
+  const handleChangePassword = (data: { currentPassword: string; newPassword: string }) => {
+    changePassword(data);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      '계정 삭제',
+      '정말 계정을 삭제하시겠습니까?\n삭제된 계정은 복구할 수 없습니다.',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => deleteAccount(),
+        },
+      ],
+    );
+  };
+
+  const handleDeleteProfileImage = () => {
+    Alert.alert(
+      '프로필 이미지 삭제',
+      '프로필 이미지를 삭제하시겠습니까?',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => deleteProfileImage(),
+        },
+      ],
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Text style={styles.title}>계정 설정</Text>
+        <View style={styles.cardContainer}>
+          <SettingsCard
+            icon={<Icon name="image" size={20} color={colors.gray[500]} />}
+            title="프로필 이미지"
+            description="프로필 이미지를 삭제할 수 있습니다."
+            buttonText="이미지 삭제"
+            variant="destructive"
+            onPress={handleDeleteProfileImage}
+            loading={isDeletingImage}
+          />
+
+          <SettingsCard
+            icon={<Icon name="key" size={20} color={colors.gray[500]} />}
+            title="비밀번호 변경"
+            description="안전한 계정 관리를 위해 비밀번호를 변경할 수 있습니다."
+            buttonText="비밀번호 변경"
+            onPress={() => setIsChangePasswordVisible(true)}
+          />
+
+          <SettingsCard
+            icon={<Icon name="user-x" size={20} color={colors.red[500]} />}
+            title="계정 삭제"
+            description="계정을 삭제하면 정보가 영구적으로 삭제돼요."
+            buttonText="계정 삭제"
+            variant="destructive"
+            onPress={() => setIsDeleteAccountVisible(true)}
+          />
+        </View>
+
+        <ChangePasswordModal
+          visible={isChangePasswordVisible}
+          onClose={() => setIsChangePasswordVisible(false)}
+          onSubmit={handleChangePassword}
+          isLoading={isChangingPassword}
+        />
+
+        <DeleteAccountModal
+          visible={isDeleteAccountVisible}
+          onClose={() => setIsDeleteAccountVisible(false)}
+          onConfirm={handleDeleteAccount}
+          isLoading={isDeletingAccount}
+        />
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 24,
+  },
+  cardContainer: {
+    gap: 16,
+  },
+});

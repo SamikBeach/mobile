@@ -58,10 +58,11 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 
   const { mutate: toggleLike } = useMutation({
     mutationFn: () => reviewApi.toggleReviewLike(review.id),
-    onMutate: () => {
+    onMutate: async () => {
       updateReviewLikeQueryData({
         reviewId: review.id,
         bookId: review.book.id,
+        authorId: review.book.authorBooks?.[0]?.author.id,
         isOptimistic: true,
       });
     },
@@ -69,6 +70,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
       updateReviewLikeQueryData({
         reviewId: review.id,
         bookId: review.book.id,
+        authorId: review.book.authorBooks?.[0]?.author.id,
         isOptimistic: false,
         currentStatus: {
           isLiked: review.isLiked ?? false,
@@ -142,7 +144,10 @@ export function ReviewItem({ review, showBookInfo }: Props) {
   };
 
   const handleEditPress = () => {
-    // navigation.navigate('WriteReview', { reviewId: review.id });
+    navigation.navigate('WriteReview', {
+      bookId: review.book.id,
+      reviewId: review.id,
+    });
   };
 
   const handleDeletePress = () => {
@@ -159,24 +164,26 @@ export function ReviewItem({ review, showBookInfo }: Props) {
       layout={Layout.duration(300)}
       style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.userInfo}>
-          <UserAvatar user={review.user} showNickname={false} size="sm" />
-          <Text style={styles.username}>{review.user.nickname}</Text>
-          <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
+        <View style={styles.headerTop}>
+          <View style={styles.userInfo}>
+            <UserAvatar user={review.user} showNickname={false} size="sm" />
+            <Text style={styles.username}>{review.user.nickname}</Text>
+            <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
+          </View>
+          <View style={styles.headerActions}>
+            {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
+          </View>
         </View>
-        <View style={styles.headerActions}>
-          {showBookInfo && (
-            <Pressable
-              style={styles.bookInfo}
-              onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
-              <Icon name="book-open" size={14} color={colors.gray[500]} />
-              <Text style={styles.bookTitle} numberOfLines={1}>
-                {review.book.title}
-              </Text>
-            </Pressable>
-          )}
-          {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
-        </View>
+        {showBookInfo && (
+          <Pressable
+            style={styles.bookInfo}
+            onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
+            <Icon name="book-open" size={14} color={colors.gray[500]} />
+            <Text style={styles.bookTitle} numberOfLines={1}>
+              {review.book.title}
+            </Text>
+          </Pressable>
+        )}
       </View>
       <Text style={styles.title}>{review.title}</Text>
       <Pressable onPress={() => isTruncated && setIsExpanded(true)} style={styles.contentContainer}>
@@ -193,9 +200,9 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         <View style={styles.actions}>
           <Pressable style={styles.actionButton} onPress={handleLikePress}>
             <Icon
-              name="heart"
+              name="thumbs-up"
               size={16}
-              color={review.isLiked ? colors.primary[500] : colors.gray[400]}
+              color={review.isLiked ? colors.red[500] : colors.gray[400]}
             />
             <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
               {review.likeCount}
@@ -204,14 +211,8 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           <Pressable
             style={[styles.actionButton, isReplying && styles.activeActionButton]}
             onPress={handleReplyPress}>
-            <Icon
-              name="message-circle"
-              size={16}
-              color={isReplying ? colors.primary[500] : colors.gray[400]}
-            />
-            <Text style={[styles.actionText, isReplying && styles.activeActionText]}>
-              {review.commentCount}
-            </Text>
+            <Icon name="message-circle" size={16} color={colors.gray[400]} />
+            <Text style={styles.actionText}>{review.commentCount}</Text>
           </Pressable>
         </View>
       </View>
@@ -239,9 +240,12 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   header: {
+    gap: spacing.xs,
+  },
+  headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -261,9 +265,7 @@ const styles = StyleSheet.create({
     color: colors.gray[500],
   },
   headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
+    alignItems: 'flex-end',
   },
   bookInfo: {
     flexDirection: 'row',
@@ -274,6 +276,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.md,
     alignSelf: 'flex-start',
+    marginTop: spacing.xs,
   },
   bookTitle: {
     fontSize: 13,
@@ -297,9 +300,7 @@ const styles = StyleSheet.create({
     color: colors.primary[500],
     marginTop: spacing.xs,
   },
-  footer: {
-    marginTop: spacing.xs,
-  },
+  footer: {},
   actions: {
     flexDirection: 'row',
     gap: spacing.md,
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     color: colors.gray[500],
   },
   activeActionText: {
-    color: colors.primary[500],
+    color: colors.red[500],
   },
   replySection: {
     marginTop: spacing.md,
