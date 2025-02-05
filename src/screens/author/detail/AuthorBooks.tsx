@@ -85,12 +85,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
-    paddingHorizontal: spacing.lg,
   },
   badge: {
     backgroundColor: colors.gray[100],

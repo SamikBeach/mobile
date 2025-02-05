@@ -162,24 +162,26 @@ export function ReviewItem({ review, showBookInfo }: Props) {
       layout={Layout.duration(300)}
       style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.userInfo}>
-          <UserAvatar user={review.user} showNickname={false} size="sm" />
-          <Text style={styles.username}>{review.user.nickname}</Text>
-          <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
+        <View style={styles.headerTop}>
+          <View style={styles.userInfo}>
+            <UserAvatar user={review.user} showNickname={false} size="sm" />
+            <Text style={styles.username}>{review.user.nickname}</Text>
+            <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
+          </View>
+          <View style={styles.headerActions}>
+            {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
+          </View>
         </View>
-        <View style={styles.headerActions}>
-          {showBookInfo && (
-            <Pressable
-              style={styles.bookInfo}
-              onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
-              <Icon name="book-open" size={14} color={colors.gray[500]} />
-              <Text style={styles.bookTitle} numberOfLines={1}>
-                {review.book.title}
-              </Text>
-            </Pressable>
-          )}
-          {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
-        </View>
+        {showBookInfo && (
+          <Pressable
+            style={styles.bookInfo}
+            onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
+            <Icon name="book-open" size={14} color={colors.gray[500]} />
+            <Text style={styles.bookTitle} numberOfLines={1}>
+              {review.book.title}
+            </Text>
+          </Pressable>
+        )}
       </View>
       <Text style={styles.title}>{review.title}</Text>
       <Pressable onPress={() => isTruncated && setIsExpanded(true)} style={styles.contentContainer}>
@@ -239,6 +241,9 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   header: {
+    gap: spacing.xs,
+  },
+  headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -258,9 +263,7 @@ const styles = StyleSheet.create({
     color: colors.gray[500],
   },
   headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
+    alignItems: 'flex-end',
   },
   bookInfo: {
     flexDirection: 'row',
@@ -271,6 +274,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.md,
     alignSelf: 'flex-start',
+    marginTop: spacing.xs,
   },
   bookTitle: {
     fontSize: 13,
