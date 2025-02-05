@@ -8,11 +8,12 @@ import Icon from 'react-native-vector-icons/Feather';
 import * as ImagePicker from 'react-native-image-picker';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
-interface Props {
+interface UserInfoProps {
   userId: number;
+  rightElement?: React.ReactNode;
 }
 
-export function UserInfo({ userId }: Props) {
+export function UserInfo({ userId, rightElement }: UserInfoProps) {
   const queryClient = useQueryClient();
   const currentUser = useCurrentUser();
   const isMyProfile = currentUser?.id === userId;
@@ -53,11 +54,7 @@ export function UserInfo({ userId }: Props) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>프로필</Text>
-        {isMyProfile && (
-          <Pressable style={styles.settingsButton}>
-            <Icon name="settings" size={20} color={colors.gray[700]} />
-          </Pressable>
-        )}
+        {rightElement}
       </View>
       <View style={styles.profileSection}>
         <View style={styles.imageContainer}>
@@ -102,10 +99,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
-  },
-  settingsButton: {
-    padding: spacing.sm,
-    marginRight: -spacing.sm,
   },
   profileSection: {
     alignItems: 'center',
