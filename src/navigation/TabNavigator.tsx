@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Library, User } from '@/components/icons';
 import { HomeScreen } from '@/screens/home/HomeScreen';
@@ -24,6 +24,7 @@ import { PrivacyScreen } from '@/screens/auth/PrivacyScreen';
 import { Logo } from '@/components/common/Logo';
 import Icon from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
+import { SearchModal } from '@/components/common/Search/SearchModal';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -94,87 +95,100 @@ function StackNavigator({
   initialRouteName: keyof RootStackParamList;
   initialParams?: Record<string, any>;
 }) {
+  const [searchVisible, setSearchVisible] = useState(false);
+
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerTitleAlign: 'center',
-        headerBackTitle: '뒤로',
-      }}
-      initialRouteName={initialRouteName}>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          headerLeft: () => <Logo size="sm" />,
-          headerTitle: '',
-          headerRight: () => (
-            <TouchableOpacity>
-              <Icon name="search" size={24} color="#000" />
-            </TouchableOpacity>
-          ),
+    <>
+      <Stack.Navigator
+        screenOptions={{
+          headerTitleAlign: 'center',
+          headerBackTitle: '뒤로',
         }}
-      />
-      <Stack.Screen
-        name="BookList"
-        component={BookScreen}
-        options={{ headerTitle: '책', headerShown: false }}
-      />
-      <Stack.Screen
-        name="AuthorList"
-        component={AuthorScreen}
-        options={{ headerTitle: '작가', headerShown: false }}
-      />
-      <Stack.Screen
-        name="User"
-        component={UserScreen}
-        options={{ headerTitle: '마이페이지', headerShown: false }}
-        initialParams={initialParams}
-      />
-      <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
-      <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
-      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerTitle: '회원가입' }} />
-      <Stack.Screen
-        name="RequestResetPassword"
-        component={RequestResetPasswordScreen}
-        options={{ headerTitle: '비밀번호 재설정' }}
-      />
-      <Stack.Screen
-        name="ResetPassword"
-        component={ResetPasswordScreen}
-        options={{ headerTitle: '비밀번호 변경' }}
-      />
-      <Stack.Screen
-        name="InitiateRegistration"
-        component={InitiateRegistrationScreen}
-        options={{ headerTitle: '회원정보 입력' }}
-      />
-      <Stack.Screen
-        name="VerifyCode"
-        component={VerifyCodeScreen}
-        options={{ headerTitle: '이메일 인증' }}
-      />
-      <Stack.Screen
-        name="BookDetail"
-        component={BookDetailScreen}
-        options={{ headerTitle: '도서 상세' }}
-      />
-      <Stack.Screen
-        name="AuthorDetail"
-        component={AuthorDetailScreen}
-        options={{ headerTitle: '작가 상세' }}
-      />
-      <Stack.Screen
-        name="WriteReview"
-        component={WriteReviewScreen}
-        options={{ headerTitle: '리뷰 작성' }}
-      />
-      <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerTitle: '설정' }} />
-      <Stack.Screen name="Terms" component={TermsScreen} options={{ headerTitle: '이용약관' }} />
-      <Stack.Screen
-        name="Privacy"
-        component={PrivacyScreen}
-        options={{ headerTitle: '개인정보처리방침' }}
-      />
-    </Stack.Navigator>
+        initialRouteName={initialRouteName}>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerLeft: () => <Logo size="sm" />,
+            headerTitle: '',
+            headerRight: () => (
+              <TouchableOpacity onPress={() => setSearchVisible(true)}>
+                <Icon name="search" size={24} color="#000" />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="BookList"
+          component={BookScreen}
+          options={{ headerTitle: '책', headerShown: false }}
+        />
+        <Stack.Screen
+          name="AuthorList"
+          component={AuthorScreen}
+          options={{ headerTitle: '작가', headerShown: false }}
+        />
+        <Stack.Screen
+          name="User"
+          component={UserScreen}
+          options={{ headerTitle: '마이페이지', headerShown: false }}
+          initialParams={initialParams}
+        />
+        <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpScreen}
+          options={{ headerTitle: '회원가입' }}
+        />
+        <Stack.Screen
+          name="RequestResetPassword"
+          component={RequestResetPasswordScreen}
+          options={{ headerTitle: '비밀번호 재설정' }}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPasswordScreen}
+          options={{ headerTitle: '비밀번호 변경' }}
+        />
+        <Stack.Screen
+          name="InitiateRegistration"
+          component={InitiateRegistrationScreen}
+          options={{ headerTitle: '회원정보 입력' }}
+        />
+        <Stack.Screen
+          name="VerifyCode"
+          component={VerifyCodeScreen}
+          options={{ headerTitle: '이메일 인증' }}
+        />
+        <Stack.Screen
+          name="BookDetail"
+          component={BookDetailScreen}
+          options={{ headerTitle: '도서 상세' }}
+        />
+        <Stack.Screen
+          name="AuthorDetail"
+          component={AuthorDetailScreen}
+          options={{ headerTitle: '작가 상세' }}
+        />
+        <Stack.Screen
+          name="WriteReview"
+          component={WriteReviewScreen}
+          options={{ headerTitle: '리뷰 작성' }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{ headerTitle: '설정' }}
+        />
+        <Stack.Screen name="Terms" component={TermsScreen} options={{ headerTitle: '이용약관' }} />
+        <Stack.Screen
+          name="Privacy"
+          component={PrivacyScreen}
+          options={{ headerTitle: '개인정보처리방침' }}
+        />
+      </Stack.Navigator>
+      <SearchModal visible={searchVisible} onClose={() => setSearchVisible(false)} />
+    </>
   );
 }
