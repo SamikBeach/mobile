@@ -2,9 +2,18 @@ import axios from 'axios';
 import { ERROR_CODES } from '@/constants/error-codes';
 import { storage } from './storage';
 import { authApi } from '@/apis/auth';
+import { Platform } from 'react-native';
+
+const baseURL = Platform.select({
+  android: __DEV__ ? 'http://10.0.2.2:3001/api/v2' : process.env.API_URL,
+  ios: __DEV__ ? 'http://localhost:3001/api/v2' : process.env.API_URL,
+});
 
 const instance = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
   params: {
     encode: true,
   },
@@ -151,6 +160,22 @@ instance.interceptors.response.use(
         resolve(instance(originalRequest));
       });
     });
+  },
+);
+
+// 에러 인터셉터 추가
+instance.interceptors.response.use(
+  response => response,
+  error => {
+    if (__DEV__) {
+      console.log('API Error:', {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+    }
+    return Promise.reject(error);
   },
 );
 
