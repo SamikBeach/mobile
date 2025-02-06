@@ -48,6 +48,11 @@ export default function RootNavigator() {
           component={withTabNavigator(AuthorDetailScreen)}
           options={{ headerTitle: '작가 상세' }}
         />
+        <Stack.Screen
+          name="User"
+          component={withTabNavigator(UserScreen)}
+          options={{ headerShown: false }}
+        />
         {/* ... other common screens */}
       </Stack.Navigator>
     </NavigationContainer>

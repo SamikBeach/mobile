@@ -15,12 +15,18 @@ interface Props {
   avatarStyle?: any;
 }
 
-export function UserAvatar({ user, size = 'md', showNickname = false, disabled = false, avatarStyle }: Props) {
+export function UserAvatar({
+  user,
+  size = 'md',
+  showNickname = false,
+  disabled = false,
+  avatarStyle,
+}: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
     if (!disabled) {
-      navigation.push('UserProfile', { userId: user.id });
+      navigation.push('User', { userId: user.id });
     }
   };
 
@@ -41,9 +47,18 @@ export function UserAvatar({ user, size = 'md', showNickname = false, disabled =
     <View style={styles.container}>
       <TouchableOpacity style={styles.container} onPress={handlePress} disabled={disabled}>
         {user.imageUrl ? (
-          <Image source={{ uri: user.imageUrl }} style={[styles.avatar, avatarStyle, { width: avatarSize, height: avatarSize }]} />
+          <Image
+            source={{ uri: user.imageUrl }}
+            style={[styles.avatar, avatarStyle, { width: avatarSize, height: avatarSize }]}
+          />
         ) : (
-          <View style={[styles.avatar, avatarStyle, styles.fallback, { width: avatarSize, height: avatarSize }]}>
+          <View
+            style={[
+              styles.avatar,
+              avatarStyle,
+              styles.fallback,
+              { width: avatarSize, height: avatarSize },
+            ]}>
             <Icon name="user" size={avatarSize * 0.6} color={colors.gray[400]} />
           </View>
         )}
