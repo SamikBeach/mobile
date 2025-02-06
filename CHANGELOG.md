@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+# [1.5.0](https://github.com/SamikBeach/mobile/compare/1.4.0...1.5.0) (2025-02-06)
+
+
+### Features
+
+* 안드로이드 구글 로그인 ([3c213da](https://github.com/SamikBeach/mobile/commit/3c213da12827d2248705256e9da07a61302f32a4))
+
 # [1.4.0](https://github.com/SamikBeach/mobile/compare/1.3.0...1.4.0) (2025-02-06)
 
 
