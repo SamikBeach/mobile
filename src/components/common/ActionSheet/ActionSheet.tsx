@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Modal, StyleSheet, Pressable, Animated } from 'react-native';
+import { Modal, StyleSheet, Pressable, Animated } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors } from '@/styles/theme';
@@ -42,11 +42,7 @@ export function ActionSheet({ visible, onClose, actions }: Props) {
                 size={20}
                 color={action.destructive ? colors.red[500] : colors.gray[700]}
               />
-              <Text
-                style={[
-                  styles.actionText,
-                  action.destructive && styles.destructiveText,
-                ]}>
+              <Text style={[styles.actionText, action.destructive && styles.destructiveText]}>
                 {action.text}
               </Text>
             </Pressable>
@@ -90,4 +86,4 @@ const styles = StyleSheet.create({
   destructiveText: {
     color: colors.red[500],
   },
-}); 
+});
