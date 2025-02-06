@@ -9,33 +9,47 @@ import { colors } from '@/styles/theme';
 
 interface Props {
   user: UserBase;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   showNickname?: boolean;
   disabled?: boolean;
+  avatarStyle?: any;
 }
 
-export function UserAvatar({ user, size = 'md', showNickname = false, disabled = false }: Props) {
+export function UserAvatar({ user, size = 'md', showNickname = false, disabled = false, avatarStyle }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
-    if (disabled) return;
-    navigation.navigate('User', { userId: user.id });
+    if (!disabled) {
+      navigation.push('UserProfile', { userId: user.id });
+    }
   };
 
-  const avatarStyle = size === 'sm' ? styles.avatarSmall : styles.avatarMedium;
-  const iconSize = size === 'sm' ? 14 : 20;
+  const getAvatarSize = () => {
+    switch (size) {
+      case 'sm':
+        return 28;
+      case 'lg':
+        return 40;
+      default:
+        return 32;
+    }
+  };
+
+  const avatarSize = getAvatarSize();
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress} disabled={disabled}>
-      {user.imageUrl ? (
-        <Image source={{ uri: user.imageUrl }} style={[styles.avatar, avatarStyle]} />
-      ) : (
-        <View style={[styles.avatar, avatarStyle, styles.fallback]}>
-          <Icon name="user" size={iconSize} color={colors.gray[400]} />
-        </View>
-      )}
-      {showNickname && <Text style={styles.nickname}>{user.nickname}</Text>}
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.container} onPress={handlePress} disabled={disabled}>
+        {user.imageUrl ? (
+          <Image source={{ uri: user.imageUrl }} style={[styles.avatar, avatarStyle, { width: avatarSize, height: avatarSize }]} />
+        ) : (
+          <View style={[styles.avatar, avatarStyle, styles.fallback, { width: avatarSize, height: avatarSize }]}>
+            <Icon name="user" size={avatarSize * 0.6} color={colors.gray[400]} />
+          </View>
+        )}
+        {showNickname && <Text style={styles.nickname}>{user.nickname}</Text>}
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -47,14 +61,6 @@ const styles = StyleSheet.create({
   },
   avatar: {
     borderRadius: 9999,
-  },
-  avatarSmall: {
-    width: 28,
-    height: 28,
-  },
-  avatarMedium: {
-    width: 40,
-    height: 40,
   },
   fallback: {
     backgroundColor: colors.gray[100],
