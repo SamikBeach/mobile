@@ -1,5 +1,36 @@
 # 🚦 CHANGELOG
 
+# [1.4.0](https://github.com/SamikBeach/mobile/compare/1.3.0...1.4.0) (2025-02-06)
+
+
+### Bug Fixes
+
+* fix lint ([d892ad8](https://github.com/SamikBeach/mobile/commit/d892ad88c65644e2a01ed451dacd0ce0e822fabb))
+* Stack navigator 수정 ([84289ef](https://github.com/SamikBeach/mobile/commit/84289ef3b579077254e617bc5513eb27e3d7daa8))
+* Tab 컴포넌트 구조 수정 ([f24b2c6](https://github.com/SamikBeach/mobile/commit/f24b2c6b7c5fe80977f67fb48deeacfb1e048f5d))
+* 스켈레톤 스타일 수정 ([79721da](https://github.com/SamikBeach/mobile/commit/79721daed52bfc060a027f4a9c6c0006ff5f2820))
+* 안드로이드 네트워크 에러 해결을 위한 axios 설정 수정 ([f099fcc](https://github.com/SamikBeach/mobile/commit/f099fcce1c4a0dda054e6ebeac5b4e46142a26ef))
+* 안드로이드 스타일 깨짐 대응 ([8196478](https://github.com/SamikBeach/mobile/commit/8196478fef24de0f61586bbcbc2a69896166c3e3))
+* 안드로이드 이미지 URL 처리 개선 ([a68365e](https://github.com/SamikBeach/mobile/commit/a68365e3be05c17c11f15654069408e5d9596689))
+* 안드로이드 패키지명 충돌 해결 ([af2f862](https://github.com/SamikBeach/mobile/commit/af2f862079c9c47ba67132acdf223cf8a2d92dfb))
+* 토큰 리프레시 로직 개선 ([0b3edc1](https://github.com/SamikBeach/mobile/commit/0b3edc14ccfbdb95efb044fe5d7820dbe4a2343e))
+* 프로필 이미지 삭제 관련 코드 제거 ([ea83739](https://github.com/SamikBeach/mobile/commit/ea83739fb58bd82fc805784cc40503b355153e1d))
+
+
+### Features
+
+* ActionSheetIOS -> ActionSheet ([3641cf1](https://github.com/SamikBeach/mobile/commit/3641cf1b4eeaf5db73b2590e823790e7e352e6d1))
+* Platform 분기 추가 ([8d952a9](https://github.com/SamikBeach/mobile/commit/8d952a907b709403f4ca7aca01f774e18a9f10ec))
+* ReviewList 애니메이션 적용 ([69ab3fb](https://github.com/SamikBeach/mobile/commit/69ab3fb9fbe1c320158b2ee81f0f90a1f17bae6e))
+* UserAvatar 컴포넌트에 기본 아이콘 추가 ([c93e02c](https://github.com/SamikBeach/mobile/commit/c93e02c5fe799af590ded871f8493d66ec069efc))
+* UserAvatar 폴백 아이콘 추가 ([82fd116](https://github.com/SamikBeach/mobile/commit/82fd116b9a6d88e0fe1ce19909ccf56be485736f))
+* 구글 로그인 버튼에 로고 추가 ([0a40e7d](https://github.com/SamikBeach/mobile/commit/0a40e7d2bdac1ffae5b779c021323a5e0677d278))
+* 비밀번호 재설정 플로우 모바일 대응 ([c35a542](https://github.com/SamikBeach/mobile/commit/c35a542d3f6ff242b8fb9514649aa04704e93e63))
+* 상세 페이지 초기 스크롤 이슈 수정 ([9e1f58e](https://github.com/SamikBeach/mobile/commit/9e1f58ea68d6a824ec1f91451164ebed74792298))
+* 쉐도우 제거 ([95072b8](https://github.com/SamikBeach/mobile/commit/95072b8cb9f091c0224ec26d7c8c6230a95d2c1c))
+* 유저 리뷰 목록 애니메이션 및 데이터 업데이트 개선 ([414a15c](https://github.com/SamikBeach/mobile/commit/414a15c18caab673afbe60b409662206cf93c840))
+* 좋아요한 책 목록 UI를 전체 책 목록과 동일하게 변경 ([6866234](https://github.com/SamikBeach/mobile/commit/68662347bf7f1ea67b6e99ee8eb69d6882b10622))
+
 # [1.3.0](https://github.com/SamikBeach/mobile/compare/1.2.0...1.3.0) (2025-02-05)
 
 
