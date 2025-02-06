@@ -8,6 +8,7 @@ import { reviewApi } from '@/apis/review';
 import type { Review } from '@/types/review';
 import { AxiosResponse } from 'axios';
 import { PaginatedResponse } from '@/types/common';
+import { colors, spacing } from '@/styles/theme';
 
 function FeedListContent() {
   const [tab, setTab] = useState<'popular' | 'recent'>('popular');
@@ -57,6 +58,8 @@ function FeedListContent() {
         onEndReached={() => hasNextPage && fetchNextPage()}
         onEndReachedThreshold={0.5}
         ListFooterComponent={hasNextPage ? <FeedSkeleton /> : null}
+        ItemSeparatorComponent={() => <View style={styles.divider} />}
+        contentContainerStyle={styles.listContent}
       />
     </View>
   );
@@ -88,6 +91,13 @@ export function FeedList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
+  },
+  listContent: {
+    paddingVertical: spacing.md,
   },
 });

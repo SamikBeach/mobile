@@ -4,72 +4,49 @@ import { Text } from '@/components/common/Text';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
+import type { Book } from '@/types/book';
 import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius } from '@/styles/theme';
-import { format } from 'date-fns';
 
 interface Props {
-  book: {
-    id: number;
-    title: string;
-    imageUrl: string | null;
-    publisher: string | null;
-    publicationDate: string | null;
-    likeCount: number;
-    reviewCount: number;
-  };
-  size?: 'medium' | 'small' | 'xsmall';
-  showPublisher?: boolean;
-  showPublicationDate?: boolean;
+  book: Book;
 }
 
-export function BookItem({
-  book,
-  size = 'medium',
-  showPublisher = false,
-  showPublicationDate = false,
-}: Props) {
+export function BookItem({ book }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
-    navigation.push('BookDetail', { bookId: book.id });
+    navigation.navigate('BookDetail', { bookId: book.id });
   };
 
-  const imageSize = {
-    medium: { width: 140, height: 200 },
-    small: { width: 110, height: 160 },
-    xsmall: { width: 90, height: 130 },
-  }[size];
-
   return (
-    <Pressable onPress={handlePress}>
-      <View style={[styles.container, { width: imageSize.width }]}>
-        <Image
-          source={{ uri: book.imageUrl ?? undefined }}
-          style={[styles.image, imageSize]}
-          resizeMode="cover"
-        />
-        <View style={styles.info}>
-          <Text style={[styles.title, size !== 'medium' && styles.smallTitle]} numberOfLines={2}>
+    <Pressable
+      style={({ pressed }) => [styles.container, pressed && { opacity: 0.8 }]}
+      onPress={handlePress}>
+      <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.image} resizeMode="cover" />
+      <View style={styles.content}>
+        <View style={styles.textContent}>
+          <Text style={styles.title} numberOfLines={2}>
             {book.title}
           </Text>
-          {showPublisher && book.publisher && (
-            <Text style={styles.publisher} numberOfLines={1}>
-              {book.publisher}
-            </Text>
-          )}
-          {showPublicationDate && book.publicationDate && (
-            <Text style={styles.date}>{format(new Date(book.publicationDate), 'yyyy.MM')}</Text>
-          )}
-          <View style={styles.stats}>
-            <View style={styles.stat}>
-              <Icon name="thumbs-up" size={12} color={colors.gray[500]} />
-              <Text style={styles.statText}>{book.likeCount}</Text>
-            </View>
-            <View style={styles.stat}>
-              <Icon name="message-square" size={12} color={colors.gray[500]} />
-              <Text style={styles.statText}>{book.reviewCount}</Text>
-            </View>
+          <Text style={styles.author} numberOfLines={1}>
+            {book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+          </Text>
+        </View>
+        <View style={styles.stats}>
+          <View style={styles.statItem}>
+            <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
+            <Text style={styles.statText}>{book.likeCount}</Text>
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.statItem}>
+            <Icon name="message-square" size={13} color={colors.gray[400]} />
+            <Text style={styles.statText}>{book.reviewCount}</Text>
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.statItem}>
+            <Icon name="book" size={13} color={colors.gray[400]} />
+            <Text style={styles.statText}>{book.totalTranslationCount}</Text>
           </View>
         </View>
       </View>
@@ -79,43 +56,53 @@ export function BookItem({
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.sm,
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    padding: spacing.lg,
+    gap: spacing.lg,
+    paddingVertical: spacing.xl,
   },
   image: {
+    width: 85,
+    height: 120,
     borderRadius: borderRadius.md,
     backgroundColor: colors.gray[100],
   },
-  info: {
+  content: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  textContent: {
     gap: spacing.xs,
   },
   title: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.gray[900],
-    lineHeight: 20,
+    lineHeight: 22,
   },
-  smallTitle: {
+  author: {
     fontSize: 14,
-  },
-  publisher: {
-    fontSize: 13,
-    color: colors.gray[500],
-  },
-  date: {
-    fontSize: 13,
-    color: colors.gray[500],
+    color: colors.gray[600],
   },
   stats: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    alignItems: 'center',
+    marginTop: spacing.sm,
   },
-  stat: {
+  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
   },
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
+  },
   statText: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.gray[500],
   },
 });

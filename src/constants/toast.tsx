@@ -15,14 +15,6 @@ export const toastConfig = {
         paddingVertical: 12,
         backgroundColor: colors.gray[900],
         borderRadius: 12,
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.15,
-        shadowRadius: 5,
-        elevation: 5,
       }}
       contentContainerStyle={{ paddingHorizontal: 15 }}
       text1Style={{
@@ -43,14 +35,6 @@ export const toastConfig = {
         paddingVertical: 12,
         backgroundColor: colors.gray[900],
         borderRadius: 12,
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.15,
-        shadowRadius: 5,
-        elevation: 5,
       }}
       contentContainerStyle={{ paddingHorizontal: 15 }}
       text1Style={{

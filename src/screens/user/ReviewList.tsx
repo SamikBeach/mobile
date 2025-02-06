@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, ActivityIndicator, View } from 'react-native';
 import { ReviewItem } from '@/components/review/ReviewItem';
 import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';
 import { spacing, colors } from '@/styles/theme';
 import type { Review } from '@/types/review';
-import { PaginatedResponse } from '@/types/common';
-import { AxiosResponse } from 'axios';
+import type { PaginatedResponse } from '@/types/common';
+import type { AxiosResponse } from 'axios';
+import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 
 interface Props {
   userId: number;
@@ -42,30 +43,29 @@ export function ReviewList({ userId }: Props) {
   if (!reviews.length) return <Empty message="작성한 리뷰가 없습니다" />;
 
   return (
-    <FlatList
-      data={reviews}
-      renderItem={({ item }) => <ReviewItem review={item} showBookInfo />}
-      keyExtractor={item => String(item.id)}
-      contentContainerStyle={styles.list}
-      onEndReached={() => {
-        if (hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      }}
-      onEndReachedThreshold={0.5}
-      ListFooterComponent={
-        isFetchingNextPage ? (
-          <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
-        ) : null
-      }
-      style={styles.list}
-    />
+    <Animated.View
+      entering={FadeIn.duration(200)}
+      exiting={FadeOut.duration(200)}
+      layout={Layout.springify()}
+      style={styles.container}>
+      {reviews.map(review => (
+        <View key={review.id}>
+          <ReviewItem review={review} showBookInfo />
+          <View style={styles.divider} />
+        </View>
+      ))}
+      {isFetchingNextPage && (
+        <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
+      )}
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  list: {
-    gap: spacing.xl,
+  container: {},
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
   spinner: {
     marginVertical: spacing.lg,

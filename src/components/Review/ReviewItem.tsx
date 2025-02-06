@@ -63,6 +63,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         reviewId: review.id,
         bookId: review.book.id,
         authorId: review.book.authorBooks?.[0]?.author.id,
+        userId: review.user.id,
         isOptimistic: true,
       });
     },
@@ -71,6 +72,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         reviewId: review.id,
         bookId: review.book.id,
         authorId: review.book.authorBooks?.[0]?.author.id,
+        userId: review.user.id,
         isOptimistic: false,
         currentStatus: {
           isLiked: review.isLiked ?? false,
@@ -112,6 +114,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         reviewId: review.id,
         bookId: review.book.id,
         authorId: review.book.authorBooks?.[0]?.author.id,
+        userId: review.user.id,
       });
       Toast.show({
         type: 'success',
@@ -166,8 +169,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <View style={styles.userInfo}>
-            <UserAvatar user={review.user} showNickname={false} size="sm" />
-            <Text style={styles.username}>{review.user.nickname}</Text>
+            <UserAvatar user={review.user} showNickname size="sm" />
             <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
           </View>
           <View style={styles.headerActions}>
@@ -239,8 +241,9 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
     gap: spacing.sm,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xs,
   },
   header: {
     gap: spacing.xs,

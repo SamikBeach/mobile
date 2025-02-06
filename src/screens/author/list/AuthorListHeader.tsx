@@ -4,7 +4,7 @@ import { GenreButtons } from './GenreButtons';
 import { SearchBar } from './SearchBar';
 import { SortButtons } from './SortButtons';
 import { EraSelect } from './EraSelect';
-import { colors, spacing, shadows } from '@/styles/theme';
+import { colors, spacing } from '@/styles/theme';
 
 export function AuthorListHeader() {
   return (
@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     paddingTop: spacing.lg,
-    ...shadows.sm,
   },
   top: {
     paddingHorizontal: spacing.lg,
@@ -42,4 +41,4 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-}); 
+});

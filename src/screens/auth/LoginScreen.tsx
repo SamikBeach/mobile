@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Image, Platform } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
@@ -11,7 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
 import { AxiosError } from 'axios';
 import Toast from 'react-native-toast-message';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GOOGLE_IOS_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '@env';
 
 interface LoginFormData {
@@ -68,7 +68,6 @@ export default function LoginScreen() {
   const { mutate: googleLogin, isPending: isGoogleLoginPending } = useMutation({
     mutationFn: authApi.googleLogin,
     onSuccess: response => {
-      console.log('Google Login Success:', response);
       setCurrentUser(response.data.user);
       Toast.show({
         type: 'success',
@@ -76,10 +75,11 @@ export default function LoginScreen() {
       });
       navigation.navigate('Home');
     },
-    onError: () => {
+    onError: (error: any) => {
       Toast.show({
         type: 'error',
         text1: '구글 로그인에 실패했습니다.',
+        text2: error.response?.data?.message || '알 수 없는 오류가 발생했습니다.',
       });
     },
   });
@@ -89,22 +89,15 @@ export default function LoginScreen() {
       await GoogleSignin.hasPlayServices();
       await GoogleSignin.signOut();
       const result = await GoogleSignin.signIn();
-      console.log('Google Sign In Result:', result);
 
       if (result.data?.idToken) {
-        googleLogin({ code: result.data.idToken, clientType: 'ios' });
+        googleLogin({
+          code: result.data.idToken,
+          clientType: Platform.OS === 'ios' ? 'ios' : 'android',
+        });
       }
     } catch (error: any) {
       console.error('Google Sign In Error:', error);
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('User cancelled the login flow');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('Sign in is in progress');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('Play services not available');
-      } else {
-        console.log('Some other error:', error);
-      }
     }
   };
 
@@ -157,14 +150,21 @@ export default function LoginScreen() {
             로그인
           </Button>
 
-          <Button variant="outline" onPress={handleGoogleLogin} loading={isGoogleLoginPending}>
-            구글 계정으로 로그인
+          <Button
+            variant="outline"
+            onPress={handleGoogleLogin}
+            loading={isGoogleLoginPending}
+            style={styles.googleButtonContainer}>
+            <View style={styles.googleButton}>
+              <Image source={require('@/assets/images/google.png')} style={styles.googleIcon} />
+              <Text style={styles.googleText}>구글 계정으로 로그인</Text>
+            </View>
           </Button>
 
           <View style={styles.links}>
             <Button
               variant="text"
-              onPress={() => navigation.navigate('RequestResetPassword')}
+              onPress={() => navigation.navigate('ResetPasswordRequest')}
               style={styles.linkButton}>
               <Text style={styles.linkText}>비밀번호를 잊으셨나요?</Text>
             </Button>
@@ -226,5 +226,24 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#EF4444',
     fontSize: 13,
+  },
+  googleButtonContainer: {
+    borderColor: '#E5E7EB',
+    backgroundColor: 'white',
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  googleIcon: {
+    width: 18,
+    height: 18,
+  },
+  googleText: {
+    color: '#3C4043',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });

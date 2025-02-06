@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, Image, Pressable, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { Avatar } from '@/components/common/Avatar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';
-import { colors, spacing, shadows } from '@/styles/theme';
-import Icon from 'react-native-vector-icons/Feather';
+import { colors, spacing } from '@/styles/theme';
 import * as ImagePicker from 'react-native-image-picker';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Toast from 'react-native-toast-message';

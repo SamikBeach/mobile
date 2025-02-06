@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, FlatList, ActivityIndicator, View } from 'react-native';
 import { AuthorItem } from '@/components/author/AuthorItem';
 import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -47,6 +47,9 @@ export function AuthorList({ userId }: Props) {
       renderItem={({ item }) => <AuthorItem author={item.author} />}
       keyExtractor={item => String(item.author.id)}
       contentContainerStyle={styles.list}
+      ItemSeparatorComponent={() => (
+        <View style={styles.divider} />
+      )}
       onEndReached={() => {
         if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
@@ -65,7 +68,10 @@ export function AuthorList({ userId }: Props) {
 const styles = StyleSheet.create({
   list: {
     padding: spacing.lg,
-    gap: spacing.md,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
   spinner: {
     marginVertical: spacing.lg,

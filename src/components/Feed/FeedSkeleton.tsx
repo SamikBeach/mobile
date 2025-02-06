@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Animated, ViewStyle } from 'react-native';
+import { spacing, colors, borderRadius } from '@/styles/theme';
 
 interface SkeletonProps {
   style: ViewStyle | ViewStyle[];
@@ -80,33 +81,26 @@ export function FeedSkeleton() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: 'white',
-    marginHorizontal: 16,
-    marginVertical: 8,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    padding: spacing.lg,
+    paddingVertical: spacing.xl,
+    backgroundColor: colors.white,
   },
   skeleton: {
-    backgroundColor: '#E1E1E1',
-    borderRadius: 4,
+    backgroundColor: colors.gray[200],
+    borderRadius: borderRadius.sm,
   },
   header: {
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.xs,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 28,
+    height: 28,
+    borderRadius: borderRadius.full,
   },
   nickname: {
     width: 80,

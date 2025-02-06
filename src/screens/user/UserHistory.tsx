@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
-import { colors, spacing, shadows } from '@/styles/theme';
+import { colors, spacing } from '@/styles/theme';
 import { ReviewList } from './ReviewList';
 import { BookList } from './BookList';
 import { AuthorList } from './AuthorList';
@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     backgroundColor: colors.white,
-    ...shadows.sm,
   },
   tabText: {
     fontSize: 14,

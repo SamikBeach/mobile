@@ -115,9 +115,6 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
       contentContainerStyle={styles.reviewList}
-      maintainVisibleContentPosition={{
-        minIndexForVisible: 0,
-      }}
     />
   );
 }

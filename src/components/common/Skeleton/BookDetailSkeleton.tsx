@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Skeleton } from './Skeleton';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 
 export function BookDetailSkeleton() {
   return (
@@ -80,4 +80,4 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: borderRadius.md,
   },
-}); 
+});

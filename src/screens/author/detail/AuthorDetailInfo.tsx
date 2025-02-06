@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { formatAuthorLifespan } from '@/utils/date';
 import { useMutation } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -128,9 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.lg,
   },
-  imageWrapper: {
-    ...shadows.md,
-  },
+  imageWrapper: {},
   image: {
     width: 120,
     height: 120,

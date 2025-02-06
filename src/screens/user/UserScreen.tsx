@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  ActionSheetIOS,
   SectionList,
 } from 'react-native';
 import { colors } from '@/styles/theme';
@@ -20,13 +19,15 @@ import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
 import { currentUserAtom } from '@/atoms/auth';
 import { useSetAtom } from 'jotai';
+import { ActionSheet } from '@/components/common/ActionSheet/ActionSheet';
 
 export function UserScreen() {
   const route = useRoute<RouteProp<TabParamList, 'UserTab'>>();
-  const { userId } = route.params;
+  const userId = route.params?.userId;
   const currentUser = useCurrentUser();
   const setCurrentUser = useSetAtom(currentUserAtom);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [showActionSheet, setShowActionSheet] = useState(false);
 
   const { mutate: logout } = useMutation({
     mutationFn: () => authApi.logout(),
@@ -55,25 +56,25 @@ export function UserScreen() {
 
   const isMyProfile = currentUser?.id === targetUserId;
 
-  const handleShowMenu = () => {
-    ActionSheetIOS.showActionSheetWithOptions(
-      {
-        options: ['취소', '설정', '로그아웃'],
-        cancelButtonIndex: 0,
-        destructiveButtonIndex: 2,
+  const actions = [
+    {
+      text: '설정',
+      icon: 'settings',
+      onPress: () => {
+        setShowActionSheet(false);
+        navigation.navigate('Settings');
       },
-      buttonIndex => {
-        switch (buttonIndex) {
-          case 1:
-            navigation.navigate('Settings');
-            break;
-          case 2:
-            logout();
-            break;
-        }
+    },
+    {
+      text: '로그아웃',
+      icon: 'log-out',
+      onPress: () => {
+        setShowActionSheet(false);
+        logout();
       },
-    );
-  };
+      destructive: true,
+    },
+  ];
 
   const sections = [
     {
@@ -93,7 +94,7 @@ export function UserScreen() {
           userId={item.userId}
           rightElement={
             item.isMyProfile && (
-              <TouchableOpacity onPress={handleShowMenu}>
+              <TouchableOpacity onPress={() => setShowActionSheet(true)}>
                 <Icon name="settings" size={24} color={colors.gray[600]} />
               </TouchableOpacity>
             )
@@ -113,6 +114,11 @@ export function UserScreen() {
         renderSectionHeader={() => null}
         stickySectionHeadersEnabled={false}
         contentContainerStyle={styles.container}
+      />
+      <ActionSheet
+        visible={showActionSheet}
+        onClose={() => setShowActionSheet(false)}
+        actions={actions}
       />
     </SafeAreaView>
   );

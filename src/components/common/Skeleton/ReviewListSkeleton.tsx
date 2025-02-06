@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { Skeleton } from './Skeleton';
 
@@ -33,13 +33,15 @@ export function ReviewListSkeleton() {
 const styles = StyleSheet.create({
   container: {
     padding: spacing.lg,
-    gap: spacing.md,
   },
   item: {
     backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    gap: spacing.sm,
+    padding: spacing.lg,
+    paddingVertical: spacing.xl,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
   header: {
     flexDirection: 'row',

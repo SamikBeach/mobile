@@ -70,7 +70,7 @@ export function CommentList({ reviewId, onReply }: Props) {
       layout={Layout.springify()}
       style={styles.container}>
       {comments.map(comment => (
-        <CommentItem comment={comment} reviewId={reviewId} onReply={onReply} />
+        <CommentItem key={comment.id} comment={comment} reviewId={reviewId} onReply={onReply} />
       ))}
       {hasNextPage && (
         <Button

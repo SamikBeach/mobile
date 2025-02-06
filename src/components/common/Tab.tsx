@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { colors, spacing } from '../../styles/theme';
 
 interface TabProps {
   tabs: { value: string; label: string }[];
@@ -8,47 +9,49 @@ interface TabProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-export function Tab({ tabs, value, onChange }: TabProps) {
+export function Tab({ tabs, value, onChange, containerStyle }: TabProps) {
   return (
-    <View style={styles.container}>
-      {tabs.map(tab => (
-        <TouchableOpacity
-          key={tab.value}
-          style={[styles.tab, value === tab.value && styles.activeTab]}
-          onPress={() => onChange(tab.value)}>
-          <Text style={[styles.tabText, value === tab.value && styles.activeTabText]}>
-            {tab.label}
-          </Text>
-        </TouchableOpacity>
-      ))}
+    <View style={[styles.container, containerStyle]}>
+      <View style={styles.tabsContainer}>
+        {tabs.map(tab => (
+          <TouchableOpacity
+            key={tab.value}
+            style={[styles.tab, value === tab.value && styles.activeTab]}
+            onPress={() => onChange(tab.value)}>
+            <Text style={[styles.tabText, value === tab.value && styles.activeTabText]}>
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray[100],
+  },
+  tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: '#f4f4f5',
-    padding: 4,
-    borderRadius: 8,
-    marginHorizontal: 16,
-    marginVertical: 8,
   },
   tab: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: spacing.md,
     alignItems: 'center',
-    borderRadius: 6,
   },
   activeTab: {
-    backgroundColor: '#fff',
+    borderBottomWidth: 2,
+    borderBottomColor: colors.gray[900],
   },
   tabText: {
     fontSize: 14,
-    color: '#71717a',
+    color: colors.gray[500],
   },
   activeTabText: {
-    color: '#18181b',
+    color: colors.gray[900],
     fontWeight: '600',
   },
 });

@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { Skeleton } from './Skeleton';
 
 export function ReviewItemSkeleton() {
@@ -19,7 +19,7 @@ export function ReviewItemSkeleton() {
       <View style={styles.content}>
         <Skeleton style={styles.contentLine} />
         <Skeleton style={styles.contentLine} />
-        <Skeleton style={[styles.contentLine, { width: '70%' }]} />
+        <Skeleton style={[styles.contentLine, { width: '70%' }] as StyleProp<ViewStyle>} />
       </View>
 
       <View style={styles.footer}>
@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
     gap: spacing.md,
-    ...shadows.sm,
   },
   header: {
     gap: spacing.sm,
@@ -99,4 +98,4 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: borderRadius.sm,
   },
-}); 
+});
