@@ -239,8 +239,9 @@ export function ReviewItem({ review, showBookInfo }: Props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
     gap: spacing.sm,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xs,
   },
   header: {
     gap: spacing.xs,

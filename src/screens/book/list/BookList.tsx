@@ -13,6 +13,7 @@ import type { Book } from '@/types/book';
 import { BookListSkeleton } from '@/components/common/Skeleton/BookListSkeleton';
 import { spacing } from '@/styles/theme';
 import { BookItem } from '@/components/book/BookItem';
+import { colors } from '@/styles/theme';
 
 interface PaginationMeta {
   currentPage: number;
@@ -102,7 +103,9 @@ export function BookList() {
       renderItem={({ item }) => <BookItem book={item} />}
       keyExtractor={item => item.id.toString()}
       contentContainerStyle={styles.list}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      ItemSeparatorComponent={() => (
+        <View style={styles.divider} />
+      )}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <BookListSkeleton /> : null}
@@ -114,7 +117,8 @@ const styles = StyleSheet.create({
   list: {
     padding: spacing.lg,
   },
-  separator: {
-    height: spacing.md,
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
 });

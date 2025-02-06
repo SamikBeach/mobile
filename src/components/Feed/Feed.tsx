@@ -160,16 +160,10 @@ export function Feed({ review, user, book, expanded }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 10,
     backgroundColor: 'white',
     marginHorizontal: 16,
     marginVertical: 8,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   header: {
     marginBottom: 16,

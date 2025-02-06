@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, FlatList, ActivityIndicator, View } from 'react-native';
 import { ReviewItem } from '@/components/review/ReviewItem';
 import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -47,6 +47,7 @@ export function ReviewList({ userId }: Props) {
       renderItem={({ item }) => <ReviewItem review={item} showBookInfo />}
       keyExtractor={item => String(item.id)}
       contentContainerStyle={styles.list}
+      ItemSeparatorComponent={() => <View style={styles.divider} />}
       onEndReached={() => {
         if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
@@ -58,14 +59,17 @@ export function ReviewList({ userId }: Props) {
           <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
         ) : null
       }
-      style={styles.list}
     />
   );
 }
 
 const styles = StyleSheet.create({
   list: {
-    gap: spacing.xl,
+    padding: spacing.lg,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
   spinner: {
     marginVertical: spacing.lg,

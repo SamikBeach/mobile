@@ -6,7 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
 import type { Book } from '@/types/book';
 import type { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 
 interface Props {
   book: Book;
@@ -58,10 +58,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
     padding: spacing.lg,
     gap: spacing.lg,
-    ...shadows.sm,
+    paddingVertical: spacing.xl,
   },
   image: {
     width: 85,

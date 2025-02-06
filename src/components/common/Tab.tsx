@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { colors, spacing } from '../../styles/theme';
 
 interface TabProps {
   tabs: { value: string; label: string }[];
@@ -27,18 +28,17 @@ export function Tab({ tabs, value, onChange }: TabProps) {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray[100],
+  },
+  tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: '#f4f4f5',
-    padding: 4,
-    borderRadius: 8,
-    marginHorizontal: 16,
-    marginVertical: 8,
   },
   tab: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: spacing.md,
     alignItems: 'center',
-    borderRadius: 6,
   },
   activeTab: {
     backgroundColor: '#fff',

@@ -97,7 +97,9 @@ export function AuthorList() {
       renderItem={({ item }) => <AuthorItem author={item} />}
       keyExtractor={item => item.id.toString()}
       contentContainerStyle={styles.list}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      ItemSeparatorComponent={() => (
+        <View style={styles.divider} />
+      )}
     />
   );
 }
@@ -106,7 +108,8 @@ const styles = StyleSheet.create({
   list: {
     padding: spacing.lg,
   },
-  separator: {
-    height: spacing.lg,
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
 });
