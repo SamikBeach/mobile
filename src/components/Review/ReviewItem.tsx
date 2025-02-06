@@ -63,6 +63,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         reviewId: review.id,
         bookId: review.book.id,
         authorId: review.book.authorBooks?.[0]?.author.id,
+        userId: review.user.id,
         isOptimistic: true,
       });
     },
@@ -71,6 +72,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         reviewId: review.id,
         bookId: review.book.id,
         authorId: review.book.authorBooks?.[0]?.author.id,
+        userId: review.user.id,
         isOptimistic: false,
         currentStatus: {
           isLiked: review.isLiked ?? false,
@@ -112,6 +114,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         reviewId: review.id,
         bookId: review.book.id,
         authorId: review.book.authorBooks?.[0]?.author.id,
+        userId: review.user.id,
       });
       Toast.show({
         type: 'success',
