@@ -91,13 +91,13 @@ export function FeedList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  listContent: {
-    paddingVertical: spacing.md,
+    backgroundColor: colors.white,
   },
   divider: {
     height: 1,
     backgroundColor: colors.gray[100],
+  },
+  listContent: {
+    paddingVertical: spacing.md,
   },
 });
