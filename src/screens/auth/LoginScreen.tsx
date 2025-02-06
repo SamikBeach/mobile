@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Image, Platform } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
@@ -12,18 +12,22 @@ import { RootStackParamList } from '@/navigation/types';
 import { AxiosError } from 'axios';
 import Toast from 'react-native-toast-message';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { GOOGLE_IOS_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '@env';
 
 interface LoginFormData {
   email: string;
   password: string;
 }
 
-GoogleSignin.configure({
-  webClientId: GOOGLE_WEB_CLIENT_ID,
-  iosClientId: GOOGLE_IOS_CLIENT_ID,
-  forceCodeForRefreshToken: true,
-});
+GoogleSignin.configure(
+  Platform.select({
+    ios: {
+      iosClientId: process.env.GOOGLE_IOS_CLIENT_ID,
+    },
+    android: {
+      webClientId: process.env.GOOGLE_WEB_CLIENT_ID,
+    },
+  }),
+);
 
 export default function LoginScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -91,10 +95,24 @@ export default function LoginScreen() {
       const result = await GoogleSignin.signIn();
 
       if (result.data?.idToken) {
-        googleLogin({ code: result.data.idToken, clientType: 'ios' });
+        googleLogin({
+          code: result.data.idToken,
+          clientType: Platform.OS === 'ios' ? 'ios' : 'android',
+        });
       }
     } catch (error: any) {
       console.error('Google Sign In Error:', error);
+
+      let errorMessage = error.message;
+      if (error.code === 12500) {
+        errorMessage = '구글 로그인 설정이 올바르지 않습니다.';
+      }
+
+      Toast.show({
+        type: 'error',
+        text1: '구글 로그인에 실패했습니다.',
+        text2: errorMessage,
+      });
     }
   };
 
