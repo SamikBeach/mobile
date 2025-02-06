@@ -35,14 +35,17 @@ export function AuthorListSkeleton() {
 const styles = StyleSheet.create({
   container: {
     padding: spacing.lg,
-    gap: spacing.md,
   },
   item: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    gap: spacing.md,
+    padding: spacing.lg,
+    paddingVertical: spacing.xl,
+    gap: spacing.lg,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
   image: {
     width: 80,

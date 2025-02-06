@@ -35,9 +35,13 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    gap: spacing.md,
+    padding: spacing.lg,
+    paddingVertical: spacing.xl,
+    gap: spacing.lg,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
   image: {
     width: 90,
