@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { Skeleton } from './Skeleton';
 
 export function RelativeBooksSkeleton() {
@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   imageContainer: {
-    ...shadows.sm,
     borderRadius: borderRadius.md,
     backgroundColor: colors.white,
   },
@@ -84,4 +83,4 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: borderRadius.sm,
   },
-}); 
+});

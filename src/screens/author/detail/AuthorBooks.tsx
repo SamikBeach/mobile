@@ -6,7 +6,7 @@ import { authorApi } from '@/apis/author';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { format } from 'date-fns';
 import { AuthorBooksSkeleton } from '@/components/common/Skeleton';
 
@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
     width: 130,
   },
   imageContainer: {
-    ...shadows.sm,
     borderRadius: borderRadius.md,
     backgroundColor: colors.white,
   },

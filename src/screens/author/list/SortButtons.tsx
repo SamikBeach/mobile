@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useAtom } from 'jotai';
 import { authorSortModeAtom } from '@/atoms/author';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 
 const SORT_OPTIONS: { value: 'popular' | 'recent' | 'alphabet'; label: string }[] = [
   { value: 'popular', label: '인기순' },
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
   },
   activeButton: {
     backgroundColor: colors.white,
-    ...shadows.sm,
   },
   text: {
     fontSize: 13,
@@ -52,4 +51,4 @@ const styles = StyleSheet.create({
   activeText: {
     color: colors.gray[900],
   },
-}); 
+});

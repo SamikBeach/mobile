@@ -4,7 +4,7 @@ import { Text } from '@/components/common/Text';
 import { Button } from '@/components/common/Button';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { useMutation } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import type { Book } from '@/types/book';
@@ -144,9 +144,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.lg,
   },
-  imageWrapper: {
-    ...shadows.md,
-  },
+  imageWrapper: {},
   image: {
     width: 120,
     height: 180,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { Skeleton } from './Skeleton';
 
 export function BookListSkeleton() {
@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     gap: spacing.md,
-    ...shadows.sm,
   },
   image: {
     width: 90,

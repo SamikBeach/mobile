@@ -86,10 +86,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderRadius: 12,
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   skeleton: {
     backgroundColor: '#E1E1E1',
