@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, Text, View, Platform } from 'react-native';
 import { UserBase } from '@/types/user';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -41,6 +41,13 @@ export function UserAvatar({
     }
   };
 
+  const getImageUrl = (url: string) => {
+    if (Platform.OS === 'android' && __DEV__) {
+      return url.replace('localhost', '10.0.2.2');
+    }
+    return url;
+  };
+
   const avatarSize = getAvatarSize();
 
   return (
@@ -48,7 +55,7 @@ export function UserAvatar({
       <TouchableOpacity style={styles.container} onPress={handlePress} disabled={disabled}>
         {user.imageUrl ? (
           <Image
-            source={{ uri: user.imageUrl }}
+            source={{ uri: getImageUrl(user.imageUrl) }}
             style={[styles.avatar, avatarStyle, { width: avatarSize, height: avatarSize }]}
           />
         ) : (
