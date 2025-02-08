@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+# [1.6.0](https://github.com/SamikBeach/mobile/compare/1.5.4...1.6.0) (2025-02-08)
+
+
+### Features
+
+* Hermes 비활성화 및 빌드 설정 최적화 ([c330ed8](https://github.com/SamikBeach/mobile/commit/c330ed8fc3b0dc42415dc7533279a9e71d42ff6e))
+
 ## [1.5.4](https://github.com/SamikBeach/mobile/compare/1.5.3...1.5.4) (2025-02-08)
 
 
