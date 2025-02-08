@@ -1,5 +1,17 @@
 # 🚦 CHANGELOG
 
+# [1.9.0](https://github.com/SamikBeach/mobile/compare/1.8.3...1.9.0) (2025-02-08)
+
+
+### Bug Fixes
+
+* .gitignore 수정 ([d48b835](https://github.com/SamikBeach/mobile/commit/d48b8352af56353a06d49d59f173bb4e5cf7804c))
+
+
+### Features
+
+* iOS 앱 표시 이름 변경 ([de074f4](https://github.com/SamikBeach/mobile/commit/de074f449fdd52fadc3d9e41ef5e18f6fbdd8804))
+
 ## [1.8.3](https://github.com/SamikBeach/mobile/compare/1.8.2...1.8.3) (2025-02-08)
 
 
