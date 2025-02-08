@@ -123,7 +123,6 @@
 			productName = "고전산책";
 			productReference = 13B07F961A680F5B00A75B9A /* mobile.app */;
 			productType = "com.apple.product-type.application";
-			productDisplayName = "고전산책";
 		};
 /* End PBXNativeTarget section */
 
@@ -501,6 +500,4 @@
 /* End XCConfigurationList section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
-}
-
 }
