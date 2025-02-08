@@ -78,3 +78,6 @@ yarn-error.log
 
 /ios/mobile/Info.plist
 /ios/mobile/GoogleService-Info.plist
+
+
+/android/gradle.properties.production
