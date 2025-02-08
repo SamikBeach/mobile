@@ -4,8 +4,18 @@ module.exports = {
     [
       'module-resolver',
       {
-        root: ['./src'],
-        extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
+        root: ['.'],
+        extensions: [
+          '.ios.ts',
+          '.android.ts',
+          '.ts',
+          '.ios.tsx',
+          '.android.tsx',
+          '.tsx',
+          '.jsx',
+          '.js',
+          '.json',
+        ],
         alias: {
           '@': './src',
         },
@@ -17,10 +27,9 @@ module.exports = {
       {
         envName: 'APP_ENV',
         moduleName: '@env',
-        path: '.env',
-        safe: false,
-        allowUndefined: true,
-        verbose: false,
+        path: '.env.production',
+        safe: true,
+        allowUndefined: false,
       },
     ],
   ],
