@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+# [1.10.0](https://github.com/SamikBeach/mobile/compare/1.9.0...1.10.0) (2025-02-08)
+
+
+### Features
+
+* iOS 프로젝트 파일 문법 오류 수정 ([5aa51df](https://github.com/SamikBeach/mobile/commit/5aa51df209145a6de7a5fc023894a21a000b7385))
+
 # [1.9.0](https://github.com/SamikBeach/mobile/compare/1.8.3...1.9.0) (2025-02-08)
 
 
