@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.6.2](https://github.com/SamikBeach/mobile/compare/1.6.1...1.6.2) (2025-02-08)
+
+
+### Bug Fixes
+
+* iOS 권한 설명 추가 ([6a3249a](https://github.com/SamikBeach/mobile/commit/6a3249a1cf7c5687986574751e6e2d0bfa111023))
+
 ## [1.6.1](https://github.com/SamikBeach/mobile/compare/1.6.0...1.6.1) (2025-02-08)
 
 
