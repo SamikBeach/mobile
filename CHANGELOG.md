@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.10.1](https://github.com/SamikBeach/mobile/compare/1.10.0...1.10.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* BuildableName 수정 ([5b7d094](https://github.com/SamikBeach/mobile/commit/5b7d094654ba71aadb91c704cbc24e1536646868))
+
 # [1.10.0](https://github.com/SamikBeach/mobile/compare/1.9.0...1.10.0) (2025-02-08)
 
 
