@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+# [1.7.0](https://github.com/SamikBeach/mobile/compare/1.6.2...1.7.0) (2025-02-08)
+
+
+### Features
+
+* 안드로이드 앱 서명 불일치 문제 해결 ([7a4e3ab](https://github.com/SamikBeach/mobile/commit/7a4e3abd070b1c9a3d0deecc7f2381a59ab61ef2))
+
 ## [1.6.2](https://github.com/SamikBeach/mobile/compare/1.6.1...1.6.2) (2025-02-08)
 
 
