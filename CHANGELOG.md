@@ -1,5 +1,17 @@
 # 🚦 CHANGELOG
 
+# [1.8.0](https://github.com/SamikBeach/mobile/compare/1.7.0...1.8.0) (2025-02-08)
+
+
+### Bug Fixes
+
+* 이름 변경 ([a15b388](https://github.com/SamikBeach/mobile/commit/a15b388940b9af603abdf5d90f18429f22db3f9e))
+
+
+### Features
+
+* 안드로이드 릴리즈 키스토어 재생성 ([1e4d3d4](https://github.com/SamikBeach/mobile/commit/1e4d3d4c0cdeb186e037efabd7db055e51f8fbb2))
+
 # [1.7.0](https://github.com/SamikBeach/mobile/compare/1.6.2...1.7.0) (2025-02-08)
 
 
