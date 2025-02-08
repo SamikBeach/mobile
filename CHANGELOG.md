@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.6.1](https://github.com/SamikBeach/mobile/compare/1.6.0...1.6.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* react-native.config.js 설정 오류 수정 ([1e4d83c](https://github.com/SamikBeach/mobile/commit/1e4d83c151cc891457a7e51bc1d72a9ebffd7015))
+
 # [1.6.0](https://github.com/SamikBeach/mobile/compare/1.5.4...1.6.0) (2025-02-08)
 
 
