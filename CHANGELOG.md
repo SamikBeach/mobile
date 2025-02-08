@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.5.3](https://github.com/SamikBeach/mobile/compare/1.5.2...1.5.3) (2025-02-08)
+
+
+### Bug Fixes
+
+* Hermes dSYM 생성 문제 해결 ([d35fa38](https://github.com/SamikBeach/mobile/commit/d35fa38c9693ad45164598c65661b33d03be2798))
+
 ## [1.5.2](https://github.com/SamikBeach/mobile/compare/1.5.1...1.5.2) (2025-02-08)
 
 
