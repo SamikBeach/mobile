@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.5.4](https://github.com/SamikBeach/mobile/compare/1.5.3...1.5.4) (2025-02-08)
+
+
+### Bug Fixes
+
+* version up ([bd954fe](https://github.com/SamikBeach/mobile/commit/bd954fe4e3d1c03786ab8deb43959edf74e48df2))
+
 ## [1.5.3](https://github.com/SamikBeach/mobile/compare/1.5.2...1.5.3) (2025-02-08)
 
 
