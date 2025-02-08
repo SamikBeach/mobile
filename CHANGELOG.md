@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.8.1](https://github.com/SamikBeach/mobile/compare/1.8.0...1.8.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* 앱 이름 수정 ([734c7aa](https://github.com/SamikBeach/mobile/commit/734c7aa450ea5731652ab087099c18c8d3dad0be))
+
 # [1.8.0](https://github.com/SamikBeach/mobile/compare/1.7.0...1.8.0) (2025-02-08)
 
 
