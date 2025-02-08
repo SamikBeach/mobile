@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+# [1.12.0](https://github.com/SamikBeach/mobile/compare/1.11.0...1.12.0) (2025-02-08)
+
+
+### Features
+
+* iOS 앱 배포를 위한 서명 설정 개선 ([26809ab](https://github.com/SamikBeach/mobile/commit/26809ab003835b19642b17e81327bc62afbce505))
+
 # [1.11.0](https://github.com/SamikBeach/mobile/compare/1.10.1...1.11.0) (2025-02-08)
 
 
