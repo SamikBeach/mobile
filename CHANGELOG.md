@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.5.2](https://github.com/SamikBeach/mobile/compare/1.5.1...1.5.2) (2025-02-08)
+
+
+### Bug Fixes
+
+* iOS 앱 아이콘 및 빌드 설정 수정 ([04e6e85](https://github.com/SamikBeach/mobile/commit/04e6e8563db151588b5d0a4b6fdbca78d13ab978))
+
 ## [1.5.1](https://github.com/SamikBeach/mobile/compare/1.5.0...1.5.1) (2025-02-08)
 
 
