@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+# [1.11.0](https://github.com/SamikBeach/mobile/compare/1.10.1...1.11.0) (2025-02-08)
+
+
+### Features
+
+* iOS 앱 서명 및 번들 설정 수정 ([aa8c5f2](https://github.com/SamikBeach/mobile/commit/aa8c5f2dcbe9407f445101664af21c20b3421c6e))
+
 ## [1.10.1](https://github.com/SamikBeach/mobile/compare/1.10.0...1.10.1) (2025-02-08)
 
 
