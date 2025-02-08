@@ -7,5 +7,8 @@ module.exports = {
         android: null,
       },
     },
+    'react-native': {
+      hermes: false,
+    },
   },
 };
