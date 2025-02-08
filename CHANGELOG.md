@@ -1,5 +1,14 @@
 # 🚦 CHANGELOG
 
+## [1.8.2](https://github.com/SamikBeach/mobile/compare/1.8.1...1.8.2) (2025-02-08)
+
+
+### Bug Fixes
+
+* 불필요한 문구 제거 ([b95e093](https://github.com/SamikBeach/mobile/commit/b95e093d0b83e550819ea564bb378e41a9756303))
+* 앱 이름 수정 ([812c136](https://github.com/SamikBeach/mobile/commit/812c13626ae0d67fe0c9b74de164d66360724e7e))
+* 앱 이름 수정 ([df06fbf](https://github.com/SamikBeach/mobile/commit/df06fbf720bef011373ac9389c98682ce41395eb))
+
 ## [1.8.1](https://github.com/SamikBeach/mobile/compare/1.8.0...1.8.1) (2025-02-08)
 
 
