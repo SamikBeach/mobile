@@ -1,5 +1,14 @@
 # 🚦 CHANGELOG
 
+## [1.5.1](https://github.com/SamikBeach/mobile/compare/1.5.0...1.5.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* 경로 설정 오류 해결 ([e70c1cf](https://github.com/SamikBeach/mobile/commit/e70c1cf4e6525d5cbdf5eba0c03d289c9ca3fed0))
+* 경로 설정 오류 해결 ([ec1543a](https://github.com/SamikBeach/mobile/commit/ec1543acf86e2842a9089fec6675fc1a9779e2a8))
+* 배포준비 ([88ee258](https://github.com/SamikBeach/mobile/commit/88ee258c00ac6cd1de000edb71278eca71303cd7))
+
 # [1.5.0](https://github.com/SamikBeach/mobile/compare/1.4.0...1.5.0) (2025-02-06)
 
 
