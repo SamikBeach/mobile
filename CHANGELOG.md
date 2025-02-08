@@ -1,5 +1,98 @@
 # 🚦 CHANGELOG
 
+## [1.8.2](https://github.com/SamikBeach/mobile/compare/1.8.1...1.8.2) (2025-02-08)
+
+
+### Bug Fixes
+
+* 불필요한 문구 제거 ([b95e093](https://github.com/SamikBeach/mobile/commit/b95e093d0b83e550819ea564bb378e41a9756303))
+* 앱 이름 수정 ([812c136](https://github.com/SamikBeach/mobile/commit/812c13626ae0d67fe0c9b74de164d66360724e7e))
+* 앱 이름 수정 ([df06fbf](https://github.com/SamikBeach/mobile/commit/df06fbf720bef011373ac9389c98682ce41395eb))
+
+## [1.8.1](https://github.com/SamikBeach/mobile/compare/1.8.0...1.8.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* 앱 이름 수정 ([734c7aa](https://github.com/SamikBeach/mobile/commit/734c7aa450ea5731652ab087099c18c8d3dad0be))
+
+# [1.8.0](https://github.com/SamikBeach/mobile/compare/1.7.0...1.8.0) (2025-02-08)
+
+
+### Bug Fixes
+
+* 이름 변경 ([a15b388](https://github.com/SamikBeach/mobile/commit/a15b388940b9af603abdf5d90f18429f22db3f9e))
+
+
+### Features
+
+* 안드로이드 릴리즈 키스토어 재생성 ([1e4d3d4](https://github.com/SamikBeach/mobile/commit/1e4d3d4c0cdeb186e037efabd7db055e51f8fbb2))
+
+# [1.7.0](https://github.com/SamikBeach/mobile/compare/1.6.2...1.7.0) (2025-02-08)
+
+
+### Features
+
+* 안드로이드 앱 서명 불일치 문제 해결 ([7a4e3ab](https://github.com/SamikBeach/mobile/commit/7a4e3abd070b1c9a3d0deecc7f2381a59ab61ef2))
+
+## [1.6.2](https://github.com/SamikBeach/mobile/compare/1.6.1...1.6.2) (2025-02-08)
+
+
+### Bug Fixes
+
+* iOS 권한 설명 추가 ([6a3249a](https://github.com/SamikBeach/mobile/commit/6a3249a1cf7c5687986574751e6e2d0bfa111023))
+
+## [1.6.1](https://github.com/SamikBeach/mobile/compare/1.6.0...1.6.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* react-native.config.js 설정 오류 수정 ([1e4d83c](https://github.com/SamikBeach/mobile/commit/1e4d83c151cc891457a7e51bc1d72a9ebffd7015))
+
+# [1.6.0](https://github.com/SamikBeach/mobile/compare/1.5.4...1.6.0) (2025-02-08)
+
+
+### Features
+
+* Hermes 비활성화 및 빌드 설정 최적화 ([c330ed8](https://github.com/SamikBeach/mobile/commit/c330ed8fc3b0dc42415dc7533279a9e71d42ff6e))
+
+## [1.5.4](https://github.com/SamikBeach/mobile/compare/1.5.3...1.5.4) (2025-02-08)
+
+
+### Bug Fixes
+
+* version up ([bd954fe](https://github.com/SamikBeach/mobile/commit/bd954fe4e3d1c03786ab8deb43959edf74e48df2))
+
+## [1.5.3](https://github.com/SamikBeach/mobile/compare/1.5.2...1.5.3) (2025-02-08)
+
+
+### Bug Fixes
+
+* Hermes dSYM 생성 문제 해결 ([d35fa38](https://github.com/SamikBeach/mobile/commit/d35fa38c9693ad45164598c65661b33d03be2798))
+
+## [1.5.2](https://github.com/SamikBeach/mobile/compare/1.5.1...1.5.2) (2025-02-08)
+
+
+### Bug Fixes
+
+* iOS 앱 아이콘 및 빌드 설정 수정 ([04e6e85](https://github.com/SamikBeach/mobile/commit/04e6e8563db151588b5d0a4b6fdbca78d13ab978))
+
+## [1.5.1](https://github.com/SamikBeach/mobile/compare/1.5.0...1.5.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* 경로 설정 오류 해결 ([e70c1cf](https://github.com/SamikBeach/mobile/commit/e70c1cf4e6525d5cbdf5eba0c03d289c9ca3fed0))
+* 경로 설정 오류 해결 ([ec1543a](https://github.com/SamikBeach/mobile/commit/ec1543acf86e2842a9089fec6675fc1a9779e2a8))
+* 배포준비 ([88ee258](https://github.com/SamikBeach/mobile/commit/88ee258c00ac6cd1de000edb71278eca71303cd7))
+
+# [1.5.0](https://github.com/SamikBeach/mobile/compare/1.4.0...1.5.0) (2025-02-06)
+
+
+### Features
+
+* 안드로이드 구글 로그인 ([3c213da](https://github.com/SamikBeach/mobile/commit/3c213da12827d2248705256e9da07a61302f32a4))
+
 # [1.4.0](https://github.com/SamikBeach/mobile/compare/1.3.0...1.4.0) (2025-02-06)
 
 
