@@ -120,7 +120,7 @@
 			dependencies = (
 			);
 			name = mobile;
-			productName = "고전산책";
+			productName = mobile;
 			productReference = 13B07F961A680F5B00A75B9A /* mobile.app */;
 			productType = "com.apple.product-type.application";
 		};
