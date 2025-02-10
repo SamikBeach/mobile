@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
 import { Text } from '@/components/common/Text';
-import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { formatAuthorLifespan } from '@/utils/date';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -13,6 +12,8 @@ import type { RootStackParamList } from '@/navigation/types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Toast from 'react-native-toast-message';
 import { AuthorDetailInfoSkeleton } from '@/components/common/Skeleton/AuthorDetailInfoSkeleton';
+import { LikeButton } from '@/components/common/LikeButton';
+import { CommentButton } from '@/components/common/CommentButton';
 
 interface Props {
   authorId: number;
@@ -102,21 +103,12 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
             </View>
 
             <View style={styles.stats}>
-              <Pressable style={styles.statItem} onPress={handleLikePress}>
-                <Icon
-                  name={author.isLiked ? 'thumbs-up' : 'thumbs-up'}
-                  size={14}
-                  color={author.isLiked ? colors.red[500] : colors.gray[500]}
-                />
-                <Text style={[styles.statText, author.isLiked && { color: colors.red[500] }]}>
-                  {author.likeCount}
-                </Text>
-              </Pressable>
-              <View style={styles.statDivider} />
-              <Pressable style={styles.statItem} onPress={onReviewPress}>
-                <Icon name="message-circle" size={14} color={colors.gray[500]} />
-                <Text style={styles.statText}>{author.reviewCount}</Text>
-              </Pressable>
+              <LikeButton
+                isLiked={author.isLiked}
+                likeCount={author.likeCount}
+                onPress={handleLikePress}
+              />
+              <CommentButton commentCount={author.reviewCount} onPress={onReviewPress} />
             </View>
           </View>
         </View>
@@ -142,14 +134,14 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {},
   image: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     borderRadius: borderRadius.full,
     backgroundColor: colors.gray[100],
   },
   info: {
     flex: 1,
-    height: 120,
+    paddingVertical: spacing.xs,
   },
   infoContent: {
     flex: 1,
@@ -184,6 +176,7 @@ const styles = StyleSheet.create({
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.xs,
   },
   statItem: {
     flexDirection: 'row',

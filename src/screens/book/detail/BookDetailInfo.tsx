@@ -13,6 +13,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { BookDetailInfoSkeleton } from '@/components/common/Skeleton/BookDetailInfoSkeleton';
+import { CommentButton } from '@/components/common/CommentButton';
+import { LikeButton } from '@/components/common/LikeButton';
 
 interface Props {
   bookId: number;
@@ -115,21 +117,12 @@ export function BookDetailInfo({ bookId, onReviewPress }: Props) {
             </View>
 
             <View style={styles.stats}>
-              <Pressable style={styles.statItem} onPress={handleLikePress}>
-                <Icon
-                  name={book.isLiked ? 'thumbs-up' : 'thumbs-up'}
-                  size={14}
-                  color={book.isLiked ? colors.red[500] : colors.gray[500]}
-                />
-                <Text style={[styles.statText, book.isLiked && { color: colors.red[500] }]}>
-                  {book.likeCount}
-                </Text>
-              </Pressable>
-              <View style={styles.statDivider} />
-              <Pressable style={styles.statItem} onPress={onReviewPress}>
-                <Icon name="message-circle" size={14} color={colors.gray[500]} />
-                <Text style={styles.statText}>{book.reviewCount}</Text>
-              </Pressable>
+              <LikeButton
+                isLiked={book.isLiked}
+                likeCount={book.likeCount}
+                onPress={handleLikePress}
+              />
+              <CommentButton commentCount={book.reviewCount} onPress={onReviewPress} />
             </View>
           </View>
         </View>
@@ -186,6 +179,7 @@ const styles = StyleSheet.create({
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.xs,
     marginBottom: spacing.xs,
   },
   statItem: {
