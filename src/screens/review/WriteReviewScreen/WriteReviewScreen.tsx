@@ -8,6 +8,8 @@ import {
   Alert,
   Pressable,
   ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
@@ -205,47 +207,53 @@ export function WriteReviewScreen({ route, navigation }: Props) {
   }, [navigation, handleCancel]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}>
-      <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-        <BookInfo bookId={bookId} />
-        <TextInput
-          style={styles.titleInput}
-          placeholder="제목"
-          value={title}
-          onChangeText={setTitle}
-          maxLength={100}
-        />
-        <TextInput
-          style={styles.contentInput}
-          placeholder="내용을 입력하세요..."
-          value={content}
-          onChangeText={setContent}
-          multiline
-          textAlignVertical="top"
-        />
-        <View style={styles.spacer} />
-      </ScrollView>
-      <View style={styles.footer}>
-        <View style={styles.buttonContainer}>
-          <Button
-            onPress={handleCancel}
-            style={styles.cancelButton}
-            textStyle={styles.cancelButtonText}>
-            취소
-          </Button>
-          <Button
-            onPress={handleSubmit}
-            disabled={isCreatePending || isUpdatePending}
-            style={styles.submitButton}
-            textStyle={styles.submitButtonText}>
-            {isCreatePending || isUpdatePending ? '제출 중...' : reviewId ? '수정하기' : '제출하기'}
-          </Button>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}>
+        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
+          <BookInfo bookId={bookId} />
+          <TextInput
+            style={styles.titleInput}
+            placeholder="제목"
+            value={title}
+            onChangeText={setTitle}
+            maxLength={100}
+          />
+          <TextInput
+            style={styles.contentInput}
+            placeholder="내용을 입력하세요..."
+            value={content}
+            onChangeText={setContent}
+            multiline
+            textAlignVertical="top"
+          />
+          <View style={styles.spacer} />
+        </ScrollView>
+        <View style={styles.footer}>
+          <View style={styles.buttonContainer}>
+            <Button
+              onPress={handleCancel}
+              style={styles.cancelButton}
+              textStyle={styles.cancelButtonText}>
+              취소
+            </Button>
+            <Button
+              onPress={handleSubmit}
+              disabled={isCreatePending || isUpdatePending}
+              style={styles.submitButton}
+              textStyle={styles.submitButtonText}>
+              {isCreatePending || isUpdatePending
+                ? '제출 중...'
+                : reviewId
+                ? '수정하기'
+                : '제출하기'}
+            </Button>
+          </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
