@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     minWidth: 120,
     gap: spacing.sm,
+    height: 38,
   },
   buttonText: {
     fontSize: 14,

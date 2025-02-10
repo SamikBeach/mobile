@@ -58,13 +58,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    padding: spacing.lg,
     gap: spacing.lg,
-    paddingVertical: spacing.xl,
+    paddingVertical: spacing.sm,
   },
   image: {
-    width: 85,
-    height: 120,
+    width: 120,
+    height: 180,
     borderRadius: borderRadius.md,
     backgroundColor: colors.gray[100],
   },

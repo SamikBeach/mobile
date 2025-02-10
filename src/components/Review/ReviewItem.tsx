@@ -204,7 +204,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
             <Icon
               name="thumbs-up"
               size={16}
-              color={review.isLiked ? colors.red[500] : colors.gray[400]}
+              color={review.isLiked ? colors.gray[900] : colors.gray[400]}
             />
             <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
               {review.likeCount}
@@ -229,7 +229,6 @@ export function ReviewItem({ review, showBookInfo }: Props) {
               setReplyToUser(null);
             }}
             replyToUser={replyToUser}
-            autoFocus
           />
           <CommentList reviewId={review.id} onReply={handleReply} />
         </View>
@@ -319,7 +318,7 @@ const styles = StyleSheet.create({
     color: colors.gray[500],
   },
   activeActionText: {
-    color: colors.red[500],
+    color: colors.gray[900],
   },
   replySection: {
     marginTop: spacing.md,

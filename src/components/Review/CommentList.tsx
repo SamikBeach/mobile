@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text } from '@/components/common/Text';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { CommentItem } from '../comment/CommentItem';
@@ -51,14 +50,6 @@ export function CommentList({ reviewId, onReply }: Props) {
       <View style={styles.container}>
         <CommentSkeleton />
         <CommentSkeleton />
-      </View>
-    );
-  }
-
-  if (comments.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>아직 댓글이 없습니다.</Text>
       </View>
     );
   }

@@ -1,44 +1,51 @@
 import React from 'react';
 import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
 import { Text } from '@/components/common/Text';
-import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { formatAuthorLifespan } from '@/utils/date';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
-import type { Author } from '@/types/author';
 import { useAuthorQueryData } from '@/hooks/useAuthorQueryData';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Toast from 'react-native-toast-message';
+import { AuthorDetailInfoSkeleton } from '@/components/common/Skeleton/AuthorDetailInfoSkeleton';
+import { LikeButton } from '@/components/common/LikeButton';
+import { CommentButton } from '@/components/common/CommentButton';
 
 interface Props {
-  author: Author;
+  authorId: number;
   onReviewPress: () => void;
 }
 
-export function AuthorDetailInfo({ author, onReviewPress }: Props) {
+export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
+  const { data: author, isLoading } = useQuery({
+    queryKey: ['author', authorId],
+    queryFn: () => authorApi.getAuthorDetail(authorId),
+    select: response => response.data,
+  });
+
   const { updateAuthorLikeQueryData } = useAuthorQueryData();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const currentUser = useCurrentUser();
 
   const { mutate: toggleLike } = useMutation({
-    mutationFn: () => authorApi.toggleAuthorLike(author.id),
+    mutationFn: () => authorApi.toggleAuthorLike(authorId),
     onMutate: async () => {
       updateAuthorLikeQueryData({
-        authorId: author.id,
+        authorId: authorId,
         isOptimistic: true,
       });
     },
     onError: () => {
       updateAuthorLikeQueryData({
-        authorId: author.id,
+        authorId: authorId,
         isOptimistic: false,
         currentStatus: {
-          isLiked: author.isLiked,
-          likeCount: author.likeCount,
+          isLiked: author?.isLiked ?? false,
+          likeCount: author?.likeCount ?? 0,
         },
       });
       Toast.show({
@@ -57,10 +64,16 @@ export function AuthorDetailInfo({ author, onReviewPress }: Props) {
   };
 
   const handleWikipediaPress = () => {
-    if (author.name) {
+    if (author?.name) {
       Linking.openURL(`https://en.wikipedia.org/wiki/${author.name}`);
     }
   };
+
+  if (isLoading) {
+    return <AuthorDetailInfoSkeleton />;
+  }
+
+  if (!author) return null;
 
   return (
     <View style={styles.container}>
@@ -90,21 +103,12 @@ export function AuthorDetailInfo({ author, onReviewPress }: Props) {
             </View>
 
             <View style={styles.stats}>
-              <Pressable style={styles.statItem} onPress={handleLikePress}>
-                <Icon
-                  name={author.isLiked ? 'thumbs-up' : 'thumbs-up'}
-                  size={14}
-                  color={author.isLiked ? colors.red[500] : colors.gray[500]}
-                />
-                <Text style={[styles.statText, author.isLiked && { color: colors.red[500] }]}>
-                  {author.likeCount}
-                </Text>
-              </Pressable>
-              <View style={styles.statDivider} />
-              <Pressable style={styles.statItem} onPress={onReviewPress}>
-                <Icon name="message-circle" size={14} color={colors.gray[500]} />
-                <Text style={styles.statText}>{author.reviewCount}</Text>
-              </Pressable>
+              <LikeButton
+                isLiked={author.isLiked}
+                likeCount={author.likeCount}
+                onPress={handleLikePress}
+              />
+              <CommentButton commentCount={author.reviewCount} onPress={onReviewPress} />
             </View>
           </View>
         </View>
@@ -130,14 +134,14 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {},
   image: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     borderRadius: borderRadius.full,
     backgroundColor: colors.gray[100],
   },
   info: {
     flex: 1,
-    height: 120,
+    paddingVertical: spacing.xs,
   },
   infoContent: {
     flex: 1,
@@ -172,6 +176,7 @@ const styles = StyleSheet.create({
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.xs,
   },
   statItem: {
     flexDirection: 'row',

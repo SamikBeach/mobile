@@ -1,5 +1,5 @@
 import React, { Suspense, useMemo, useState } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, RefreshControlProps } from 'react-native';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { Tab } from '@/components/common/Tab';
 import { Feed } from './Feed';
@@ -10,7 +10,11 @@ import { AxiosResponse } from 'axios';
 import { PaginatedResponse } from '@/types/common';
 import { colors, spacing } from '@/styles/theme';
 
-function FeedListContent() {
+interface Props {
+  refreshControl?: React.ReactElement<RefreshControlProps>;
+}
+
+function FeedListContent({ refreshControl }: Props) {
   const [tab, setTab] = useState<'popular' | 'recent'>('popular');
 
   const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery<
@@ -60,12 +64,13 @@ function FeedListContent() {
         ListFooterComponent={hasNextPage ? <FeedSkeleton /> : null}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
         contentContainerStyle={styles.listContent}
+        refreshControl={refreshControl}
       />
     </View>
   );
 }
 
-export function FeedList() {
+export function FeedList({ refreshControl }: Props) {
   return (
     <Suspense
       fallback={
@@ -83,7 +88,7 @@ export function FeedList() {
           ))}
         </View>
       }>
-      <FeedListContent />
+      <FeedListContent refreshControl={refreshControl} />
     </Suspense>
   );
 }

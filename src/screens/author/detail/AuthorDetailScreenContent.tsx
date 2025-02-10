@@ -8,7 +8,7 @@ import { ReviewItem } from '@/components/review/ReviewItem';
 import type { Review } from '@/types/review';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
-import { AuthorDetailSkeleton, ReviewItemSkeleton } from '@/components/common/Skeleton';
+import { ReviewItemSkeleton } from '@/components/common/Skeleton';
 import { AuthorDetailInfo } from './AuthorDetailInfo';
 import { AuthorBooks } from './AuthorBooks';
 import { Empty } from '@/components/common/Empty';
@@ -68,13 +68,9 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     });
   };
 
-  if (isLoading || !author) {
-    return <AuthorDetailSkeleton />;
-  }
-
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
-      <AuthorDetailInfo author={author} onReviewPress={handleReviewPress} />
+      <AuthorDetailInfo authorId={authorId} onReviewPress={handleReviewPress} />
       <AuthorBooks authorId={authorId} />
       <View style={styles.header}>
         <View style={styles.titleSection}>
@@ -103,7 +99,7 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
       data={reviews}
       renderItem={({ item }) => (
         <View style={styles.reviewItemContainer}>
-          <ReviewItem review={item} showBookInfo />
+          {isLoading ? <ReviewItemSkeleton /> : <ReviewItem review={item} showBookInfo />}
         </View>
       )}
       itemLayoutAnimation={Layout.springify()}

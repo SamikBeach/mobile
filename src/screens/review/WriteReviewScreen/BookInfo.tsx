@@ -25,11 +25,7 @@ export function BookInfo({ bookId }: Props) {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: book.imageUrl ?? undefined }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+      <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.image} resizeMode="cover" />
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={1}>
           {book.title}
@@ -67,4 +63,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.gray[500],
   },
-}); 
+});

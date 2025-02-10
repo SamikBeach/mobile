@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  SectionList,
-} from 'react-native';
+import { StyleSheet, SafeAreaView, TouchableOpacity, SectionList } from 'react-native';
 import { colors } from '@/styles/theme';
 import { UserInfo } from './UserInfo';
 import { UserHistory } from './UserHistory';
@@ -94,7 +89,9 @@ export function UserScreen() {
           userId={item.userId}
           rightElement={
             item.isMyProfile && (
-              <TouchableOpacity onPress={() => setShowActionSheet(true)}>
+              <TouchableOpacity
+                onPress={() => setShowActionSheet(true)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                 <Icon name="settings" size={24} color={colors.gray[600]} />
               </TouchableOpacity>
             )
@@ -102,6 +99,7 @@ export function UserScreen() {
         />
       );
     }
+
     return <UserHistory userId={item.userId} />;
   };
 

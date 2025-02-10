@@ -96,13 +96,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    padding: spacing.lg,
+    padding: spacing.md,
     gap: spacing.lg,
-    paddingVertical: spacing.xl,
+    paddingVertical: spacing.sm,
   },
   imageWrapper: {
-    width: 85,
-    height: 85,
+    width: 100,
+    height: 100,
     borderRadius: borderRadius.full,
     overflow: 'hidden',
   },
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'space-between',
+    paddingVertical: spacing.sm,
   },
   textContent: {
     gap: spacing.xs,
@@ -162,7 +163,6 @@ const styles = StyleSheet.create({
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.sm,
   },
   statItem: {
     flexDirection: 'row',

@@ -22,7 +22,25 @@ export default function RecentSearchList({ onClose }: Props) {
 
   const { mutate: deleteSearch } = useMutation({
     mutationFn: userApi.deleteSearch,
-    onSuccess: () => {
+    onMutate: async (searchId: number) => {
+      const previousSearches = queryClient.getQueryData(['recentSearches']);
+
+      queryClient.setQueryData(['recentSearches'], (old: { data: Array<{ id: number }> }) => ({
+        data: old.data.filter(search => search.id !== searchId),
+      }));
+
+      return { previousSearches };
+    },
+    onError: (
+      _err: unknown,
+      _variables: unknown,
+      context: { previousSearches: unknown } | undefined,
+    ) => {
+      if (context?.previousSearches) {
+        queryClient.setQueryData(['recentSearches'], context.previousSearches);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['recentSearches'] });
     },
   });
@@ -85,4 +103,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.gray[500],
   },
-}); 
+});

@@ -1,5 +1,10 @@
-import { useEffect, useRef } from 'react';
-import { Animated, Easing } from 'react-native';
+import { useCallback } from 'react';
+import {
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
+  Easing,
+} from 'react-native-reanimated';
 
 interface Props {
   visible: boolean;
@@ -7,48 +12,30 @@ interface Props {
 }
 
 export function useActionSheet({ visible, onClose }: Props) {
-  const translateY = useRef(new Animated.Value(300)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useSharedValue(300);
 
-  useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: 0,
-          duration: 300,
-          easing: Easing.bezier(0.4, 0, 0.2, 1),
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [visible, translateY, opacity]);
+  const animatedStyles = useAnimatedStyle(() => {
+    translateY.value = visible
+      ? withTiming(0, {
+          duration: 250,
+          easing: Easing.inOut(Easing.ease),
+        })
+      : withTiming(300, {
+          duration: 200,
+          easing: Easing.inOut(Easing.ease),
+        });
 
-  const handleClose = () => {
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 300,
-        duration: 200,
-        easing: Easing.bezier(0.4, 0, 1, 1),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      onClose();
-    });
-  };
+    return {
+      transform: [{ translateY: translateY.value }],
+    };
+  }, [visible]);
+
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
 
   return {
-    translateY,
-    opacity,
+    animatedStyles,
     handleClose,
   };
 }

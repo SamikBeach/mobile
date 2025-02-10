@@ -119,7 +119,7 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
 
 const styles = StyleSheet.create({
   content: {
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 20,
     color: colors.gray[700],
   },

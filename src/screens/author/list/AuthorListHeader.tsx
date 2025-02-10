@@ -1,25 +1,47 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { GenreButtons } from './GenreButtons';
 import { SearchBar } from './SearchBar';
 import { SortButtons } from './SortButtons';
 import { EraSelect } from './EraSelect';
 import { colors, spacing } from '@/styles/theme';
+import { useIsFocused } from '@react-navigation/native';
 
 export function AuthorListHeader() {
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (!isFocused && isSearchExpanded) {
+      closeSearch();
+    }
+  }, [isFocused, isSearchExpanded]);
+
+  const closeSearch = () => {
+    setIsSearchExpanded(false);
+  };
+
+  const toggleSearch = () => {
+    if (!isSearchExpanded) {
+      setIsSearchExpanded(true);
+    } else {
+      closeSearch();
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={isSearchExpanded ? closeSearch : undefined}>
       <View style={styles.top}>
         <GenreButtons />
       </View>
-      <View style={styles.bottom}>
-        <SearchBar />
-        <View style={styles.filters}>
+      <Pressable style={styles.controls} onPress={e => e.stopPropagation()}>
+        <View style={[styles.controlsContainer, { display: isSearchExpanded ? 'none' : 'flex' }]}>
           <EraSelect />
           <SortButtons />
         </View>
-      </View>
-    </View>
+        <SearchBar expanded={isSearchExpanded} onToggle={toggleSearch} />
+      </Pressable>
+    </Pressable>
   );
 }
 
@@ -29,16 +51,19 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
   },
   top: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
   },
-  bottom: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    gap: spacing.md,
-  },
-  filters: {
+  controls: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
+  },
+  controlsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
 });

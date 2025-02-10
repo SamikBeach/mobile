@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Skeleton } from './Skeleton';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 
-export function AuthorDetailInfoSkeleton() {
+export function BookDetailInfoSkeleton() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -14,10 +14,10 @@ export function AuthorDetailInfoSkeleton() {
         <View style={styles.info}>
           <View style={styles.infoContent}>
             <View style={styles.titleSection}>
-              <Skeleton style={styles.name} />
-              <Skeleton style={styles.originalName} />
-              <Skeleton style={styles.lifespan} />
-              <Skeleton style={styles.source} />
+              <Skeleton style={styles.title} />
+              <Skeleton style={styles.author} />
+              <Skeleton style={styles.meta} />
+              <Skeleton style={styles.aladin} />
             </View>
 
             <View style={styles.stats}>
@@ -34,6 +34,13 @@ export function AuthorDetailInfoSkeleton() {
           </View>
         </View>
       </View>
+
+      <View style={styles.writeButton}>
+        <View style={styles.writeButtonContent}>
+          <Skeleton style={styles.writeButtonIcon} />
+          <Skeleton style={styles.writeButtonText} />
+        </View>
+      </View>
     </View>
   );
 }
@@ -47,52 +54,51 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.lg,
   },
-  imageWrapper: {},
-  image: {
+  imageWrapper: {
     width: 120,
-    height: 120,
-    borderRadius: borderRadius.full,
+    height: 180,
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
   info: {
     flex: 1,
-    height: 120,
+    height: 180,
   },
   infoContent: {
     flex: 1,
     justifyContent: 'space-between',
   },
   titleSection: {
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
-  name: {
+  title: {
     height: 24,
-    width: '80%',
+    width: '100%',
     borderRadius: borderRadius.sm,
   },
-  originalName: {
+  author: {
     height: 15,
     width: '60%',
     borderRadius: borderRadius.sm,
   },
-  lifespan: {
-    height: 14,
-    width: '40%',
+  meta: {
+    height: 13,
+    width: '50%',
     borderRadius: borderRadius.sm,
   },
-  source: {
+  aladin: {
     height: 13,
     width: '30%',
     borderRadius: borderRadius.sm,
   },
-  description: {
-    height: 15,
-    width: '100%',
-    borderRadius: borderRadius.sm,
-    marginBottom: spacing.xs,
-  },
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: spacing.xs,
   },
   statItem: {
     flexDirection: 'row',
@@ -114,5 +120,29 @@ const styles = StyleSheet.create({
     height: 12,
     backgroundColor: colors.gray[200],
     marginHorizontal: spacing.sm,
+  },
+  writeButton: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.white,
+    paddingVertical: spacing.md,
+  },
+  writeButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  writeButtonIcon: {
+    width: 16,
+    height: 16,
+    borderRadius: borderRadius.sm,
+  },
+  writeButtonText: {
+    width: 120,
+    height: 15,
+    borderRadius: borderRadius.sm,
   },
 });

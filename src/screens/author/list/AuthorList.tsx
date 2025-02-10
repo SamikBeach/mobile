@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import Icon from 'react-native-vector-icons/Feather';
@@ -14,7 +14,7 @@ import {
 } from '@/atoms/author';
 import { GENRE_IDS } from '@/constants/genre';
 import type { Author } from '@/types/author';
-import { colors, spacing } from '@/styles/theme';
+import { colors } from '@/styles/theme';
 import { AuthorListSkeleton } from '@/components/common/Skeleton/AuthorListSkeleton';
 import { AuthorItem } from '@/components/author/AuthorItem';
 
@@ -97,17 +97,12 @@ export function AuthorList() {
       renderItem={({ item }) => <AuthorItem author={item} />}
       keyExtractor={item => item.id.toString()}
       contentContainerStyle={styles.list}
-      ItemSeparatorComponent={() => (
-        <View style={styles.divider} />
-      )}
     />
   );
 }
 
 const styles = StyleSheet.create({
-  list: {
-    padding: spacing.lg,
-  },
+  list: {},
   divider: {
     height: 1,
     backgroundColor: colors.gray[100],

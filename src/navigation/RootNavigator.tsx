@@ -6,14 +6,14 @@ import { UserScreen } from '@/screens/user/UserScreen';
 import { RootStackParamList, TabParamList } from './types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import BookScreen from '@/screens/book/BookScreen';
-import AuthorScreen from '@/screens/author/list/AuthorScreen';
+import AuthorScreen from '@/screens/author/AuthorScreen';
 import LoginScreen from '@/screens/auth/LoginScreen';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { ReviewScreen } from '@/screens/review/ReviewScreen';
 import SignUpScreen from '@/screens/auth/SignUpScreen';
 import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
 import { AuthorDetailScreen } from '@/screens/author/AuthorDetailScreen';
-import { WriteReviewScreen } from '@/screens/review/WriteReviewScreen';
+import { WriteReviewScreen } from '@/screens/review/WriteReviewScreen/WriteReviewScreen';
 import { SettingsScreen } from '@/screens/settings/SettingsScreen';
 import InitiateRegistrationScreen from '@/screens/auth/InitiateRegistrationScreen';
 import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
@@ -21,13 +21,14 @@ import { TermsScreen } from '@/screens/auth/TermsScreen';
 import { PrivacyScreen } from '@/screens/auth/PrivacyScreen';
 import { Logo } from '@/components/common/Logo';
 import Icon from 'react-native-vector-icons/Feather';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, View } from 'react-native';
 import { SearchModal } from '@/components/common/Search/SearchModal';
 import { NavigationContainer } from '@react-navigation/native';
 import { ResetPasswordRequestScreen } from '@/screens/auth/reset-password/ResetPasswordRequestScreen';
+import { colors } from '@/styles/theme';
 
 const Tab = createBottomTabNavigator<TabParamList>();
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   return (
@@ -127,6 +128,15 @@ function StackNavigator({
 }) {
   const [searchVisible, setSearchVisible] = useState(false);
 
+  const SearchButton = () => (
+    <TouchableOpacity
+      onPress={() => setSearchVisible(true)}
+      style={styles.headerButton}
+      hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}>
+      <Icon name="search" size={24} color={colors.gray[600]} />
+    </TouchableOpacity>
+  );
+
   return (
     <>
       <Stack.Navigator
@@ -139,12 +149,19 @@ function StackNavigator({
           name="Home"
           component={HomeScreen}
           options={{
-            headerLeft: () => <Logo size="sm" />,
+            headerStyle: {
+              height: Platform.OS === 'ios' ? 120 : 60,
+            },
+            headerLeft: () => (
+              <View style={styles.headerLeftContainer}>
+                <Logo size="sm" />
+              </View>
+            ),
             headerTitle: '',
             headerRight: () => (
-              <TouchableOpacity onPress={() => setSearchVisible(true)}>
-                <Icon name="search" size={24} color="#000" />
-              </TouchableOpacity>
+              <View style={styles.headerRightContainer}>
+                <SearchButton />
+              </View>
             ),
           }}
         />
@@ -217,6 +234,22 @@ function StackNavigator({
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  headerButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Platform.OS === 'android' ? -8 : 0,
+  },
+  headerLeftContainer: {
+    marginLeft: 12,
+  },
+  headerRightContainer: {
+    marginRight: 12,
+  },
+});
 
 function withTabNavigator(Component: React.ComponentType<any>) {
   return function TabWrappedScreen(props: any) {

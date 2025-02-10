@@ -7,6 +7,10 @@ import {
   Platform,
   Alert,
   Pressable,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Dimensions,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
@@ -204,45 +208,58 @@ export function WriteReviewScreen({ route, navigation }: Props) {
   }, [navigation, handleCancel]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}>
-      <View style={styles.content}>
-        <BookInfo bookId={bookId} />
-        <TextInput
-          style={styles.titleInput}
-          placeholder="제목"
-          value={title}
-          onChangeText={setTitle}
-          maxLength={100}
-        />
-        <TextInput
-          style={styles.contentInput}
-          placeholder="내용을 입력하세요..."
-          value={content}
-          onChangeText={setContent}
-          multiline
-          textAlignVertical="top"
-        />
-      </View>
-      <View style={styles.footer}>
-        <View style={styles.buttonContainer}>
-          <Button
-            onPress={handleCancel}
-            style={styles.cancelButton}
-            textStyle={styles.cancelButtonText}>
-            취소
-          </Button>
-          <Button
-            onPress={handleSubmit}
-            disabled={isCreatePending || isUpdatePending}
-            style={styles.submitButton}
-            textStyle={styles.submitButtonText}>
-            {isCreatePending || isUpdatePending ? '제출 중...' : reviewId ? '수정하기' : '제출하기'}
-          </Button>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}>
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.formContainer}>
+            <BookInfo bookId={bookId} />
+            <TextInput
+              style={styles.titleInput}
+              placeholder="제목"
+              value={title}
+              onChangeText={setTitle}
+              maxLength={100}
+            />
+            <TextInput
+              style={styles.contentInput}
+              placeholder="내용을 입력하세요..."
+              value={content}
+              onChangeText={setContent}
+              multiline
+              textAlignVertical="top"
+              maxFontSizeMultiplier={1}
+            />
+          </View>
+        </ScrollView>
+        <View style={styles.footer}>
+          <View style={styles.buttonContainer}>
+            <Button
+              onPress={handleCancel}
+              style={styles.cancelButton}
+              textStyle={styles.cancelButtonText}>
+              취소
+            </Button>
+            <Button
+              onPress={handleSubmit}
+              disabled={isCreatePending || isUpdatePending}
+              style={styles.submitButton}
+              textStyle={styles.submitButtonText}>
+              {isCreatePending || isUpdatePending
+                ? '제출 중...'
+                : reviewId
+                ? '수정하기'
+                : '제출하기'}
+            </Button>
+          </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -253,8 +270,15 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     padding: spacing.lg,
+  },
+  formContainer: {
+    flex: 1,
     gap: spacing.md,
+    paddingBottom: 100,
   },
   titleInput: {
     fontSize: 16,
@@ -265,14 +289,19 @@ const styles = StyleSheet.create({
     height: 48,
   },
   contentInput: {
-    flex: 1,
+    height: Dimensions.get('window').height * 0.5,
     fontSize: 15,
     padding: spacing.md,
     backgroundColor: colors.gray[50],
     borderRadius: 8,
     color: colors.gray[900],
+    textAlignVertical: 'top',
   },
   footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
     paddingVertical: spacing.md,

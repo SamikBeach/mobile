@@ -121,7 +121,7 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
           <Icon
             name="thumbs-up"
             size={14}
-            color={comment.isLiked ? colors.red[500] : colors.gray[500]}
+            color={comment.isLiked ? colors.gray[900] : colors.gray[500]}
           />
           <Text style={[styles.actionText, comment.isLiked && styles.activeActionText]}>
             {comment.likeCount}
@@ -191,6 +191,6 @@ const styles = StyleSheet.create({
     color: colors.gray[500],
   },
   activeActionText: {
-    color: colors.red[500],
+    color: colors.gray[900],
   },
 });

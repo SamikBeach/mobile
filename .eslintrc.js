@@ -5,5 +5,6 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     curly: 'off',
     'react/no-unstable-nested-components': 'off',
+    'react-native/no-inline-styles': 'off',
   },
 };

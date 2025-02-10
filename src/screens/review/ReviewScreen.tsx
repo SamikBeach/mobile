@@ -25,6 +25,7 @@ import { CommentEditor } from '@/components/comment/CommentEditor';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import { spacing } from '@/styles/theme';
 import { colors } from '@/styles/theme';
+import { ReviewHeaderSkeleton } from './ReviewHeaderSkeleton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Review'>;
 
@@ -37,7 +38,7 @@ export function ReviewScreen({ route }: Props) {
   const { createCommentQueryData } = useCommentQueryData();
   const contentRef = useRef<{ scrollToComments: () => void }>(null);
 
-  const { data: review } = useQuery({
+  const { data: review, isLoading } = useQuery({
     queryKey: ['review', reviewId],
     queryFn: () => reviewApi.getReviewDetail(reviewId),
     select: response => response.data,
@@ -87,68 +88,78 @@ export function ReviewScreen({ route }: Props) {
     toggleLike();
   };
 
-  if (!review) {
+  if (!review && !isLoading) {
     return null;
   }
 
-  const renderHeader = () => (
-    <>
-      <View style={styles.header}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{review.title}</Text>
-          <TouchableOpacity
-            style={styles.bookCard}
-            onPress={() =>
-              navigation.navigate('BookDetail', {
-                bookId: review.book.id,
-              })
-            }>
-            <Image
-              source={{ uri: review.book.imageUrl ?? undefined }}
-              style={styles.bookThumbnail}
-            />
-            <View style={styles.bookInfo}>
-              <Text style={styles.bookTitle} numberOfLines={1}>
-                {review.book.title}
-              </Text>
-              <Text style={styles.bookAuthor} numberOfLines={1}>
-                {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
-              </Text>
-            </View>
-          </TouchableOpacity>
+  const renderHeader = () => {
+    if (isLoading) {
+      return <ReviewHeaderSkeleton />;
+    }
+
+    if (!review) {
+      return null;
+    }
+
+    return (
+      <>
+        <View style={styles.header}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{review.title}</Text>
+            <TouchableOpacity
+              style={styles.bookCard}
+              onPress={() =>
+                navigation.navigate('BookDetail', {
+                  bookId: review.book.id,
+                })
+              }>
+              <Image
+                source={{ uri: review.book.imageUrl ?? undefined }}
+                style={styles.bookThumbnail}
+              />
+              <View style={styles.bookInfo}>
+                <Text style={styles.bookTitle} numberOfLines={1}>
+                  {review.book.title}
+                </Text>
+                <Text style={styles.bookAuthor} numberOfLines={1}>
+                  {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.userInfo}>
+            <UserAvatar user={review.user} size="sm" showNickname />
+            <Text style={styles.dot}>·</Text>
+            <Text style={styles.date}>
+              {format(new Date(review.createdAt), 'yyyy년 M월 d일 HH시 mm분')}
+            </Text>
+          </View>
         </View>
 
-        <View style={styles.userInfo}>
-          <UserAvatar user={review.user} size="sm" showNickname />
-          <Text style={styles.dot}>·</Text>
-          <Text style={styles.date}>
-            {format(new Date(review.createdAt), 'yyyy년 M월 d일 HH시 mm분')}
-          </Text>
+        <View style={styles.reviewContent}>
+          <LexicalContent content={review.content} isExpanded={true} />
         </View>
-      </View>
 
-      <View style={styles.reviewContent}>
-        <LexicalContent content={review.content} isExpanded={true} />
-      </View>
-
-      <View style={styles.actions}>
-        <LikeButton
-          isLiked={review.isLiked ?? false}
-          likeCount={review.likeCount}
-          onPress={handleLikePress}
-        />
-        <CommentButton
-          commentCount={review.commentCount}
-          onPress={() => {
-            const content = contentRef.current;
-            if (content) {
-              content.scrollToComments();
-            }
-          }}
-        />
-      </View>
-    </>
-  );
+        <View style={styles.actions}>
+          <LikeButton
+            isLiked={review.isLiked ?? false}
+            likeCount={review.likeCount}
+            onPress={handleLikePress}
+          />
+          <CommentButton
+            commentCount={review.commentCount}
+            onPress={() => {
+              const content = contentRef.current;
+              if (content) {
+                content.scrollToComments();
+              }
+            }}
+          />
+        </View>
+      </>
+    );
+  };
 
   const handleSubmit = (content: string) => {
     createComment(content);
@@ -161,15 +172,22 @@ export function ReviewScreen({ route }: Props) {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ReviewScreenContent
-        ref={contentRef}
-        reviewId={reviewId}
-        onReply={user => setReplyToUser(user)}
-        ListHeaderComponent={renderHeader()}
-      />
-      <View style={styles.editorContainer}>
-        <CommentEditor replyToUser={replyToUser} onSubmit={handleSubmit} onCancel={handleCancel} />
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
+      <View style={styles.contentContainer}>
+        <ReviewScreenContent
+          ref={contentRef}
+          reviewId={reviewId}
+          onReply={user => setReplyToUser(user)}
+          ListHeaderComponent={renderHeader()}
+        />
+        <View style={styles.editorContainer}>
+          <CommentEditor
+            replyToUser={replyToUser}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+          />
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -179,10 +197,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    paddingTop: 16,
+  },
+  contentContainer: {
+    flex: 1,
+    position: 'relative',
   },
   header: {
     gap: 10,
-    marginBottom: 32,
+    marginBottom: 12,
   },
   titleContainer: {
     gap: 10,
@@ -198,9 +221,13 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: '#F9FAFB',
     borderRadius: 8,
-    paddingRight: 8,
-    paddingLeft: 8,
+    paddingHorizontal: 12,
     alignSelf: 'flex-start',
+    ...Platform.select({
+      android: {
+        paddingVertical: 6,
+      },
+    }),
   },
   bookThumbnail: {
     width: 25,
@@ -215,7 +242,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     color: '#111827',
-    marginTop: 8,
+    ...Platform.select({
+      ios: {
+        marginTop: 6,
+      },
+    }),
   },
   bookAuthor: {
     fontSize: 11,
@@ -243,8 +274,13 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   editorContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
     padding: spacing.lg,
+    backgroundColor: 'white',
   },
 });

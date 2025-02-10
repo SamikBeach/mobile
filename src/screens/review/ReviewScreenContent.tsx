@@ -1,5 +1,5 @@
 import React, { Fragment, ReactNode, useRef, forwardRef, useImperativeHandle } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Platform } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
@@ -8,6 +8,9 @@ import { CommentSkeleton } from '@/components/comment/CommentSkeleton';
 import { AxiosResponse } from 'axios';
 import { PaginatedResponse } from '@/types/common';
 import { Comment } from '@/types/review';
+import Icon from 'react-native-vector-icons/Feather';
+import { colors } from '@/styles/theme';
+import { Empty } from '@/components/common/Empty';
 
 interface Props {
   reviewId: number;
@@ -92,7 +95,17 @@ export const ReviewScreenContent = forwardRef<{ scrollToComments: () => void }, 
           keyExtractor={item => item.id.toString()}
           onEndReached={() => hasNextPage && fetchNextPage()}
           onEndReachedThreshold={0.5}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[
+            styles.listContent,
+            { paddingBottom: Platform.OS === 'ios' ? 120 : 80 },
+          ]}
+          ListEmptyComponent={
+            <Empty
+              icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
+              message="아직 댓글이 없어요"
+              description="첫 번째 댓글을 작성해보세요"
+            />
+          }
         />
       </View>
     );
@@ -102,7 +115,6 @@ export const ReviewScreenContent = forwardRef<{ scrollToComments: () => void }, 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 16,
   },
   header: {
     flexDirection: 'row',

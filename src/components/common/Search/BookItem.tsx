@@ -3,31 +3,20 @@ import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Text } from '@/components/common';
 import { colors, spacing } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList, TabParamList } from '@/navigation/types';
 import { Book } from '@/types/book';
-import type { CompositeNavigationProp } from '@react-navigation/native';
-import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 interface Props {
   book: Book;
   onClose: () => void;
   onDelete?: () => void;
   searchValue?: string;
+  onPress?: () => void;
 }
 
-type BookItemNavigationProp = CompositeNavigationProp<
-  NativeStackNavigationProp<RootStackParamList>,
-  BottomTabNavigationProp<TabParamList>
->;
-
-export default function BookItem({ book, onClose, onDelete }: Props) {
-  const navigation = useNavigation<BookItemNavigationProp>();
-
+export default function BookItem({ book, onClose, onDelete, onPress }: Props) {
   const handlePress = () => {
     onClose();
-    navigation.navigate('BookDetail', { bookId: book.id });
+    onPress?.();
   };
 
   return (

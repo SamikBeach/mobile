@@ -8,6 +8,7 @@ import { colors, spacing } from '@/styles/theme';
 import * as ImagePicker from 'react-native-image-picker';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Toast from 'react-native-toast-message';
+import { UserInfoSkeleton } from '@/components/common/Skeleton/UserInfoSkeleton';
 
 interface UserInfoProps {
   userId: number;
@@ -19,7 +20,7 @@ export function UserInfo({ userId, rightElement }: UserInfoProps) {
   const currentUser = useCurrentUser();
   const isMyProfile = currentUser?.id === userId;
 
-  const { data: user } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ['user', userId],
     queryFn: () => userApi.getUserDetail(userId),
     select: response => response.data,
@@ -129,11 +130,15 @@ export function UserInfo({ userId, rightElement }: UserInfoProps) {
     }
   };
 
+  if (isLoading) {
+    return <UserInfoSkeleton rightElement={rightElement} />;
+  }
+
   if (!user) return null;
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>{rightElement}</View>
+      <TouchableOpacity style={styles.header}>{rightElement}</TouchableOpacity>
       <View style={styles.profileSection}>
         <TouchableOpacity onPress={isMyProfile ? handleImagePress : undefined}>
           <Avatar uri={user.imageUrl} size={120} loading={isUploading || isDeleting} />
@@ -152,11 +157,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   header: {
+    height: 52,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
   },
   profileSection: {
     alignItems: 'center',

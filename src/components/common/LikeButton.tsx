@@ -12,7 +12,7 @@ interface LikeButtonProps {
 export function LikeButton({ isLiked, likeCount, onPress }: LikeButtonProps) {
   return (
     <TouchableOpacity style={[styles.button, isLiked && styles.likedButton]} onPress={onPress}>
-      <Icon name="thumbs-up" size={16} color={isLiked ? colors.red[500] : colors.gray[500]} />
+      <Icon name="thumbs-up" size={16} color={isLiked ? colors.white : colors.gray[500]} />
       <Text style={[styles.text, isLiked && styles.likedText]}>{likeCount}</Text>
     </TouchableOpacity>
   );
@@ -25,19 +25,22 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 16,
-    backgroundColor: '#f4f4f5',
+    backgroundColor: colors.white,
     gap: 4,
     minWidth: 52,
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.gray[200],
   },
   likedButton: {
-    backgroundColor: '#fef2f2',
+    backgroundColor: colors.gray[900],
+    borderWidth: 0,
   },
   text: {
     fontSize: 12,
-    color: '#71717a',
+    color: colors.gray[500],
   },
   likedText: {
-    color: '#ef4444',
+    color: colors.white,
   },
 });

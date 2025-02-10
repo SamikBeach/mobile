@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  Pressable,
-  NativeSyntheticEvent,
-  TextInputKeyPressEventData,
-} from 'react-native';
+import { View, StyleSheet, TextInput, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
@@ -69,6 +62,7 @@ export function CommentEditor({
         children.forEach((node: LexicalNode) => {
           if (node.type === 'mention') {
             extractedMentions.push(node.text || '');
+            fullText += `@${node.text} `;
           } else if (node.type === 'text') {
             fullText += node.text || '';
           }
@@ -77,7 +71,6 @@ export function CommentEditor({
         setMentions(extractedMentions);
         setText(fullText);
 
-        // 수정 모드 진입 시 포커스
         setTimeout(() => {
           inputRef.current?.focus();
         }, 100);
@@ -98,26 +91,12 @@ export function CommentEditor({
     }
   }, [autoFocus, replyToUser]);
 
-  const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-    if (
-      mentions.length > 0 &&
-      e.nativeEvent.key === 'Backspace' &&
-      !text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '').trim()
-    ) {
-      setText('');
-      3;
-      setMentions([]);
-      if (!isEditMode) {
-        onCancel();
-      }
-    }
-  };
-
   const handleTextChange = (newText: string) => {
-    if (replyToUser) {
-      const mentionText = `@${replyToUser.nickname} `;
+    if (newText.length < text.length && mentions.length > 0) {
+      const lastMention = mentions[mentions.length - 1];
+      const mentionText = `@${lastMention}`;
 
-      if (newText.length < text.length && !newText) {
+      if (text.trim() === mentionText && newText.length < mentionText.length) {
         setText('');
         setMentions([]);
         if (!isEditMode) {
@@ -125,11 +104,8 @@ export function CommentEditor({
         }
         return;
       }
-
-      setText(mentionText + newText);
-    } else {
-      setText(newText);
     }
+    setText(newText);
   };
 
   const handleSubmit = () => {
@@ -150,7 +126,7 @@ export function CommentEditor({
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: ` ${text.trim()}`,
+                text: text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '').trim(),
                 type: 'text',
                 version: 1,
               },
@@ -188,25 +164,21 @@ export function CommentEditor({
 
   const isEditMode = Boolean(initialContent);
 
-  const displayText = text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '');
-
   return (
     <View style={styles.container}>
-      {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
+      {showAvatar && currentUser && (
+        <View style={styles.avatarContainer}>
+          <UserAvatar user={currentUser} size="sm" />
+        </View>
+      )}
       <View style={styles.inputContainer}>
-        {mentions.map((mention, index) => (
-          <Text key={`mention-${index}`} style={styles.mention}>
-            @{mention}
-          </Text>
-        ))}
         <TextInput
           ref={inputRef}
-          style={[styles.input, mentions.length > 0 && styles.inputWithMention]}
+          style={styles.input}
           placeholder={currentUser ? '댓글을 입력하세요.' : '로그인 후 댓글을 작성할 수 있습니다.'}
           placeholderTextColor={colors.gray[400]}
-          value={displayText}
+          value={text}
           onChangeText={handleTextChange}
-          onKeyPress={handleKeyPress}
           multiline
           maxLength={1000}
           editable={Boolean(currentUser)}
@@ -246,19 +218,22 @@ export function CommentEditor({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 12,
     backgroundColor: 'white',
+  },
+  avatarContainer: {
+    marginTop: 4,
   },
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: colors.gray[50],
     borderRadius: 20,
     paddingLeft: 16,
     paddingRight: 8,
-    paddingVertical: 6,
+    paddingVertical: 8,
     minHeight: 40,
   },
   closeButton: {
@@ -268,14 +243,20 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
+    lineHeight: 20,
     color: colors.gray[900],
     padding: 0,
-    maxHeight: 100,
+    paddingTop: 0,
+    paddingBottom: 0,
+    minHeight: 20,
+    maxHeight: 120,
+    textAlignVertical: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
+    marginTop: 4,
   },
   cancelButton: {
     paddingHorizontal: 12,
@@ -305,12 +286,5 @@ const styles = StyleSheet.create({
   },
   submitButtonTextDisabled: {
     color: colors.gray[400],
-  },
-  mention: {
-    color: '#3B82F6',
-    fontSize: 14,
-  },
-  inputWithMention: {
-    paddingLeft: 4,
   },
 });

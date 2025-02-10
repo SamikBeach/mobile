@@ -81,3 +81,4 @@ yarn-error.log
 
 
 /android/gradle.properties.production
+/android/gradle.properties

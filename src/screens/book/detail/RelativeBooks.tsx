@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   bookImage: {
-    width: 130,
-    height: 190,
+    width: 120,
+    height: 180,
     borderRadius: borderRadius.md,
     backgroundColor: colors.gray[100],
   },
