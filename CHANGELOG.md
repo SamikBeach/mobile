@@ -1,5 +1,56 @@
 # 🚦 CHANGELOG
 
+# [1.13.0](https://github.com/SamikBeach/mobile/compare/1.12.0...1.13.0) (2025-02-10)
+
+
+### Bug Fixes
+
+* autoFocus 제거 ([406e766](https://github.com/SamikBeach/mobile/commit/406e766d2f1965e0e6c5c065f7bd78d9bb3f01d1))
+* Comment Empty 처리 ([0380e0a](https://github.com/SamikBeach/mobile/commit/0380e0a5ddd16de41f3df26e0db136350a359815))
+* CommentEditor 스타일 수정 ([a34a60a](https://github.com/SamikBeach/mobile/commit/a34a60ab7b9495b7f7c05a04a6fed7383f3a2a80))
+* Easing 함수 타입 에러 수정 ([3dc7276](https://github.com/SamikBeach/mobile/commit/3dc7276cc31c18f7e9f87538f58d036dae84a5e3))
+* fix lint ([300a14e](https://github.com/SamikBeach/mobile/commit/300a14ed8052ea78e7e8402f5a4ca5500fbf0a87))
+* fix lint ([f381d56](https://github.com/SamikBeach/mobile/commit/f381d56a7093a9e50a3be61258b5bb6d6d28f2a4))
+* HomeScreen pull to refresh 추가 ([832b37e](https://github.com/SamikBeach/mobile/commit/832b37ecec334daae07c70110551167feb30b09b))
+* iOS 키보드 대응 레이아웃 수정 ([3c59a8c](https://github.com/SamikBeach/mobile/commit/3c59a8cabfd04bc7382c230515b926198dffcd01))
+* ReviewScreen 스타일 수정 ([ba21074](https://github.com/SamikBeach/mobile/commit/ba21074eb427ac592aa2d3f9c09c0a37e8c120a5))
+* SearchContent 로딩 처리 개선 ([bed022d](https://github.com/SamikBeach/mobile/commit/bed022df9c61de142ed665755d9ab0c8121d6cfb))
+* SearchModal 헤더 높이 수정 ([3629b67](https://github.com/SamikBeach/mobile/commit/3629b6794ea31028e4df8500743581c1aa236eb8))
+* 검색 모달 키보드 대응 개선 ([b1f5cc9](https://github.com/SamikBeach/mobile/commit/b1f5cc9734a6de77ee0ed851385b44aacc120b83))
+* 네비게이션 스타일 수정 ([ba890fd](https://github.com/SamikBeach/mobile/commit/ba890fd7b48eb7cd76a8027f7632c0659305f6a2))
+* 댓글 입력 시 멘션 삭제 동작 개선 ([f07fcc0](https://github.com/SamikBeach/mobile/commit/f07fcc02966a62781b3cce31a9845433438b8626))
+* 도서 목록 헤더 레이아웃 개선 ([1a8c1e4](https://github.com/SamikBeach/mobile/commit/1a8c1e45b1cd2135ad9bd5c6f17e5e632461cdf5))
+* 리뷰 입력 창 스타일 수정 ([357f943](https://github.com/SamikBeach/mobile/commit/357f943d4c05f83c0dd89132bf6ed0322306532e))
+* 리뷰 키보드 입력 이슈 해결 ([862b903](https://github.com/SamikBeach/mobile/commit/862b903618bb244d9170ba17a695d83f6613add4))
+* 리뷰 화면 키보드 대응 레이아웃 개선 ([18c59aa](https://github.com/SamikBeach/mobile/commit/18c59aa2ad94a8bd118345859683e4624cb33723))
+* 버튼 스타일 수정 ([f6f2bd2](https://github.com/SamikBeach/mobile/commit/f6f2bd2c1e21c84b91258d0c00e6256e9597fb9b))
+* 설정 헤더 스타일 수정 ([b4fcb41](https://github.com/SamikBeach/mobile/commit/b4fcb41d491e397ad0b02e9372d35b2c580b5c6e))
+* 스타일 수정 ([f525724](https://github.com/SamikBeach/mobile/commit/f525724cacdf6f6bb482c18142ff111b3769feee))
+* 스타일 수정 ([5154f44](https://github.com/SamikBeach/mobile/commit/5154f4450e0ea3533f07d63e457c02b14d0f61ec))
+* 스타일 수정 ([24cc6d6](https://github.com/SamikBeach/mobile/commit/24cc6d698283249879d10992cfafc9f3e19e45af))
+* 아이콘 스타일 수정 ([cc2addf](https://github.com/SamikBeach/mobile/commit/cc2addf3554b2842baa646425b0412aad2f33d86))
+* 애니메이션 등 디테일 수정 ([1d95cc2](https://github.com/SamikBeach/mobile/commit/1d95cc2a920807c77c72ca4a68655e89d4fc4ad0))
+* 책 이미지 크기 수정 ([557ebcb](https://github.com/SamikBeach/mobile/commit/557ebcb96f3b8bd2063a482ce5c2e1ec70173cb4))
+
+
+### Features
+
+* deleteSearch optimistic update 처리 ([af77208](https://github.com/SamikBeach/mobile/commit/af77208b43a30ecf50c3c8b1248f024975f8e5cc))
+* LexicalContent 폰트 사이즈 수정 ([f80f229](https://github.com/SamikBeach/mobile/commit/f80f22947701ae43b79bef699a4cb1627fdff08c))
+* mention을 텍스트처럼 처리 ([451ccc8](https://github.com/SamikBeach/mobile/commit/451ccc84d2dec92c312adfe8fe877f90f5afde48))
+* userApi.saveSearch 연동 ([62a49da](https://github.com/SamikBeach/mobile/commit/62a49dadbda052936ad4ca73909f14598d39184d))
+* WriteReviewScreen 수정 ([8a8a221](https://github.com/SamikBeach/mobile/commit/8a8a2213f44c682581f602cb381029e90e26a518))
+* 리뷰 작성 페이지를 TouchableWithoutFeedback로 감싸기 ([5580bde](https://github.com/SamikBeach/mobile/commit/5580bde8a27997567d28079cf0a13a867e7aa409))
+* 스켈레톤 수정 ([65a7bd6](https://github.com/SamikBeach/mobile/commit/65a7bd6559504b9e7fd85a67a00f2b05328aecf7))
+* 스타일 & 스켈레톤 레이아웃 수정 ([f14c939](https://github.com/SamikBeach/mobile/commit/f14c939a452b3ba107d583c7e50486e07b3f8448))
+* 안드로이드 앱 버전 코드 업데이트 ([5112bf4](https://github.com/SamikBeach/mobile/commit/5112bf49e4d92dd0a2a33f469571ba8a398d77bf))
+* 작가 목록 검색 UI/UX 개선 ([a2474b4](https://github.com/SamikBeach/mobile/commit/a2474b496f88711c4d84591a6c0e08dd2b323056))
+
+
+### Performance Improvements
+
+* 검색창 애니메이션 성능 개선 ([7cc1bb2](https://github.com/SamikBeach/mobile/commit/7cc1bb2892712113517f208cec8a2daa70eac0d5))
+
 # [1.12.0](https://github.com/SamikBeach/mobile/compare/1.11.0...1.12.0) (2025-02-08)
 
 
