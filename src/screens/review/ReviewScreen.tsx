@@ -172,7 +172,8 @@ export function ReviewScreen({ route }: Props) {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
       <ReviewScreenContent
         ref={contentRef}
         reviewId={reviewId}
@@ -254,8 +255,13 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   editorContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
     padding: spacing.lg,
+    backgroundColor: 'white',
   },
 });
