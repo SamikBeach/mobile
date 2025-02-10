@@ -10,6 +10,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  Dimensions,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
@@ -232,6 +233,7 @@ export function WriteReviewScreen({ route, navigation }: Props) {
               onChangeText={setContent}
               multiline
               textAlignVertical="top"
+              maxFontSizeMultiplier={1}
             />
           </View>
         </ScrollView>
@@ -287,12 +289,13 @@ const styles = StyleSheet.create({
     height: 48,
   },
   contentInput: {
-    height: 300,
+    height: Dimensions.get('window').height * 0.5,
     fontSize: 15,
     padding: spacing.md,
     backgroundColor: colors.gray[50],
     borderRadius: 8,
     color: colors.gray[900],
+    textAlignVertical: 'top',
   },
   footer: {
     position: 'absolute',
