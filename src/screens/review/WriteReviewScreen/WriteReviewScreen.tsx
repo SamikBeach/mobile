@@ -212,24 +212,25 @@ export function WriteReviewScreen({ route, navigation }: Props) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.container}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}>
-        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-          <BookInfo bookId={bookId} />
-          <TextInput
-            style={styles.titleInput}
-            placeholder="제목"
-            value={title}
-            onChangeText={setTitle}
-            maxLength={100}
-          />
-          <TextInput
-            style={styles.contentInput}
-            placeholder="내용을 입력하세요..."
-            value={content}
-            onChangeText={setContent}
-            multiline
-            textAlignVertical="top"
-          />
-          <View style={styles.spacer} />
+        <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+          <View style={styles.formContainer}>
+            <BookInfo bookId={bookId} />
+            <TextInput
+              style={styles.titleInput}
+              placeholder="제목"
+              value={title}
+              onChangeText={setTitle}
+              maxLength={100}
+            />
+            <TextInput
+              style={styles.contentInput}
+              placeholder="내용을 입력하세요..."
+              value={content}
+              onChangeText={setContent}
+              multiline
+              textAlignVertical="top"
+            />
+          </View>
         </ScrollView>
         <View style={styles.footer}>
           <View style={styles.buttonContainer}>
@@ -264,7 +265,15 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     padding: spacing.lg,
+  },
+  formContainer: {
+    flex: 1,
+    gap: spacing.md,
+    paddingBottom: 100,
   },
   titleInput: {
     fontSize: 16,
@@ -273,7 +282,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: colors.gray[900],
     height: 48,
-    marginBottom: spacing.md,
   },
   contentInput: {
     height: 300,
@@ -282,9 +290,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
     borderRadius: 8,
     color: colors.gray[900],
-  },
-  spacer: {
-    height: 100,
   },
   footer: {
     position: 'absolute',
