@@ -7,6 +7,7 @@ import {
   Platform,
   Alert,
   Pressable,
+  ScrollView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
@@ -206,8 +207,9 @@ export function WriteReviewScreen({ route, navigation }: Props) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}>
-      <View style={styles.content}>
+      style={styles.container}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}>
+      <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
         <BookInfo bookId={bookId} />
         <TextInput
           style={styles.titleInput}
@@ -224,7 +226,8 @@ export function WriteReviewScreen({ route, navigation }: Props) {
           multiline
           textAlignVertical="top"
         />
-      </View>
+        <View style={styles.spacer} />
+      </ScrollView>
       <View style={styles.footer}>
         <View style={styles.buttonContainer}>
           <Button
@@ -254,7 +257,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: spacing.lg,
-    gap: spacing.md,
   },
   titleInput: {
     fontSize: 16,
@@ -263,16 +265,24 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: colors.gray[900],
     height: 48,
+    marginBottom: spacing.md,
   },
   contentInput: {
-    flex: 1,
+    height: 300,
     fontSize: 15,
     padding: spacing.md,
     backgroundColor: colors.gray[50],
     borderRadius: 8,
     color: colors.gray[900],
   },
+  spacer: {
+    height: 100,
+  },
   footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
     paddingVertical: spacing.md,
