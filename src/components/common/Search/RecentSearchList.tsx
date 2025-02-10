@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.gray[500],
   },
-}); 
+});

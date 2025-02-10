@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { Text } from '@/components/common';
 import { colors } from '@/styles/theme';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
@@ -40,7 +40,7 @@ function SearchResults({ keyword, onClose }: Props) {
 
   if (!data?.books?.length && !data?.authors?.length) {
     return (
-      <View style={styles.centerContainer}>
+      <View style={[styles.container, styles.centerContainer]}>
         <Text style={styles.guideText}>검색 결과가 없습니다</Text>
       </View>
     );
@@ -61,21 +61,33 @@ export default function SearchContent({ keyword, onClose }: Props) {
   const isEmpty = !keyword;
 
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      {isEmpty ? (
-        currentUser ? (
-          <RecentSearchList onClose={onClose} />
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag">
+      <Suspense fallback={<LoadingSpinner />}>
+        {isEmpty ? (
+          currentUser ? (
+            <RecentSearchList onClose={onClose} />
+          ) : (
+            <SearchGuide />
+          )
         ) : (
-          <SearchGuide />
-        )
-      ) : (
-        <SearchResults keyword={keyword} onClose={onClose} />
-      )}
-    </Suspense>
+          <SearchResults keyword={keyword} onClose={onClose} />
+        )}
+      </Suspense>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    flexGrow: 1,
+  },
   centerContainer: {
     flex: 1,
     alignItems: 'center',
