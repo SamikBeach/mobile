@@ -221,9 +221,13 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: '#F9FAFB',
     borderRadius: 8,
-    paddingRight: 8,
-    paddingLeft: 8,
+    paddingHorizontal: 12,
     alignSelf: 'flex-start',
+    ...Platform.select({
+      android: {
+        paddingVertical: 6,
+      },
+    }),
   },
   bookThumbnail: {
     width: 25,
@@ -238,7 +242,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     color: '#111827',
-    marginTop: 8,
+    ...Platform.select({
+      ios: {
+        marginTop: 6,
+      },
+    }),
   },
   bookAuthor: {
     fontSize: 11,
