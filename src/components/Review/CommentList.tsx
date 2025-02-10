@@ -56,16 +56,6 @@ export function CommentList({ reviewId, onReply }: Props) {
     );
   }
 
-  if (comments.length === 0) {
-    return (
-      <Empty
-        icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
-        message="아직 댓글이 없어요"
-        description="첫 번째 댓글을 작성해보세요"
-      />
-    );
-  }
-
   return (
     <Animated.View
       entering={FadeIn.duration(200)}

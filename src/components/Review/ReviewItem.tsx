@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,6 +6,8 @@ import {
   NativeSyntheticEvent,
   TextLayoutEventData,
   Alert,
+  ScrollView,
+  findNodeHandle,
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
@@ -31,13 +33,15 @@ import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 interface Props {
   review: Review;
   showBookInfo?: boolean;
+  scrollRef?: React.RefObject<ScrollView>;
 }
 
-export function ReviewItem({ review, showBookInfo }: Props) {
+export function ReviewItem({ review, showBookInfo, scrollRef }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
+  const commentEditorRef = useRef<View>(null);
 
   const currentUser = useCurrentUser();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -219,7 +223,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         </View>
       </View>
       {isReplying && (
-        <View style={styles.replySection}>
+        <View ref={commentEditorRef} style={styles.replySection}>
           <CommentEditor
             onSubmit={content => {
               createComment(content);
