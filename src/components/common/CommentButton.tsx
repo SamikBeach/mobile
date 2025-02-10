@@ -1,17 +1,19 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Feather';
+import { colors } from '@/styles/theme';
 
 interface CommentButtonProps {
   commentCount: number;
   onPress?: () => void;
+  isActive?: boolean;
 }
 
-export function CommentButton({ commentCount, onPress }: CommentButtonProps) {
+export function CommentButton({ commentCount, onPress, isActive }: CommentButtonProps) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Icon name="comment-outline" size={16} color="#71717a" />
-      <Text style={styles.text}>{commentCount}</Text>
+    <TouchableOpacity style={[styles.button, isActive && styles.activeButton]} onPress={onPress}>
+      <Icon name="message-square" size={16} color={isActive ? colors.white : colors.gray[500]} />
+      <Text style={[styles.text, isActive && styles.activeText]}>{commentCount}</Text>
     </TouchableOpacity>
   );
 }
@@ -23,13 +25,22 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 16,
-    backgroundColor: '#f4f4f5',
+    backgroundColor: colors.white,
     gap: 4,
     minWidth: 52,
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+  },
+  activeButton: {
+    backgroundColor: colors.gray[900],
+    borderWidth: 0,
   },
   text: {
     fontSize: 12,
-    color: '#71717a',
+    color: colors.gray[500],
+  },
+  activeText: {
+    color: colors.white,
   },
 });

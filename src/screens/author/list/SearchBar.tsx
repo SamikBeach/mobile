@@ -65,4 +65,4 @@ const styles = StyleSheet.create({
   clearButton: {
     padding: spacing.xs,
   },
-}); 
+});
