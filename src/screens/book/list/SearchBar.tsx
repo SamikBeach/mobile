@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Animated, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, TextInput, View, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing } from '@/styles/theme';
 import { useAtom } from 'jotai';
@@ -33,16 +33,12 @@ export function SearchBar({ expanded, onToggle }: Props) {
   };
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.spring(animatedWidth, {
-        toValue: expanded ? maxWidth : 40,
-        useNativeDriver: false,
-        friction: 22,
-        tension: 200,
-        restDisplacementThreshold: 0.001,
-        restSpeedThreshold: 0.001,
-      }),
-    ]).start();
+    Animated.timing(animatedWidth, {
+      toValue: expanded ? maxWidth : 40,
+      useNativeDriver: false,
+      duration: 250,
+      easing: Easing.bezier(0.4, 0.0, 0.2, 1),
+    }).start();
   }, [expanded, maxWidth, animatedWidth]);
 
   const debouncedSearch = debounce((value: string) => {
