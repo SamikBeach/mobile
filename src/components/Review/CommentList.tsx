@@ -10,8 +10,6 @@ import type { Comment } from '@/types/comment';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
-import { Empty } from '../common/Empty';
-import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   reviewId: number;
