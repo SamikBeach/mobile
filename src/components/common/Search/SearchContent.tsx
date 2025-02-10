@@ -30,13 +30,17 @@ function SearchGuide() {
 }
 
 function SearchResults({ keyword, onClose }: Props) {
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['search', keyword],
     queryFn: () => searchApi.search(keyword),
     enabled: Boolean(keyword),
     select: response => response.data,
     placeholderData: keepPreviousData,
   });
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   if (!data?.books?.length && !data?.authors?.length) {
     return (
