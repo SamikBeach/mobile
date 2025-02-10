@@ -174,14 +174,20 @@ export function ReviewScreen({ route }: Props) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
-      <ReviewScreenContent
-        ref={contentRef}
-        reviewId={reviewId}
-        onReply={user => setReplyToUser(user)}
-        ListHeaderComponent={renderHeader()}
-      />
-      <View style={styles.editorContainer}>
-        <CommentEditor replyToUser={replyToUser} onSubmit={handleSubmit} onCancel={handleCancel} />
+      <View style={styles.contentContainer}>
+        <ReviewScreenContent
+          ref={contentRef}
+          reviewId={reviewId}
+          onReply={user => setReplyToUser(user)}
+          ListHeaderComponent={renderHeader()}
+        />
+        <View style={styles.editorContainer}>
+          <CommentEditor
+            replyToUser={replyToUser}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+          />
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -191,6 +197,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    paddingTop: 12,
+  },
+  contentContainer: {
+    flex: 1,
+    position: 'relative',
   },
   header: {
     gap: 10,
