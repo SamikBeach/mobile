@@ -42,6 +42,8 @@ const styles = StyleSheet.create({
   header: {
     gap: 10,
     marginBottom: 32,
+    marginHorizontal: 16,
+    marginTop: 16,
   },
   titleContainer: {
     gap: 10,
