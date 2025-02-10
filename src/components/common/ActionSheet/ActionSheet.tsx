@@ -1,9 +1,10 @@
 import React from 'react';
-import { Modal, StyleSheet, Pressable, Animated } from 'react-native';
+import { Modal, StyleSheet, Pressable, View } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors } from '@/styles/theme';
 import { useActionSheet } from './useActionSheet';
+import Animated from 'react-native-reanimated';
 
 interface Action {
   text: string;
@@ -19,19 +20,13 @@ interface Props {
 }
 
 export function ActionSheet({ visible, onClose, actions }: Props) {
-  const { translateY, opacity, handleClose } = useActionSheet({ visible, onClose });
+  const { animatedStyles, handleClose } = useActionSheet({ visible, onClose });
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={handleClose}>
       <Pressable style={styles.overlay} onPress={handleClose}>
-        <Animated.View style={[styles.background, { opacity }]} />
-        <Animated.View
-          style={[
-            styles.sheet,
-            {
-              transform: [{ translateY }],
-            },
-          ]}>
+        <View style={styles.background} />
+        <Animated.View style={[styles.sheet, animatedStyles]}>
           {actions.map((action, index) => (
             <Pressable
               key={action.text}

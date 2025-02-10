@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Animated, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { GenreButtons } from './GenreButtons';
 import { SearchBar } from './SearchBar';
 import { SortButtons } from './SortButtons';
@@ -35,11 +35,10 @@ export function AuthorListHeader() {
         <GenreButtons />
       </View>
       <Pressable style={styles.controls} onPress={e => e.stopPropagation()}>
-        <Animated.View
-          style={[styles.controlsContainer, { display: isSearchExpanded ? 'none' : 'flex' }]}>
+        <View style={[styles.controlsContainer, { display: isSearchExpanded ? 'none' : 'flex' }]}>
           <EraSelect />
           <SortButtons />
-        </Animated.View>
+        </View>
         <SearchBar expanded={isSearchExpanded} onToggle={toggleSearch} />
       </Pressable>
     </Pressable>
