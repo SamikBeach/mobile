@@ -69,6 +69,7 @@ export function CommentEditor({
         children.forEach((node: LexicalNode) => {
           if (node.type === 'mention') {
             extractedMentions.push(node.text || '');
+            fullText += `@${node.text} `;
           } else if (node.type === 'text') {
             fullText += node.text || '';
           }
@@ -77,7 +78,6 @@ export function CommentEditor({
         setMentions(extractedMentions);
         setText(fullText);
 
-        // 수정 모드 진입 시 포커스
         setTimeout(() => {
           inputRef.current?.focus();
         }, 100);
@@ -102,10 +102,9 @@ export function CommentEditor({
     if (
       mentions.length > 0 &&
       e.nativeEvent.key === 'Backspace' &&
-      !text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '').trim()
+      text.trim() === `@${mentions[mentions.length - 1]}`
     ) {
       setText('');
-      3;
       setMentions([]);
       if (!isEditMode) {
         onCancel();
@@ -114,22 +113,7 @@ export function CommentEditor({
   };
 
   const handleTextChange = (newText: string) => {
-    if (replyToUser) {
-      const mentionText = `@${replyToUser.nickname} `;
-
-      if (newText.length < text.length && !newText) {
-        setText('');
-        setMentions([]);
-        if (!isEditMode) {
-          onCancel();
-        }
-        return;
-      }
-
-      setText(mentionText + newText);
-    } else {
-      setText(newText);
-    }
+    setText(newText);
   };
 
   const handleSubmit = () => {
@@ -150,7 +134,7 @@ export function CommentEditor({
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: ` ${text.trim()}`,
+                text: text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '').trim(),
                 type: 'text',
                 version: 1,
               },
@@ -188,23 +172,16 @@ export function CommentEditor({
 
   const isEditMode = Boolean(initialContent);
 
-  const displayText = text.replace(new RegExp(`@(${mentions.join('|')})\\s`, 'g'), '');
-
   return (
     <View style={styles.container}>
       {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
       <View style={styles.inputContainer}>
-        {mentions.map((mention, index) => (
-          <Text key={`mention-${index}`} style={styles.mention}>
-            @{mention}
-          </Text>
-        ))}
         <TextInput
           ref={inputRef}
-          style={[styles.input, mentions.length > 0 && styles.inputWithMention]}
+          style={styles.input}
           placeholder={currentUser ? '댓글을 입력하세요.' : '로그인 후 댓글을 작성할 수 있습니다.'}
           placeholderTextColor={colors.gray[400]}
-          value={displayText}
+          value={text}
           onChangeText={handleTextChange}
           onKeyPress={handleKeyPress}
           multiline
@@ -305,12 +282,5 @@ const styles = StyleSheet.create({
   },
   submitButtonTextDisabled: {
     color: colors.gray[400],
-  },
-  mention: {
-    color: '#3B82F6',
-    fontSize: 14,
-  },
-  inputWithMention: {
-    paddingLeft: 4,
   },
 });
