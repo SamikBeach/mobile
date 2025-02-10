@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  Pressable,
-  NativeSyntheticEvent,
-  TextInputKeyPressEventData,
-} from 'react-native';
+import { View, StyleSheet, TextInput, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
