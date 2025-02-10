@@ -221,12 +221,12 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: colors.gray[50],
     borderRadius: 20,
     paddingLeft: 16,
     paddingRight: 8,
-    paddingVertical: 6,
+    paddingVertical: 8,
     minHeight: 40,
   },
   closeButton: {
@@ -236,9 +236,14 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
+    lineHeight: 20,
     color: colors.gray[900],
     padding: 0,
-    maxHeight: 100,
+    paddingTop: 0,
+    paddingBottom: 0,
+    minHeight: 20,
+    maxHeight: 120,
+    textAlignVertical: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
