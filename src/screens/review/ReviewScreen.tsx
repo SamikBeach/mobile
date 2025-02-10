@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: 10,
-    marginBottom: 32,
+    marginBottom: 12,
   },
   titleContainer: {
     gap: 10,

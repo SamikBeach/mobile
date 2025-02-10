@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text } from '@/components/common/Text';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { CommentItem } from '../comment/CommentItem';
@@ -11,6 +10,8 @@ import type { Comment } from '@/types/comment';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import { Empty } from '../common/Empty';
+import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   reviewId: number;
@@ -57,9 +58,11 @@ export function CommentList({ reviewId, onReply }: Props) {
 
   if (comments.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>아직 댓글이 없습니다.</Text>
-      </View>
+      <Empty
+        icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
+        message="아직 댓글이 없어요"
+        description="첫 번째 댓글을 작성해보세요"
+      />
     );
   }
 
