@@ -40,6 +40,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.md,
     height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   activeButton: {
     backgroundColor: colors.white,
