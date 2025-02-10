@@ -138,7 +138,7 @@ export function UserInfo({ userId, rightElement }: UserInfoProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>{rightElement}</View>
+      <TouchableOpacity style={styles.header}>{rightElement}</TouchableOpacity>
       <View style={styles.profileSection}>
         <TouchableOpacity onPress={isMyProfile ? handleImagePress : undefined}>
           <Avatar uri={user.imageUrl} size={120} loading={isUploading || isDeleting} />

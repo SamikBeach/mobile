@@ -89,7 +89,9 @@ export function UserScreen() {
           userId={item.userId}
           rightElement={
             item.isMyProfile && (
-              <TouchableOpacity onPress={() => setShowActionSheet(true)}>
+              <TouchableOpacity
+                onPress={() => setShowActionSheet(true)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                 <Icon name="settings" size={24} color={colors.gray[600]} />
               </TouchableOpacity>
             )
