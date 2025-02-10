@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Animated, Pressable, StyleSheet, TextInput, View, Easing } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing } from '@/styles/theme';
 import { useAtom } from 'jotai';
 import { bookSearchKeywordAtom } from '@/atoms/book';
 import { debounce } from 'lodash-es';
 import { LayoutChangeEvent } from 'react-native';
+import Animated, { Layout, Easing } from 'react-native-reanimated';
 
 interface Props {
   expanded: boolean;
@@ -16,9 +17,7 @@ export function SearchBar({ expanded, onToggle }: Props) {
   const [searchKeyword, setSearchKeyword] = useAtom(bookSearchKeywordAtom);
   const [inputValue, setInputValue] = useState(searchKeyword);
   const [maxWidth, setMaxWidth] = useState(40);
-  const animatedWidth = useMemo(() => new Animated.Value(40), []);
 
-  // expanded가 false가 되면 검색어 초기화
   useEffect(() => {
     if (!expanded) {
       setInputValue('');
@@ -26,20 +25,10 @@ export function SearchBar({ expanded, onToggle }: Props) {
     }
   }, [expanded, setSearchKeyword]);
 
-  // 부모 컨테이너의 너비를 측정하여 최대 확장 너비 설정
   const measureParent = (event: LayoutChangeEvent) => {
     const containerWidth = event.nativeEvent.layout.width;
-    setMaxWidth(containerWidth - spacing.md * 2); // 패딩 고려
+    setMaxWidth(containerWidth - spacing.md * 2);
   };
-
-  useEffect(() => {
-    Animated.timing(animatedWidth, {
-      toValue: expanded ? maxWidth : 40,
-      useNativeDriver: false,
-      duration: 250,
-      easing: Easing.bezier(0.4, 0.0, 0.2, 1),
-    }).start();
-  }, [expanded, maxWidth, animatedWidth]);
 
   const debouncedSearch = debounce((value: string) => {
     setSearchKeyword(value);
@@ -59,14 +48,15 @@ export function SearchBar({ expanded, onToggle }: Props) {
   return (
     <View onLayout={measureParent} style={styles.wrapper}>
       <Animated.View
+        layout={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
         style={[
           styles.container,
           {
-            width: animatedWidth,
+            width: expanded ? maxWidth : 40,
           },
         ]}>
         {expanded ? (
-          <Animated.View style={[styles.inputContainer]}>
+          <View style={styles.inputContainer}>
             <Icon name="search" size={16} color={colors.gray[400]} />
             <TextInput
               style={styles.input}
@@ -79,7 +69,7 @@ export function SearchBar({ expanded, onToggle }: Props) {
             <Pressable onPress={handleClear} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
               <Icon name="x" size={16} color={colors.gray[400]} />
             </Pressable>
-          </Animated.View>
+          </View>
         ) : (
           <Pressable onPress={onToggle} style={styles.iconButton}>
             <Icon name="search" size={20} color={colors.gray[600]} />
