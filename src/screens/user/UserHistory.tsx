@@ -38,14 +38,14 @@ export function UserHistory({ userId }: Props) {
           style={[styles.tab, activeSection === 'books' && styles.activeTab]}
           onPress={() => setActiveSection('books')}>
           <Text style={[styles.tabText, activeSection === 'books' && styles.activeTabText]}>
-            좋아요한 책
+            좋아한 책
           </Text>
         </Pressable>
         <Pressable
           style={[styles.tab, activeSection === 'authors' && styles.activeTab]}
           onPress={() => setActiveSection('authors')}>
           <Text style={[styles.tabText, activeSection === 'authors' && styles.activeTabText]}>
-            좋아요한 작가
+            좋아한 작가
           </Text>
         </Pressable>
       </View>

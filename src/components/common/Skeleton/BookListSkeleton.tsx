@@ -11,13 +11,26 @@ export function BookListSkeleton() {
           <View style={styles.item}>
             <Skeleton style={styles.image} />
             <View style={styles.content}>
-              <View style={styles.titleSection}>
+              <View style={styles.textContent}>
                 <Skeleton style={styles.title} />
                 <Skeleton style={{ ...styles.title, width: '70%' }} />
-              </View>
-              <View style={styles.meta}>
                 <Skeleton style={styles.author} />
-                <Skeleton style={styles.publisher} />
+              </View>
+              <View style={styles.stats}>
+                <View style={styles.statItem}>
+                  <Skeleton style={styles.statIcon} />
+                  <Skeleton style={styles.statText} />
+                </View>
+                <View style={styles.divider} />
+                <View style={styles.statItem}>
+                  <Skeleton style={styles.statIcon} />
+                  <Skeleton style={styles.statText} />
+                </View>
+                <View style={styles.divider} />
+                <View style={styles.statItem}>
+                  <Skeleton style={styles.statIcon} />
+                  <Skeleton style={styles.statText} />
+                </View>
               </View>
             </View>
           </View>
@@ -30,54 +43,63 @@ export function BookListSkeleton() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: spacing.lg,
+    padding: spacing.md,
   },
   item: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    padding: spacing.lg,
-    paddingVertical: spacing.xl,
     gap: spacing.lg,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.gray[100],
+    paddingVertical: spacing.sm,
   },
   image: {
-    width: 90,
-    height: 130,
-    borderRadius: borderRadius.sm,
-    backgroundColor: colors.gray[200],
+    width: 120,
+    height: 180,
+    borderRadius: borderRadius.md,
   },
   content: {
     flex: 1,
-    gap: spacing.sm,
+    justifyContent: 'space-between',
   },
-  titleSection: {
+  textContent: {
     gap: spacing.xs,
   },
   title: {
-    height: 20,
-    width: '100%',
+    height: 22,
     borderRadius: borderRadius.sm,
-    backgroundColor: colors.gray[200],
-  },
-  meta: {
-    gap: spacing.xs,
   },
   author: {
-    height: 16,
-    width: '80%',
+    height: 20,
+    width: '60%',
     borderRadius: borderRadius.sm,
-    backgroundColor: colors.gray[200],
   },
-  publisher: {
-    height: 16,
-    width: '50%',
+  stats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  statIcon: {
+    width: 13,
+    height: 13,
+    borderRadius: borderRadius.full,
+  },
+  statText: {
+    width: 20,
+    height: 13,
     borderRadius: borderRadius.sm,
+  },
+  divider: {
+    width: 1,
+    height: 12,
     backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
   },
   separator: {
-    height: spacing.md,
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
 });

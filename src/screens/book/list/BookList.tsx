@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import Icon from 'react-native-vector-icons/Feather';
@@ -103,9 +103,6 @@ export function BookList() {
       renderItem={({ item }) => <BookItem book={item} />}
       keyExtractor={item => item.id.toString()}
       contentContainerStyle={styles.list}
-      ItemSeparatorComponent={() => (
-        <View style={styles.divider} />
-      )}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <BookListSkeleton /> : null}
@@ -115,7 +112,7 @@ export function BookList() {
 
 const styles = StyleSheet.create({
   list: {
-    padding: spacing.lg,
+    padding: spacing.md,
   },
   divider: {
     height: 1,

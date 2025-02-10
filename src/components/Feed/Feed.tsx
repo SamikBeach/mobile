@@ -160,10 +160,8 @@ export function Feed({ review, user, book, expanded }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: 14,
     backgroundColor: 'white',
-    marginHorizontal: 16,
-    marginVertical: 8,
   },
   header: {
     marginBottom: 16,
@@ -247,6 +245,3 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
-// End of Selection
-
-// 커밋 메시지: 이미지 URL 관련 타입 에러 수정됨

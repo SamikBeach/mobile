@@ -28,9 +28,7 @@ export function AuthorBooksSkeleton() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: spacing.xl,
-  },
+  container: {},
   header: {
     paddingHorizontal: spacing.lg,
     marginBottom: spacing.md,
@@ -66,4 +64,4 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: borderRadius.sm,
   },
-}); 
+});

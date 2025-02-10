@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, ActivityIndicator, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ReviewItem } from '@/components/review/ReviewItem';
 import { Empty } from '@/components/common/Empty';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -9,13 +9,14 @@ import type { Review } from '@/types/review';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import { ReviewListSkeleton } from '@/components/common/Skeleton';
 
 interface Props {
   userId: number;
 }
 
 export function ReviewList({ userId }: Props) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
     Error
   >({
@@ -40,34 +41,45 @@ export function ReviewList({ userId }: Props) {
 
   const reviews = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);
 
+  if (isLoading) {
+    return <ReviewListSkeleton />;
+  }
+
   if (!reviews.length) return <Empty message="작성한 리뷰가 없습니다" />;
 
   return (
-    <Animated.View
+    <Animated.FlatList
+      data={reviews}
+      renderItem={({ item }) => (
+        <View style={styles.reviewItemContainer}>
+          <ReviewItem review={item} showBookInfo />
+        </View>
+      )}
+      ItemSeparatorComponent={() => <View style={styles.divider} />}
+      onEndReached={() => {
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={isFetchingNextPage ? <ReviewListSkeleton /> : null}
+      contentContainerStyle={styles.container}
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(200)}
-      layout={Layout.springify()}
-      style={styles.container}>
-      {reviews.map(review => (
-        <View key={review.id}>
-          <ReviewItem review={review} showBookInfo />
-          <View style={styles.divider} />
-        </View>
-      ))}
-      {isFetchingNextPage && (
-        <ActivityIndicator size="large" color={colors.primary[500]} style={styles.spinner} />
-      )}
-    </Animated.View>
+      itemLayoutAnimation={Layout.springify()}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    padding: spacing.lg,
+  },
   divider: {
     height: 1,
     backgroundColor: colors.gray[100],
   },
-  spinner: {
-    marginVertical: spacing.lg,
+  reviewItemContainer: {
+    backgroundColor: colors.white,
   },
 });

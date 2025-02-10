@@ -1,114 +1,80 @@
 import React from 'react';
-import { View, StyleSheet, Animated, ViewStyle } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { spacing, colors, borderRadius } from '@/styles/theme';
-
-interface SkeletonProps {
-  style: ViewStyle | ViewStyle[];
-  opacity: Animated.AnimatedInterpolation<number>;
-}
-
-const Skeleton = ({ style, opacity }: SkeletonProps) => (
-  <Animated.View style={[styles.skeleton, style, { opacity }]} />
-);
+import { Skeleton } from '../common/Skeleton/Skeleton';
 
 export function FeedSkeleton() {
-  const animatedValue = React.useMemo(() => new Animated.Value(0), []);
-
-  React.useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(animatedValue, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(animatedValue, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [animatedValue]);
-
-  const opacity = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.3, 0.7],
-  });
-
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.userInfo}>
-          <Skeleton style={styles.avatar} opacity={opacity} />
-          <Skeleton style={styles.nickname} opacity={opacity} />
-          <Skeleton style={styles.date} opacity={opacity} />
-        </View>
-      </View>
-
-      {/* Main Content */}
-      <View style={styles.mainContent}>
-        {/* Left: Book Section */}
-        <View style={styles.bookSection}>
-          <Skeleton style={styles.bookImage} opacity={opacity} />
-          <View style={styles.bookInfo}>
-            <Skeleton style={styles.bookTitle} opacity={opacity} />
-            <Skeleton style={styles.bookTitleShort} opacity={opacity} />
-            <Skeleton style={styles.bookAuthor} opacity={opacity} />
-          </View>
-        </View>
-
-        {/* Right: Review Section */}
-        <View style={styles.reviewSection}>
-          <View style={styles.reviewContent}>
-            <Skeleton style={styles.reviewTitle} opacity={opacity} />
-            <Skeleton style={styles.reviewText} opacity={opacity} />
-            <Skeleton style={styles.reviewText} opacity={opacity} />
-            <Skeleton style={styles.reviewText} opacity={opacity} />
-            <Skeleton style={styles.reviewTextShort} opacity={opacity} />
+      {Array.from({ length: 3 }).map((_, index) => (
+        <View key={index} style={styles.feedItem}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.userInfo}>
+              <Skeleton style={styles.avatar} />
+              <Skeleton style={styles.date} />
+            </View>
           </View>
 
-          <View style={styles.actions}>
-            <Skeleton style={styles.actionButton} opacity={opacity} />
-            <Skeleton style={styles.actionButton} opacity={opacity} />
+          <View style={styles.mainContent}>
+            {/* Book Section */}
+            <View style={styles.bookSection}>
+              <Skeleton style={styles.bookImage} />
+              <View style={styles.bookInfo}>
+                <Skeleton style={styles.bookTitle} />
+                <Skeleton style={styles.bookAuthor} />
+                <Skeleton style={styles.bookPublisher} />
+              </View>
+            </View>
+
+            {/* Review Section */}
+            <View style={styles.reviewSection}>
+              <View style={styles.reviewContent}>
+                <Skeleton style={styles.reviewTitle} />
+                <View style={styles.reviewTextContainer}>
+                  <Skeleton style={styles.reviewText} />
+                  <Skeleton style={styles.reviewText} />
+                  <Skeleton style={[styles.reviewText, { width: '80%' }]} />
+                </View>
+              </View>
+
+              <View style={styles.actions}>
+                <Skeleton style={styles.likeButton} />
+                <Skeleton style={styles.commentButton} />
+              </View>
+            </View>
           </View>
         </View>
-      </View>
+      ))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: spacing.lg,
-    paddingVertical: spacing.xl,
+    gap: spacing.lg,
+  },
+  feedItem: {
+    padding: 14,
     backgroundColor: colors.white,
   },
-  skeleton: {
-    backgroundColor: colors.gray[200],
-    borderRadius: borderRadius.sm,
-  },
   header: {
-    marginBottom: spacing.md,
+    marginBottom: 16,
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: 8,
   },
   avatar: {
-    width: 28,
-    height: 28,
+    width: 36,
+    height: 36,
     borderRadius: borderRadius.full,
   },
-  nickname: {
-    width: 80,
-    height: 16,
-  },
   date: {
-    width: 60,
-    height: 12,
+    width: 70,
+    height: 14,
+    borderRadius: borderRadius.sm,
   },
   mainContent: {
     flexDirection: 'row',
@@ -116,6 +82,7 @@ const styles = StyleSheet.create({
   },
   bookSection: {
     width: 120,
+    gap: 8,
   },
   bookImage: {
     width: 120,
@@ -124,21 +91,23 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bookInfo: {
-    maxWidth: 120,
+    gap: 4,
   },
   bookTitle: {
-    height: 16,
-    marginBottom: 4,
+    height: 18,
     width: '100%',
-  },
-  bookTitleShort: {
-    height: 16,
-    marginBottom: 4,
-    width: '80%',
+    borderRadius: borderRadius.sm,
   },
   bookAuthor: {
     height: 14,
-    width: '90%',
+    width: '80%',
+    borderRadius: borderRadius.sm,
+  },
+  bookPublisher: {
+    height: 14,
+    width: '60%',
+    borderRadius: borderRadius.sm,
+    marginTop: 2,
   },
   reviewSection: {
     flex: 1,
@@ -146,20 +115,20 @@ const styles = StyleSheet.create({
   },
   reviewContent: {
     flex: 1,
-    gap: 8,
   },
   reviewTitle: {
     height: 20,
-    width: '60%',
+    width: '70%',
+    borderRadius: borderRadius.sm,
     marginBottom: 8,
+  },
+  reviewTextContainer: {
+    gap: spacing.sm,
   },
   reviewText: {
     height: 16,
     width: '100%',
-  },
-  reviewTextShort: {
-    height: 16,
-    width: '75%',
+    borderRadius: borderRadius.sm,
   },
   actions: {
     flexDirection: 'row',
@@ -167,9 +136,14 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 16,
   },
-  actionButton: {
-    width: 54,
+  likeButton: {
+    width: 50,
     height: 28,
-    borderRadius: 14,
+    borderRadius: borderRadius.full,
+  },
+  commentButton: {
+    width: 50,
+    height: 28,
+    borderRadius: borderRadius.full,
   },
 });

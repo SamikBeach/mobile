@@ -5,40 +5,46 @@ import { Button } from '@/components/common/Button';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
 import { colors, spacing, borderRadius } from '@/styles/theme';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
-import type { Book } from '@/types/book';
 import { useBookQueryData } from '@/hooks/useBookQueryData';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { BookDetailInfoSkeleton } from '@/components/common/Skeleton/BookDetailInfoSkeleton';
 
 interface Props {
-  book: Book;
+  bookId: number;
   onReviewPress: () => void;
 }
 
-export function BookDetailInfo({ book, onReviewPress }: Props) {
+export function BookDetailInfo({ bookId, onReviewPress }: Props) {
+  const { data: book, isLoading } = useQuery({
+    queryKey: ['book', bookId],
+    queryFn: () => bookApi.getBookDetail(bookId),
+    select: response => response.data,
+  });
+
   const { updateBookLikeQueryData } = useBookQueryData();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const currentUser = useCurrentUser();
 
   const { mutate: toggleLike } = useMutation({
-    mutationFn: () => bookApi.toggleBookLike(book.id),
+    mutationFn: () => bookApi.toggleBookLike(bookId),
     onMutate: async () => {
       updateBookLikeQueryData({
-        bookId: book.id,
+        bookId: bookId,
         isOptimistic: true,
       });
     },
     onError: () => {
       updateBookLikeQueryData({
-        bookId: book.id,
+        bookId: bookId,
         isOptimistic: false,
         currentStatus: {
-          isLiked: book.isLiked,
-          likeCount: book.likeCount,
+          isLiked: book?.isLiked ?? false,
+          likeCount: book?.likeCount ?? 0,
         },
       });
     },
@@ -52,12 +58,12 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
     toggleLike();
   };
 
-  const formattedPublicationDate = book.publicationDate
+  const formattedPublicationDate = book?.publicationDate
     ? format(new Date(book.publicationDate), 'yyyy년 M월 d일')
     : '';
 
   const handleBookClick = () => {
-    if (book.isbn) {
+    if (book?.isbn) {
       Linking.openURL(`https://www.aladin.co.kr/shop/wproduct.aspx?isbn=${book.isbn}`);
     }
   };
@@ -68,8 +74,14 @@ export function BookDetailInfo({ book, onReviewPress }: Props) {
       return;
     }
 
-    navigation.navigate('WriteReview', { bookId: book.id });
+    navigation.navigate('WriteReview', { bookId: bookId });
   };
+
+  if (isLoading) {
+    return <BookDetailInfoSkeleton />;
+  }
+
+  if (!book) return null;
 
   return (
     <View style={styles.container}>

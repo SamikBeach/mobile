@@ -4,41 +4,47 @@ import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { formatAuthorLifespan } from '@/utils/date';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
-import type { Author } from '@/types/author';
 import { useAuthorQueryData } from '@/hooks/useAuthorQueryData';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Toast from 'react-native-toast-message';
+import { AuthorDetailInfoSkeleton } from '@/components/common/Skeleton/AuthorDetailInfoSkeleton';
 
 interface Props {
-  author: Author;
+  authorId: number;
   onReviewPress: () => void;
 }
 
-export function AuthorDetailInfo({ author, onReviewPress }: Props) {
+export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
+  const { data: author, isLoading } = useQuery({
+    queryKey: ['author', authorId],
+    queryFn: () => authorApi.getAuthorDetail(authorId),
+    select: response => response.data,
+  });
+
   const { updateAuthorLikeQueryData } = useAuthorQueryData();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const currentUser = useCurrentUser();
 
   const { mutate: toggleLike } = useMutation({
-    mutationFn: () => authorApi.toggleAuthorLike(author.id),
+    mutationFn: () => authorApi.toggleAuthorLike(authorId),
     onMutate: async () => {
       updateAuthorLikeQueryData({
-        authorId: author.id,
+        authorId: authorId,
         isOptimistic: true,
       });
     },
     onError: () => {
       updateAuthorLikeQueryData({
-        authorId: author.id,
+        authorId: authorId,
         isOptimistic: false,
         currentStatus: {
-          isLiked: author.isLiked,
-          likeCount: author.likeCount,
+          isLiked: author?.isLiked ?? false,
+          likeCount: author?.likeCount ?? 0,
         },
       });
       Toast.show({
@@ -57,10 +63,16 @@ export function AuthorDetailInfo({ author, onReviewPress }: Props) {
   };
 
   const handleWikipediaPress = () => {
-    if (author.name) {
+    if (author?.name) {
       Linking.openURL(`https://en.wikipedia.org/wiki/${author.name}`);
     }
   };
+
+  if (isLoading) {
+    return <AuthorDetailInfoSkeleton />;
+  }
+
+  if (!author) return null;
 
   return (
     <View style={styles.container}>

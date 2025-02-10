@@ -9,7 +9,7 @@ import { Checkbox } from '@/components/common/Checkbox';
 import type { Review } from '@/types/review';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
-import { BookDetailSkeleton, ReviewItemSkeleton } from '@/components/common/Skeleton';
+import { ReviewItemSkeleton } from '@/components/common/Skeleton';
 import { BookDetailInfo } from './BookDetailInfo';
 import { RelativeBooks } from './RelativeBooks';
 import { Empty } from '@/components/common/Empty';
@@ -80,13 +80,9 @@ export function BookDetailScreenContent({ bookId }: Props) {
     }
   }, [isLoading]);
 
-  if (isLoading || !book) {
-    return <BookDetailSkeleton />;
-  }
-
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
-      <BookDetailInfo book={book} onReviewPress={handleReviewPress} />
+      <BookDetailInfo bookId={bookId} onReviewPress={handleReviewPress} />
       <RelativeBooks bookId={bookId} />
       <View style={styles.header}>
         <View style={styles.titleRow}>
@@ -123,10 +119,14 @@ export function BookDetailScreenContent({ bookId }: Props) {
       data={reviews}
       renderItem={({ item }) => (
         <View style={styles.reviewItemContainer}>
-          <ReviewItem
-            review={item}
-            showBookInfo={includeOtherTranslations && item.book.id !== bookId}
-          />
+          {isLoading ? (
+            <ReviewItemSkeleton />
+          ) : (
+            <ReviewItem
+              review={item}
+              showBookInfo={includeOtherTranslations && item.book.id !== bookId}
+            />
+          )}
         </View>
       )}
       itemLayoutAnimation={Layout.springify()}
@@ -196,7 +196,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   separator: {
-    height: spacing.md,
+    height: 1,
+    backgroundColor: colors.gray[100],
   },
   listHeader: {
     gap: spacing.xl,

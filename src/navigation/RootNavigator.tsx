@@ -6,14 +6,14 @@ import { UserScreen } from '@/screens/user/UserScreen';
 import { RootStackParamList, TabParamList } from './types';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import BookScreen from '@/screens/book/BookScreen';
-import AuthorScreen from '@/screens/author/list/AuthorScreen';
+import AuthorScreen from '@/screens/author/AuthorScreen';
 import LoginScreen from '@/screens/auth/LoginScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ReviewScreen } from '@/screens/review/ReviewScreen';
 import SignUpScreen from '@/screens/auth/SignUpScreen';
 import { BookDetailScreen } from '@/screens/book/BookDetailScreen';
 import { AuthorDetailScreen } from '@/screens/author/AuthorDetailScreen';
-import { WriteReviewScreen } from '@/screens/review/WriteReviewScreen';
+import { WriteReviewScreen } from '@/screens/review/WriteReviewScreen/WriteReviewScreen';
 import { SettingsScreen } from '@/screens/settings/SettingsScreen';
 import InitiateRegistrationScreen from '@/screens/auth/InitiateRegistrationScreen';
 import VerifyCodeScreen from '@/screens/auth/VerifyCodeScreen';
@@ -21,7 +21,7 @@ import { TermsScreen } from '@/screens/auth/TermsScreen';
 import { PrivacyScreen } from '@/screens/auth/PrivacyScreen';
 import { Logo } from '@/components/common/Logo';
 import Icon from 'react-native-vector-icons/Feather';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { SearchModal } from '@/components/common/Search/SearchModal';
 import { NavigationContainer } from '@react-navigation/native';
 import { ResetPasswordRequestScreen } from '@/screens/auth/reset-password/ResetPasswordRequestScreen';
@@ -142,7 +142,13 @@ function StackNavigator({
             headerLeft: () => <Logo size="sm" />,
             headerTitle: '',
             headerRight: () => (
-              <TouchableOpacity onPress={() => setSearchVisible(true)}>
+              <TouchableOpacity
+                onPress={() => setSearchVisible(true)}
+                style={styles.headerButton}
+                hitSlop={Platform.select({
+                  android: { top: 15, bottom: 15, left: 15, right: 15 },
+                  ios: { top: 5, bottom: 5, left: 5, right: 5 },
+                })}>
                 <Icon name="search" size={24} color="#000" />
               </TouchableOpacity>
             ),
@@ -217,6 +223,16 @@ function StackNavigator({
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  headerButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Platform.OS === 'android' ? -8 : 0,
+  },
+});
 
 function withTabNavigator(Component: React.ComponentType<any>) {
   return function TabWrappedScreen(props: any) {

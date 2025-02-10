@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  SectionList,
-} from 'react-native';
+import { StyleSheet, SafeAreaView, TouchableOpacity, SectionList } from 'react-native';
 import { colors } from '@/styles/theme';
 import { UserInfo } from './UserInfo';
 import { UserHistory } from './UserHistory';
@@ -102,6 +97,7 @@ export function UserScreen() {
         />
       );
     }
+
     return <UserHistory userId={item.userId} />;
   };
 
