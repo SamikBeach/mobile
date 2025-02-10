@@ -166,7 +166,11 @@ export function CommentEditor({
 
   return (
     <View style={styles.container}>
-      {showAvatar && currentUser && <UserAvatar user={currentUser} size="sm" />}
+      {showAvatar && currentUser && (
+        <View style={styles.avatarContainer}>
+          <UserAvatar user={currentUser} size="sm" />
+        </View>
+      )}
       <View style={styles.inputContainer}>
         <TextInput
           ref={inputRef}
@@ -214,9 +218,12 @@ export function CommentEditor({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 12,
     backgroundColor: 'white',
+  },
+  avatarContainer: {
+    marginTop: 4,
   },
   inputContainer: {
     flex: 1,
@@ -249,6 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
+    marginTop: 4,
   },
   cancelButton: {
     paddingHorizontal: 12,
