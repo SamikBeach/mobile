@@ -229,7 +229,6 @@ export function ReviewItem({ review, showBookInfo }: Props) {
               setReplyToUser(null);
             }}
             replyToUser={replyToUser}
-            autoFocus
           />
           <CommentList reviewId={review.id} onReply={handleReply} />
         </View>

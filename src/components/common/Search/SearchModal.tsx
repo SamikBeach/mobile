@@ -54,7 +54,6 @@ export function SearchModal({ visible, onClose }: Props) {
               onChangeText={handleChange}
               placeholder="책이나 작가를 검색하세요"
               style={styles.input}
-              autoFocus
             />
           </View>
           <TouchableOpacity onPress={handleClose}>
