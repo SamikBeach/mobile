@@ -98,21 +98,20 @@ export function CommentEditor({
     }
   }, [autoFocus, replyToUser]);
 
-  const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-    if (
-      mentions.length > 0 &&
-      e.nativeEvent.key === 'Backspace' &&
-      text.trim() === `@${mentions[mentions.length - 1]}`
-    ) {
-      setText('');
-      setMentions([]);
-      if (!isEditMode) {
-        onCancel();
+  const handleTextChange = (newText: string) => {
+    if (newText.length < text.length && mentions.length > 0) {
+      const lastMention = mentions[mentions.length - 1];
+      const mentionText = `@${lastMention}`;
+
+      if (text.trim() === mentionText && newText.length < mentionText.length) {
+        setText('');
+        setMentions([]);
+        if (!isEditMode) {
+          onCancel();
+        }
+        return;
       }
     }
-  };
-
-  const handleTextChange = (newText: string) => {
     setText(newText);
   };
 
@@ -183,7 +182,6 @@ export function CommentEditor({
           placeholderTextColor={colors.gray[400]}
           value={text}
           onChangeText={handleTextChange}
-          onKeyPress={handleKeyPress}
           multiline
           maxLength={1000}
           editable={Boolean(currentUser)}
