@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.md,
+    height: 30,
   },
   activeButton: {
     backgroundColor: colors.white,
