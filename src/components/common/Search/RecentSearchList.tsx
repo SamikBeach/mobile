@@ -19,6 +19,7 @@ export default function RecentSearchList({ onClose }: Props) {
     queryFn: () => userApi.getRecentSearches(),
     select: response => response.data,
   });
+
   const { mutate: deleteSearch } = useMutation({
     mutationFn: userApi.deleteSearch,
     onMutate: async (searchId: number) => {

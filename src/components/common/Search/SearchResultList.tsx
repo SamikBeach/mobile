@@ -6,6 +6,12 @@ import BookItem from './BookItem';
 import AuthorItem from './AuthorItem';
 import { Book } from '@/types/book';
 import { Author } from '@/types/author';
+import { useMutation } from '@tanstack/react-query';
+import { userApi } from '@/apis/user';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQueryClient } from '@tanstack/react-query';
+import { RootStackParamList } from '@/navigation/types';
 
 interface Props {
   books: Book[];
@@ -15,13 +21,44 @@ interface Props {
 }
 
 export default function SearchResultList({ books, authors, onClose, searchValue }: Props) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const queryClient = useQueryClient();
+
+  const { mutate: saveSearch } = useMutation({
+    mutationFn: (params: { bookId?: number; authorId?: number }) => userApi.saveSearch(params),
+    onError: () => {
+      console.error('Failed to save search history');
+    },
+    onSuccess: () => {
+      // 검색 기록이 변경되었으므로 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['recentSearches'] });
+    },
+  });
+
+  const handleItemClick = ({ bookId, authorId }: { bookId?: number; authorId?: number }) => {
+    saveSearch({ bookId, authorId });
+
+    if (bookId) {
+      navigation.navigate('BookDetail', { bookId });
+    } else if (authorId) {
+      navigation.navigate('AuthorDetail', { authorId });
+    }
+    onClose();
+  };
+
   return (
     <ScrollView style={styles.container}>
       {books.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>도서</Text>
           {books.map(book => (
-            <BookItem key={book.id} book={book} onClose={onClose} searchValue={searchValue} />
+            <BookItem
+              key={book.id}
+              book={book}
+              onClose={onClose}
+              searchValue={searchValue}
+              onPress={() => handleItemClick({ bookId: book.id })}
+            />
           ))}
         </View>
       )}
@@ -35,6 +72,7 @@ export default function SearchResultList({ books, authors, onClose, searchValue 
               author={author}
               onClose={onClose}
               searchValue={searchValue}
+              onPress={() => handleItemClick({ authorId: author.id })}
             />
           ))}
         </View>
