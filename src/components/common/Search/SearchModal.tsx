@@ -83,19 +83,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: spacing.sm,
+    height: 32,
   },
   searchIcon: {
     marginRight: spacing.xs,
   },
   input: {
     flex: 1,
-    height: 40,
+    height: 44,
     padding: 0,
     margin: 0,
     borderWidth: 0,
+    fontSize: 16,
   },
   cancelButton: {
     color: colors.gray[600],
     fontSize: 16,
+    padding: spacing.xs,
   },
 });
