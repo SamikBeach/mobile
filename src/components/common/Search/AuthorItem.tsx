@@ -32,18 +32,16 @@ export default function AuthorItem({ author, onClose, onDelete, onPress }: Props
           </Text>
         </View>
         <View style={styles.stats}>
-          <View style={styles.statItem}>
-            <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
+          <View style={styles.stat}>
+            <Icon name="thumbs-up" size={12} color={colors.gray[400]} />
             <Text style={styles.statText}>{author.likeCount}</Text>
           </View>
-          <View style={styles.divider} />
-          <View style={styles.statItem}>
-            <Icon name="message-square" size={13} color={colors.gray[400]} />
+          <View style={styles.stat}>
+            <Icon name="message-square" size={12} color={colors.gray[400]} />
             <Text style={styles.statText}>{author.reviewCount}</Text>
           </View>
-          <View style={styles.divider} />
-          <View style={styles.statItem}>
-            <Icon name="book" size={13} color={colors.gray[400]} />
+          <View style={styles.stat}>
+            <Icon name="book" size={12} color={colors.gray[400]} />
             <Text style={styles.statText}>{author.bookCount}</Text>
           </View>
         </View>
@@ -61,7 +59,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
     backgroundColor: colors.white,
   },
   image: {
@@ -75,34 +73,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   name: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
     color: colors.gray[900],
   },
   originalName: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.gray[500],
     marginTop: 4,
   },
   stats: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: spacing.sm,
+    gap: spacing.md,
   },
-  statItem: {
+  stat: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
-  },
-  divider: {
-    width: 1,
-    height: 12,
-    backgroundColor: colors.gray[200],
-    marginHorizontal: spacing.sm,
+    gap: 4,
   },
   statText: {
-    fontSize: 13,
-    color: colors.gray[500],
+    fontSize: 12,
+    color: colors.gray[400],
   },
   deleteButton: {
     padding: spacing.sm,
