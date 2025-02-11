@@ -10,6 +10,7 @@ import { colors, spacing, borderRadius } from '@/styles/theme';
 import { format } from 'date-fns';
 import { AuthorBooksSkeleton } from '@/components/common/Skeleton';
 import { BookImage } from '@/components/book/BookImage';
+import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   authorId: number;
@@ -72,6 +73,17 @@ export function AuthorBooks({ authorId }: Props) {
                   </>
                 )}
               </Text>
+              <View style={styles.stats}>
+                <View style={styles.statItem}>
+                  <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
+                  <Text style={styles.statText}>{book.likeCount}</Text>
+                </View>
+                <View style={styles.divider} />
+                <View style={styles.statItem}>
+                  <Icon name="message-square" size={13} color={colors.gray[400]} />
+                  <Text style={styles.statText}>{book.reviewCount}</Text>
+                </View>
+              </View>
             </View>
           </Pressable>
         ))}
@@ -129,6 +141,26 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   bookPublisher: {
+    fontSize: 12,
+    color: colors.gray[500],
+  },
+  stats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing['2xs'],
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
+  },
+  statText: {
     fontSize: 12,
     color: colors.gray[500],
   },
