@@ -11,20 +11,22 @@ export function RelativeBooksSkeleton() {
         <Skeleton style={styles.badge} />
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
-        <View style={styles.bookList}>
-          {[1, 2, 3].map(key => (
-            <View key={key} style={styles.bookItem}>
-              <View style={styles.imageContainer}>
-                <Skeleton style={styles.bookImage} />
-              </View>
-              <View style={styles.bookInfo}>
-                <Skeleton style={styles.bookTitle} />
-                <Skeleton style={styles.bookPublisher} />
-              </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
+        {[1, 2, 3].map(key => (
+          <View key={key} style={styles.bookItem}>
+            <View style={styles.imageContainer}>
+              <Skeleton style={styles.bookImage} />
             </View>
-          ))}
-        </View>
+            <View style={styles.bookInfo}>
+              <Skeleton style={styles.bookTitle} />
+              <Skeleton style={styles.bookTitle} />
+              <Skeleton style={styles.bookPublisher} />
+            </View>
+          </View>
+        ))}
       </ScrollView>
     </View>
   );
@@ -37,50 +39,47 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 0,
   },
   title: {
-    width: 100,
-    height: 24,
+    width: 80,
+    height: 18,
     borderRadius: borderRadius.sm,
-    marginLeft: spacing.lg,
+    marginHorizontal: spacing.lg,
   },
   badge: {
     width: 24,
     height: 20,
     borderRadius: borderRadius.full,
   },
-  scrollView: {
-    flexGrow: 0,
-  },
-  bookList: {
-    flexDirection: 'row',
-    gap: spacing.md,
+  scrollContent: {
+    gap: spacing.sm,
+    paddingVertical: spacing.xs,
     paddingHorizontal: spacing.lg,
   },
   bookItem: {
-    width: 130,
-    gap: spacing.sm,
+    width: 120,
   },
   imageContainer: {
     borderRadius: borderRadius.md,
     backgroundColor: colors.white,
   },
   bookImage: {
-    width: 130,
-    height: 190,
+    width: 120,
+    height: 180,
     borderRadius: borderRadius.md,
   },
   bookInfo: {
+    marginTop: spacing.sm,
     gap: spacing.xs,
   },
   bookTitle: {
-    height: 40,
+    height: 18,
     borderRadius: borderRadius.sm,
   },
   bookPublisher: {
     width: '70%',
-    height: 16,
+    height: 12,
     borderRadius: borderRadius.sm,
   },
 });

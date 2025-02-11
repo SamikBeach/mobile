@@ -104,12 +104,12 @@ const styles = StyleSheet.create({
     color: colors.gray[600],
   },
   scrollContent: {
-    gap: spacing.md,
+    gap: spacing.sm,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.lg,
   },
   bookItem: {
-    width: 130,
+    width: 120,
   },
   imageContainer: {
     borderRadius: borderRadius.md,

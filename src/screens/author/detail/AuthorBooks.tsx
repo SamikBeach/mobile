@@ -110,20 +110,20 @@ const styles = StyleSheet.create({
     color: colors.gray[600],
   },
   scrollContent: {
-    gap: spacing.md,
+    gap: spacing.sm,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.lg,
   },
   bookItem: {
-    width: 130,
+    width: 120,
   },
   imageContainer: {
     borderRadius: borderRadius.md,
     backgroundColor: colors.white,
   },
   bookImage: {
-    width: 130,
-    height: 190,
+    width: 120,
+    height: 180,
     borderRadius: borderRadius.md,
     backgroundColor: colors.gray[100],
   },
