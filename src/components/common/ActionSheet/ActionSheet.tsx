@@ -30,7 +30,6 @@ export function ActionSheet({
   title,
   headerRight,
   customContent,
-  showCloseButton = true,
 }: Props) {
   const { animatedStyles, handleClose } = useActionSheet({ visible, onClose });
 
@@ -56,12 +55,13 @@ export function ActionSheet({
                 {actions.map((action, index) => (
                   <TouchableOpacity
                     key={action.text}
-                    style={[
-                      styles.action,
-                      index < actions.length - 1 && styles.borderBottom,
-                    ]}
+                    style={[styles.action, index < actions.length - 1 && styles.borderBottom]}
                     onPress={action.onPress}>
-                    <Icon name={action.icon} size={20} color={action.destructive ? colors.red[500] : colors.gray[700]} />
+                    <Icon
+                      name={action.icon ?? ''}
+                      size={20}
+                      color={action.destructive ? colors.red[500] : colors.gray[700]}
+                    />
                     <Text style={[styles.actionText, action.destructive && styles.destructiveText]}>
                       {action.text}
                     </Text>
