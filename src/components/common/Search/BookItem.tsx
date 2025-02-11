@@ -59,7 +59,8 @@ export default function BookItem({ book, onClose, onDelete, onPress }: Props) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xs,
     backgroundColor: colors.white,
   },
   image: {
