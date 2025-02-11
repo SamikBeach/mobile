@@ -12,16 +12,16 @@ interface Props {
 const getSizeStyle = (size: Props['size']) => {
   switch (size) {
     case 'xs':
-      return { width: 24, height: 36 };
+      return { width: 24, height: 36, borderRadius: 2 };
     case 'sm':
-      return { width: 40, height: 60 };
+      return { width: 40, height: 60, borderRadius: 4 };
     case 'md':
-      return { width: 80, height: 120 };
+      return { width: 80, height: 120, borderRadius: 6 };
     case 'lg':
-      return { width: 100, height: 150 };
+      return { width: 100, height: 150, borderRadius: 8 };
     case 'xl':
     default:
-      return { width: 120, height: 180 };
+      return { width: 120, height: 180, borderRadius: 10 };
   }
 };
 
@@ -51,7 +51,6 @@ export function BookImage({ imageUrl, size = 'xl', onPress }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
     overflow: 'hidden',
   },
   image: {
