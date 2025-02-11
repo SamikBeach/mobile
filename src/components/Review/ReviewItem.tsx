@@ -6,6 +6,9 @@ import {
   NativeSyntheticEvent,
   TextLayoutEventData,
   Alert,
+  Image,
+  Platform,
+  TouchableOpacity,
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
@@ -177,14 +180,26 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           </View>
         </View>
         {showBookInfo && (
-          <Pressable
-            style={styles.bookInfo}
-            onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
-            <Icon name="book-open" size={14} color={colors.gray[500]} />
-            <Text style={styles.bookTitle} numberOfLines={1}>
-              {review.book.title}
-            </Text>
-          </Pressable>
+          <TouchableOpacity
+            style={styles.bookCard}
+            onPress={() =>
+              navigation.navigate('BookDetail', {
+                bookId: review.book.id,
+              })
+            }>
+            <Image
+              source={{ uri: review.book.imageUrl ?? undefined }}
+              style={styles.bookThumbnail}
+            />
+            <View style={styles.bookInfo}>
+              <Text style={styles.bookTitle} numberOfLines={1}>
+                {review.book.title}
+              </Text>
+              <Text style={styles.bookAuthor} numberOfLines={1}>
+                {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+              </Text>
+            </View>
+          </TouchableOpacity>
         )}
       </View>
       <Text style={styles.title}>{review.title}</Text>
@@ -269,20 +284,42 @@ const styles = StyleSheet.create({
   headerActions: {
     alignItems: 'flex-end',
   },
-  bookInfo: {
+  bookCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: spacing.sm,
     backgroundColor: colors.gray[50],
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.sm,
     alignSelf: 'flex-start',
-    marginTop: spacing.xs,
+    ...Platform.select({
+      android: {
+        paddingVertical: 6,
+      },
+    }),
+  },
+  bookThumbnail: {
+    width: 25,
+    height: 35,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.gray[50],
+  },
+  bookAuthor: {
+    fontSize: 11,
+    color: colors.gray[500],
+  },
+  bookInfo: {
+    gap: 2,
   },
   bookTitle: {
-    fontSize: 13,
+    fontSize: 12,
+    fontWeight: '500',
     color: colors.gray[700],
+    ...Platform.select({
+      ios: {
+        marginTop: 6,
+      },
+    }),
   },
   title: {
     fontSize: 16,
@@ -312,6 +349,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xs,
     paddingVertical: spacing.xs,
+    backgroundColor: colors.gray[50],
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.sm,
+    alignSelf: 'flex-start',
+    ...Platform.select({
+      android: {
+        paddingVertical: 6,
+      },
+    }),
   },
   actionText: {
     fontSize: 14,

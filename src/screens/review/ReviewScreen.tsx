@@ -235,6 +235,10 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#F3F4F6',
   },
+  bookAuthor: {
+    fontSize: 11,
+    color: '#6B7280',
+  },
   bookInfo: {
     gap: 2,
   },
@@ -248,10 +252,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  bookAuthor: {
-    fontSize: 11,
-    color: '#6B7280',
-  },
+
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
