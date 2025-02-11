@@ -1,5 +1,19 @@
 # 🚦 CHANGELOG
 
+# [1.15.0](https://github.com/SamikBeach/mobile/compare/1.14.0...1.15.0) (2025-02-11)
+
+
+### Bug Fixes
+
+* SearchContent 스타일 수정 ([d421b22](https://github.com/SamikBeach/mobile/commit/d421b224688f05242fc0184113ca845e8270d4b9))
+* 누락된 API 연동 작업 추가 ([d322f30](https://github.com/SamikBeach/mobile/commit/d322f30f1211ec25530ceb39172bac4f7135f63f))
+
+
+### Features
+
+* author list에 무한 스크롤 적용 ([cf5a4f3](https://github.com/SamikBeach/mobile/commit/cf5a4f37cccf3fce4c22fe4cbe9e923f2cd91c23))
+* 작가 탭 아이콘 변경 ([95e3dfd](https://github.com/SamikBeach/mobile/commit/95e3dfd39403e6b7a300af4f9ccf5e0191a55094))
+
 # [1.14.0](https://github.com/SamikBeach/mobile/compare/1.13.0...1.14.0) (2025-02-11)
 
 
