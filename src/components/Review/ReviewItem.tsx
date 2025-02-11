@@ -224,17 +224,15 @@ export function ReviewItem({
           <Pressable style={styles.actionButton} onPress={handleLikePress}>
             <Icon
               name="thumbs-up"
-              size={16}
+              size={18}
               color={review.isLiked ? colors.gray[900] : colors.gray[400]}
             />
             <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
               {review.likeCount}
             </Text>
           </Pressable>
-          <Pressable
-            style={[styles.actionButton, isReplying && styles.activeActionButton]}
-            onPress={handleReplyPress}>
-            <Icon name="message-circle" size={16} color={colors.gray[400]} />
+          <Pressable style={styles.actionButton} onPress={handleReplyPress}>
+            <Icon name="message-circle" size={18} color={colors.gray[400]} />
             <Text style={styles.actionText}>{review.commentCount}</Text>
           </Pressable>
         </View>
@@ -346,22 +344,12 @@ const styles = StyleSheet.create({
   footer: {},
   actions: {
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.xs,
-    backgroundColor: colors.gray[50],
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.sm,
-    alignSelf: 'flex-start',
-    ...Platform.select({
-      android: {
-        paddingVertical: 6,
-      },
-    }),
   },
   actionText: {
     fontSize: 14,
@@ -373,8 +361,5 @@ const styles = StyleSheet.create({
   replySection: {
     marginTop: spacing.md,
     paddingLeft: spacing.xl,
-  },
-  activeActionButton: {
-    opacity: 0.8,
   },
 });
