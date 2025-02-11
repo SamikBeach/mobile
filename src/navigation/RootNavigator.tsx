@@ -90,7 +90,7 @@ function TabNavigator() {
         name="AuthorTab"
         options={{
           tabBarLabel: '작가',
-          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Icon name="users" size={size} color={color} />,
         }}>
         {() => <StackNavigator initialRouteName="AuthorList" />}
       </Tab.Screen>
@@ -283,7 +283,7 @@ function withTabNavigator(Component: React.ComponentType<any>) {
           component={AuthorScreen}
           options={{
             tabBarLabel: '작가',
-            tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+            tabBarIcon: ({ color, size }) => <Icon name="users" size={size} color={color} />,
           }}
         />
         {currentUser ? (

@@ -1,8 +1,9 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import Icon from 'react-native-vector-icons/Feather';
+import { AxiosResponse } from 'axios';
 
 import { authorApi } from '@/apis/author';
 import { Empty } from '@/components/common/Empty';
@@ -18,50 +19,67 @@ import { colors } from '@/styles/theme';
 import { AuthorListSkeleton } from '@/components/common/Skeleton/AuthorListSkeleton';
 import { AuthorItem } from '@/components/author/AuthorItem';
 
+interface PaginationMeta {
+  currentPage: number;
+  totalPages: number;
+}
+
+interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
+
 export function AuthorList() {
   const genre = useAtomValue(authorGenreAtom);
   const searchKeyword = useAtomValue(authorSearchKeywordAtom);
   const sortMode = useAtomValue(authorSortModeAtom);
   const selectedEraId = useAtomValue(eraIdAtom);
 
-  const {
-    data: response,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['authors', searchKeyword, sortMode, selectedEraId, genre],
-    queryFn: async () => {
-      const sortBy = (() => {
-        switch (sortMode) {
-          case 'popular':
-            return 'likeCount:DESC';
-          case 'recent':
-            return 'createdAt:DESC';
-          case 'alphabet':
-            return 'nameInKor:ASC';
-          default:
-            return 'likeCount:DESC';
-        }
-      })();
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery<AxiosResponse<PaginatedResponse<Author>>, Error>({
+      queryKey: ['authors', searchKeyword, sortMode, selectedEraId, genre],
+      queryFn: ({ pageParam = 1 }) => {
+        const sortBy = (() => {
+          switch (sortMode) {
+            case 'popular':
+              return 'likeCount:DESC';
+            case 'recent':
+              return 'createdAt:DESC';
+            case 'alphabet':
+              return 'nameInKor:ASC';
+            default:
+              return 'likeCount:DESC';
+          }
+        })();
 
-      const result = await authorApi.searchAuthors({
-        page: 1,
-        limit: 20,
-        ...(searchKeyword && {
-          search: searchKeyword,
-          searchBy: ['nameInKor'],
-        }),
-        sortBy,
-        filter: {
-          genre_id: GENRE_IDS[genre] ?? undefined,
-          eraId: selectedEraId ? Number(selectedEraId) : undefined,
-        },
-      });
-      return result;
-    },
-  });
+        return authorApi.searchAuthors({
+          page: pageParam as number,
+          limit: 20,
+          ...(searchKeyword && {
+            search: searchKeyword,
+            searchBy: ['nameInKor'],
+          }),
+          sortBy,
+          filter: {
+            genre_id: GENRE_IDS[genre] ?? undefined,
+            eraId: selectedEraId ? Number(selectedEraId) : undefined,
+          },
+        });
+      },
+      getNextPageParam: lastPage => {
+        const { currentPage, totalPages } = lastPage.data.meta;
+        return currentPage < totalPages ? currentPage + 1 : undefined;
+      },
+      initialPageParam: 1,
+    });
 
-  const authors = response?.data.data ?? [];
+  const authors = data?.pages.flatMap(page => page.data.data) ?? [];
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
   if (isLoading) {
     return <AuthorListSkeleton />;
@@ -97,6 +115,9 @@ export function AuthorList() {
       renderItem={({ item }) => <AuthorItem author={item} />}
       keyExtractor={item => item.id.toString()}
       contentContainerStyle={styles.list}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={isFetchingNextPage ? <AuthorListSkeleton /> : null}
     />
   );
 }
