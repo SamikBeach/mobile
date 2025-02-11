@@ -34,9 +34,16 @@ import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 interface Props {
   review: Review;
   showBookInfo?: boolean;
+  hideUserInfo?: boolean;
+  hideDate?: boolean;
 }
 
-export function ReviewItem({ review, showBookInfo }: Props) {
+export function ReviewItem({
+  review,
+  showBookInfo,
+  hideUserInfo = false,
+  hideDate = false,
+}: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
@@ -170,37 +177,38 @@ export function ReviewItem({ review, showBookInfo }: Props) {
       layout={Layout.duration(300)}
       style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <View style={styles.userInfo}>
-            <UserAvatar user={review.user} showNickname size="sm" />
-            <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
-          </View>
+        <View style={[styles.headerTop, hideUserInfo && hideDate && styles.headerTopSimple]}>
+          {showBookInfo && (
+            <TouchableOpacity
+              style={styles.bookCard}
+              onPress={() =>
+                navigation.navigate('BookDetail', {
+                  bookId: review.book.id,
+                })
+              }>
+              <Image
+                source={{ uri: review.book.imageUrl ?? undefined }}
+                style={styles.bookThumbnail}
+              />
+              <View style={styles.bookInfo}>
+                <Text style={styles.bookTitle} numberOfLines={1}>
+                  {review.book.title}
+                </Text>
+                <Text style={styles.bookAuthor} numberOfLines={1}>
+                  {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          {!hideUserInfo && (
+            <View style={styles.userInfo}>
+              <UserAvatar user={review.user} showNickname size="sm" />
+            </View>
+          )}
           <View style={styles.headerActions}>
             {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
           </View>
         </View>
-        {showBookInfo && (
-          <TouchableOpacity
-            style={styles.bookCard}
-            onPress={() =>
-              navigation.navigate('BookDetail', {
-                bookId: review.book.id,
-              })
-            }>
-            <Image
-              source={{ uri: review.book.imageUrl ?? undefined }}
-              style={styles.bookThumbnail}
-            />
-            <View style={styles.bookInfo}>
-              <Text style={styles.bookTitle} numberOfLines={1}>
-                {review.book.title}
-              </Text>
-              <Text style={styles.bookAuthor} numberOfLines={1}>
-                {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
       </View>
       <Text style={styles.title}>{review.title}</Text>
       <Pressable onPress={() => isTruncated && setIsExpanded(true)} style={styles.contentContainer}>
@@ -213,6 +221,7 @@ export function ReviewItem({ review, showBookInfo }: Props) {
         </Text>
         {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
       </Pressable>
+      {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
       <View style={styles.footer}>
         <View style={styles.actions}>
           <Pressable style={styles.actionButton} onPress={handleLikePress}>
@@ -265,6 +274,9 @@ const styles = StyleSheet.create({
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.md,
+  },
+  headerTopSimple: {
     justifyContent: 'space-between',
   },
   userInfo: {
