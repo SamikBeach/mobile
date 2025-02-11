@@ -46,10 +46,11 @@ export function ChangePasswordSheet({ visible, onClose, onSubmit, isLoading }: P
       onClose={onClose}
       title="비밀번호 변경"
       headerRight={
-        <TouchableOpacity onPress={handleSubmit(handleFormSubmit)} disabled={isLoading}>
-          <Text style={[styles.actionText, isLoading && styles.disabledText]}>
-            {isLoading ? '처리중...' : '완료'}
-          </Text>
+        <TouchableOpacity
+          onPress={handleSubmit(handleFormSubmit)}
+          disabled={isLoading}
+          style={[styles.actionButton, isLoading && styles.disabledButton]}>
+          <Text style={styles.actionButtonText}>{isLoading ? '처리중' : '완료'}</Text>
         </TouchableOpacity>
       }
       customContent={
@@ -144,12 +145,18 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     fontSize: 16,
   },
-  actionText: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: colors.primary[500],
+  actionButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: spacing.sm,
+    backgroundColor: colors.gray[900],
   },
-  disabledText: {
-    opacity: 0.5,
+  disabledButton: {
+    backgroundColor: colors.gray[200],
+  },
+  actionButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.white,
   },
 });

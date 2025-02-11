@@ -21,14 +21,15 @@ export function DeleteAccountSheet({ visible, onClose, onConfirm, isLoading }: P
       onClose={onClose}
       title="계정 삭제"
       headerRight={
-        <TouchableOpacity onPress={onConfirm} disabled={confirmText !== '삭제' || isLoading}>
-          <Text
-            style={[
-              styles.deleteText,
-              (confirmText !== '삭제' || isLoading) && styles.disabledText,
-            ]}>
-            {isLoading ? '처리중...' : '삭제'}
-          </Text>
+        <TouchableOpacity
+          onPress={onConfirm}
+          disabled={confirmText !== '삭제' || isLoading}
+          style={[
+            styles.actionButton,
+            styles.deleteButton,
+            (confirmText !== '삭제' || isLoading) && styles.disabledButton,
+          ]}>
+          <Text style={styles.actionButtonText}>{isLoading ? '처리중' : '삭제'}</Text>
         </TouchableOpacity>
       }
       customContent={
@@ -102,12 +103,21 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     fontSize: 16,
   },
-  deleteText: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: colors.red[500],
+  actionButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: spacing.sm,
+    backgroundColor: colors.gray[900],
   },
-  disabledText: {
-    opacity: 0.5,
+  deleteButton: {
+    backgroundColor: colors.red[500],
+  },
+  disabledButton: {
+    backgroundColor: colors.gray[200],
+  },
+  actionButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.white,
   },
 });
