@@ -53,7 +53,7 @@ export function UserScreen() {
 
   const actions = [
     {
-      text: '설정',
+      text: '계정 설정',
       icon: 'settings',
       onPress: () => {
         setShowActionSheet(false);
