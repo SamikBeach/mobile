@@ -20,38 +20,40 @@ export function DeleteAccountSheet({ visible, onClose, onConfirm, isLoading }: P
       visible={visible}
       onClose={onClose}
       title="계정 삭제"
-      headerRight={
-        <TouchableOpacity
-          onPress={onConfirm}
-          disabled={confirmText !== '삭제' || isLoading}
-          style={[
-            styles.actionButton,
-            styles.deleteButton,
-            (confirmText !== '삭제' || isLoading) && styles.disabledButton,
-          ]}>
-          <Text style={styles.actionButtonText}>{isLoading ? '처리중' : '삭제'}</Text>
-        </TouchableOpacity>
-      }
       customContent={
-        <View style={styles.content}>
-          <View style={styles.warningBox}>
-            <Icon name="alert-triangle" size={20} color={colors.red[500]} />
-            <View style={styles.warningContent}>
-              <Text style={styles.warningTitle}>삭제 전 꼭 확인해 주세요</Text>
-              <Text style={styles.warningText}>• 모든 리뷰 기록이 삭제돼요</Text>
-              <Text style={styles.warningText}>• 북마크한 책과 작가 정보가 삭제돼요</Text>
-              <Text style={styles.warningText}>• 삭제된 계정은 복구할 수 없어요</Text>
+        <View style={styles.container}>
+          <View style={styles.content}>
+            <View style={styles.warningBox}>
+              <Icon name="alert-triangle" size={20} color={colors.red[500]} />
+              <View style={styles.warningContent}>
+                <Text style={styles.warningTitle}>삭제 전 꼭 확인해 주세요</Text>
+                <Text style={styles.warningText}>• 모든 리뷰 기록이 삭제돼요</Text>
+                <Text style={styles.warningText}>• 북마크한 책과 작가 정보가 삭제돼요</Text>
+                <Text style={styles.warningText}>• 삭제된 계정은 복구할 수 없어요</Text>
+              </View>
+            </View>
+
+            <View style={styles.confirmSection}>
+              <Text style={styles.label}>계정 삭제를 원하시면 '삭제'를 입력해 주세요</Text>
+              <TextInput
+                style={styles.input}
+                value={confirmText}
+                onChangeText={setConfirmText}
+                placeholder="삭제"
+              />
             </View>
           </View>
 
-          <View style={styles.confirmSection}>
-            <Text style={styles.label}>계정 삭제를 원하시면 '삭제'를 입력해 주세요</Text>
-            <TextInput
-              style={styles.input}
-              value={confirmText}
-              onChangeText={setConfirmText}
-              placeholder="삭제"
-            />
+          <View style={styles.footer}>
+            <TouchableOpacity
+              onPress={onConfirm}
+              disabled={confirmText !== '삭제' || isLoading}
+              style={[
+                styles.deleteButton,
+                (confirmText !== '삭제' || isLoading) && styles.disabledButton,
+              ]}>
+              <Text style={styles.deleteButtonText}>{isLoading ? '처리중' : '계정 삭제'}</Text>
+            </TouchableOpacity>
           </View>
         </View>
       }
@@ -60,6 +62,9 @@ export function DeleteAccountSheet({ visible, onClose, onConfirm, isLoading }: P
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   content: {
     padding: spacing.xl,
     gap: spacing.xl,
@@ -103,21 +108,22 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     fontSize: 16,
   },
-  actionButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: spacing.sm,
-    backgroundColor: colors.gray[900],
+  footer: {
+    padding: spacing.lg,
+    paddingTop: 0,
   },
   deleteButton: {
     backgroundColor: colors.red[500],
+    padding: spacing.md,
+    borderRadius: spacing.sm,
+    alignItems: 'center',
   },
   disabledButton: {
     backgroundColor: colors.gray[200],
   },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
+  deleteButtonText: {
     color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
