@@ -10,7 +10,10 @@ export const bookApi = {
       params: transformFilterParams(params),
     }),
 
-  getBookDetail: (bookId: number) => axios.get<BookDetail>(`/book/${bookId}`),
+  getBookDetail: (bookId: number, includeOtherTranslations = false) =>
+    axios.get<BookDetail>(`/book/${bookId}`, {
+      params: { includeOtherTranslations },
+    }),
 
   toggleBookLike: (bookId: number) => axios.post<{ liked: boolean }>(`/book/${bookId}/like`),
 

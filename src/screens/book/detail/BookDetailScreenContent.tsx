@@ -53,8 +53,8 @@ export function BookDetailScreenContent({ bookId }: Props) {
   });
 
   const { data: book } = useQuery({
-    queryKey: ['book', bookId],
-    queryFn: () => bookApi.getBookDetail(bookId),
+    queryKey: ['book', bookId, includeOtherTranslations],
+    queryFn: () => bookApi.getBookDetail(bookId, includeOtherTranslations),
     select: response => response.data,
   });
 
