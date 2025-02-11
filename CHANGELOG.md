@@ -1,5 +1,31 @@
 # 🚦 CHANGELOG
 
+# [1.14.0](https://github.com/SamikBeach/mobile/compare/1.13.0...1.14.0) (2025-02-11)
+
+
+### Bug Fixes
+
+* ActionSheet 내용 영역 스크롤 처리 ([655357c](https://github.com/SamikBeach/mobile/commit/655357ce8f1cd2cd136e76b83d742af88e31fc33))
+* BookImage 사용하도록 수정 ([4db1140](https://github.com/SamikBeach/mobile/commit/4db1140b98c2c8b8f13cf474621d031c7b12bbb5))
+* BookImage 스타일 수정 ([814f362](https://github.com/SamikBeach/mobile/commit/814f36299b6f94a8d4dfaa6cf349a20e8c2b1cd3))
+* BookImage 폴백 이미지 추가 ([b412f14](https://github.com/SamikBeach/mobile/commit/b412f1443a2c0f01c579e564963340c7d05f0bc9))
+* ReviewItem 레이아웃 수정 ([dce3b35](https://github.com/SamikBeach/mobile/commit/dce3b35863563688865bcdbb9e58a71ac00a3159))
+* ReviewItem 레이아웃 수정 ([353521e](https://github.com/SamikBeach/mobile/commit/353521e42b6fe8f5f423747867362130ee541207))
+* SearchContent 간격 수정 ([04e3cf1](https://github.com/SamikBeach/mobile/commit/04e3cf12a713e3cf5ad8755c8b965cbb00bbb76e))
+* 검색어 저장 누락된 조건 추가 ([288c588](https://github.com/SamikBeach/mobile/commit/288c588f57b2068800e8c5eac50b7dd67f1bbb96))
+* 다른 번역서 리뷰 개수 fetching 로직 추가 ([211fc5c](https://github.com/SamikBeach/mobile/commit/211fc5c38b706c34ade10dce1c10108dd32fa78b))
+* 디자인 디테일 수정 ([269f287](https://github.com/SamikBeach/mobile/commit/269f287994b5f4528b4697553f10567dd81e1b7e))
+* 리뷰 내 도서 정보 스타일 수정 ([8aeb1c4](https://github.com/SamikBeach/mobile/commit/8aeb1c46f8712ee9154d102f648303c774d8f26e))
+* 버튼 스타일 수정 ([e271621](https://github.com/SamikBeach/mobile/commit/e271621ece9b7009ebf05f5502ef45a4e495604a))
+* 불필요한 패딩 제거 ([dcbe173](https://github.com/SamikBeach/mobile/commit/dcbe17337dceef3723061782d7f4364248e3c88e))
+* 스타일 수정 ([e0348fb](https://github.com/SamikBeach/mobile/commit/e0348fbba9cb8f8d9c4a996288c96c7769f88f7d))
+* 좋아요 댓글 수 추가 ([f12ed8a](https://github.com/SamikBeach/mobile/commit/f12ed8af665bfc406597b2359649f584644d1633))
+
+
+### Features
+
+* 닉네임 변경 기능 추가 ([0832c9e](https://github.com/SamikBeach/mobile/commit/0832c9e508763aa43c24518f98e5f7901a6bbcc0))
+
 # [1.13.0](https://github.com/SamikBeach/mobile/compare/1.12.0...1.13.0) (2025-02-10)
 
 
