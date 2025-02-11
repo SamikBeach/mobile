@@ -33,16 +33,18 @@ export default function BookItem({ book, onClose, onDelete, onPress }: Props) {
           </Text>
         </View>
         <View style={styles.stats}>
-          <View style={styles.stat}>
-            <Icon name="thumbs-up" size={12} color={colors.gray[400]} />
+          <View style={styles.statItem}>
+            <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
             <Text style={styles.statText}>{book.likeCount}</Text>
           </View>
-          <View style={styles.stat}>
-            <Icon name="message-square" size={12} color={colors.gray[400]} />
+          <View style={styles.divider} />
+          <View style={styles.statItem}>
+            <Icon name="message-square" size={13} color={colors.gray[400]} />
             <Text style={styles.statText}>{book.reviewCount}</Text>
           </View>
-          <View style={styles.stat}>
-            <Icon name="book" size={12} color={colors.gray[400]} />
+          <View style={styles.divider} />
+          <View style={styles.statItem}>
+            <Icon name="book" size={13} color={colors.gray[400]} />
             <Text style={styles.statText}>{book.totalTranslationCount}</Text>
           </View>
         </View>
@@ -74,27 +76,34 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
     color: colors.gray[900],
   },
   author: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.gray[500],
     marginTop: 4,
   },
   stats: {
     flexDirection: 'row',
-    gap: spacing.md,
+    alignItems: 'center',
+    marginTop: spacing.sm,
   },
-  stat: {
+  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
+  },
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
   },
   statText: {
-    fontSize: 12,
-    color: colors.gray[400],
+    fontSize: 13,
+    color: colors.gray[500],
   },
   deleteButton: {
     padding: spacing.sm,
