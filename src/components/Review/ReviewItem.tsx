@@ -179,34 +179,45 @@ export function ReviewItem({
       <View style={styles.header}>
         <View style={styles.headerTop}>
           {!hideUserInfo && (
-            <View style={styles.userInfo}>
-              <UserAvatar user={review.user} showNickname size="sm" />
-              {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
-            </View>
+            <>
+              <View style={styles.userInfo}>
+                <UserAvatar user={review.user} showNickname size="sm" />
+                {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
+              </View>
+              {isMyReview && (
+                <View style={styles.headerActions}>
+                  <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
+                </View>
+              )}
+            </>
           )}
-          <View style={styles.headerActions}>
-            {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
-          </View>
         </View>
 
         {showBookInfo && (
-          <TouchableOpacity
-            style={styles.bookCard}
-            onPress={() =>
-              navigation.navigate('BookDetail', {
-                bookId: review.book.id,
-              })
-            }>
-            <BookImage imageUrl={review.book.imageUrl} size="xs" />
-            <View style={styles.bookInfo}>
-              <Text style={styles.bookTitle} numberOfLines={1}>
-                {review.book.title}
-              </Text>
-              <Text style={styles.bookAuthor} numberOfLines={1}>
-                {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
-              </Text>
-            </View>
-          </TouchableOpacity>
+          <View style={styles.bookInfoContainer}>
+            <TouchableOpacity
+              style={styles.bookCard}
+              onPress={() =>
+                navigation.navigate('BookDetail', {
+                  bookId: review.book.id,
+                })
+              }>
+              <BookImage imageUrl={review.book.imageUrl} size="xs" />
+              <View style={styles.bookInfo}>
+                <Text style={styles.bookTitle} numberOfLines={1}>
+                  {review.book.title}
+                </Text>
+                <Text style={styles.bookAuthor} numberOfLines={1}>
+                  {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            {isMyReview && (
+              <View style={styles.headerActions}>
+                <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
+              </View>
+            )}
+          </View>
         )}
       </View>
       <Text style={styles.title}>{review.title}</Text>
@@ -261,7 +272,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     gap: spacing.sm,
-    paddingVertical: spacing.xl,
+    paddingVertical: spacing.md,
     paddingHorizontal: spacing.xs,
   },
   header: {
@@ -284,6 +295,11 @@ const styles = StyleSheet.create({
   },
   headerActions: {
     alignItems: 'flex-end',
+  },
+  bookInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   bookCard: {
     flexDirection: 'row',
