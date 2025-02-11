@@ -177,35 +177,37 @@ export function ReviewItem({
       layout={Layout.duration(300)}
       style={styles.container}>
       <View style={styles.header}>
-        <View style={[styles.headerTop, hideUserInfo && hideDate && styles.headerTopSimple]}>
-          {showBookInfo && (
-            <TouchableOpacity
-              style={styles.bookCard}
-              onPress={() =>
-                navigation.navigate('BookDetail', {
-                  bookId: review.book.id,
-                })
-              }>
-              <BookImage imageUrl={review.book.imageUrl} size="xs" />
-              <View style={styles.bookInfo}>
-                <Text style={styles.bookTitle} numberOfLines={1}>
-                  {review.book.title}
-                </Text>
-                <Text style={styles.bookAuthor} numberOfLines={1}>
-                  {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
+        <View style={styles.headerTop}>
           {!hideUserInfo && (
             <View style={styles.userInfo}>
               <UserAvatar user={review.user} showNickname size="sm" />
+              {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
             </View>
           )}
           <View style={styles.headerActions}>
             {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
           </View>
         </View>
+
+        {showBookInfo && (
+          <TouchableOpacity
+            style={styles.bookCard}
+            onPress={() =>
+              navigation.navigate('BookDetail', {
+                bookId: review.book.id,
+              })
+            }>
+            <BookImage imageUrl={review.book.imageUrl} size="xs" />
+            <View style={styles.bookInfo}>
+              <Text style={styles.bookTitle} numberOfLines={1}>
+                {review.book.title}
+              </Text>
+              <Text style={styles.bookAuthor} numberOfLines={1}>
+                {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.title}>{review.title}</Text>
       <Pressable onPress={() => isTruncated && setIsExpanded(true)} style={styles.contentContainer}>
@@ -218,7 +220,6 @@ export function ReviewItem({
         </Text>
         {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
       </Pressable>
-      {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
       <View style={styles.footer}>
         <View style={styles.actions}>
           <Pressable style={styles.actionButton} onPress={handleLikePress}>
@@ -269,24 +270,17 @@ const styles = StyleSheet.create({
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-  },
-  headerTopSimple: {
     justifyContent: 'space-between',
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-  },
-  username: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.gray[900],
+    gap: spacing.xs,
   },
   date: {
     fontSize: 13,
     color: colors.gray[500],
+    marginLeft: spacing.sm,
   },
   headerActions: {
     alignItems: 'flex-end',
@@ -299,13 +293,13 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.sm,
     alignSelf: 'flex-start',
+    marginTop: 4,
     ...Platform.select({
       android: {
         paddingVertical: 6,
       },
     }),
   },
-
   bookAuthor: {
     fontSize: 11,
     color: colors.gray[500],
