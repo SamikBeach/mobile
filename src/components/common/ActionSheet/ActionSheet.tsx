@@ -39,17 +39,10 @@ export function ActionSheet({
       <Pressable style={styles.overlay} onPress={handleClose}>
         <View style={styles.background} />
         <Animated.View style={[styles.sheet, animatedStyles]}>
-          {(title || headerRight || showCloseButton) && (
+          {(title || headerRight) && (
             <View style={styles.header}>
-              {showCloseButton ? (
-                <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-                  <Icon name="x" size={24} color={colors.gray[700]} />
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.headerLeft} />
-              )}
               {title && <Text style={styles.title}>{title}</Text>}
-              <View style={styles.headerRight}>{headerRight}</View>
+              {headerRight && <View style={styles.headerRight}>{headerRight}</View>}
             </View>
           )}
 
@@ -61,21 +54,18 @@ export function ActionSheet({
             {actions.length > 0 && (
               <View style={styles.actions}>
                 {actions.map((action, index) => (
-                  <Pressable
+                  <TouchableOpacity
                     key={action.text}
-                    style={[styles.action, index !== actions.length - 1 && styles.borderBottom]}
+                    style={[
+                      styles.action,
+                      index < actions.length - 1 && styles.borderBottom,
+                    ]}
                     onPress={action.onPress}>
-                    {action.icon && (
-                      <Icon
-                        name={action.icon}
-                        size={20}
-                        color={action.destructive ? colors.red[500] : colors.gray[700]}
-                      />
-                    )}
+                    <Icon name={action.icon} size={20} color={action.destructive ? colors.red[500] : colors.gray[700]} />
                     <Text style={[styles.actionText, action.destructive && styles.destructiveText]}>
                       {action.text}
                     </Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 ))}
               </View>
             )}
@@ -100,25 +90,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '90%',
-    paddingBottom: spacing.lg,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[100],
     padding: spacing.lg,
   },
-  headerLeft: {
-    width: 44,
-  },
-  closeButton: {
-    padding: spacing.xs,
-    margin: -spacing.xs,
-  },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
   },
@@ -127,18 +107,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   actions: {
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
+    paddingVertical: spacing.md,
   },
   action: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    padding: spacing.md,
+    padding: spacing.lg,
   },
   borderBottom: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
+    borderBottomColor: colors.gray[100],
   },
   actionText: {
     fontSize: 16,
