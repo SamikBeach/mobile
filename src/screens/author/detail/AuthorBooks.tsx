@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -9,6 +9,8 @@ import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { format } from 'date-fns';
 import { AuthorBooksSkeleton } from '@/components/common/Skeleton';
+import { BookImage } from '@/components/book/BookImage';
+import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   authorId: number;
@@ -56,11 +58,7 @@ export function AuthorBooks({ authorId }: Props) {
             style={styles.bookItem}
             onPress={() => navigation.push('BookDetail', { bookId: book.id })}>
             <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: book.imageUrl ?? undefined }}
-                style={styles.bookImage}
-                resizeMode="cover"
-              />
+              <BookImage imageUrl={book.imageUrl} />
             </View>
             <View style={styles.bookInfo}>
               <Text style={styles.bookTitle} numberOfLines={2}>
@@ -75,6 +73,17 @@ export function AuthorBooks({ authorId }: Props) {
                   </>
                 )}
               </Text>
+              <View style={styles.stats}>
+                <View style={styles.statItem}>
+                  <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
+                  <Text style={styles.statText}>{book.likeCount}</Text>
+                </View>
+                <View style={styles.divider} />
+                <View style={styles.statItem}>
+                  <Icon name="message-square" size={13} color={colors.gray[400]} />
+                  <Text style={styles.statText}>{book.reviewCount}</Text>
+                </View>
+              </View>
             </View>
           </Pressable>
         ))}
@@ -110,22 +119,16 @@ const styles = StyleSheet.create({
     color: colors.gray[600],
   },
   scrollContent: {
-    gap: spacing.md,
+    gap: spacing.sm,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.lg,
   },
   bookItem: {
-    width: 130,
+    width: 120,
   },
   imageContainer: {
     borderRadius: borderRadius.md,
     backgroundColor: colors.white,
-  },
-  bookImage: {
-    width: 130,
-    height: 190,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[100],
   },
   bookInfo: {
     marginTop: spacing.sm,
@@ -138,6 +141,26 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   bookPublisher: {
+    fontSize: 12,
+    color: colors.gray[500],
+  },
+  stats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing['2xs'],
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  divider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
+  },
+  statText: {
     fontSize: 12,
     color: colors.gray[500],
   },

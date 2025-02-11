@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
 import { colors } from '@/styles/theme';
 import { SettingsCard } from './components/SettingsCard';
-import { ChangePasswordModal } from './components/ChangePasswordModal';
-import { DeleteAccountModal } from './components/DeleteAccountModal';
+import { ChangePasswordSheet } from './components/ChangePasswordSheet';
+import { DeleteAccountSheet } from './components/DeleteAccountSheet';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import { userApi } from '@/apis/user';
@@ -58,26 +58,22 @@ export function SettingsScreen() {
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert(
-      '계정 삭제',
-      '정말 계정을 삭제하시겠습니까?\n삭제된 계정은 복구할 수 없습니다.',
-      [
-        {
-          text: '취소',
-          style: 'cancel',
-        },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: () => deleteAccount(),
-        },
-      ],
-    );
+    Alert.alert('계정 삭제', '정말 계정을 삭제하시겠습니까?\n삭제된 계정은 복구할 수 없습니다.', [
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: () => deleteAccount(),
+      },
+    ]);
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+    <>
+      <ScrollView style={styles.container}>
         <Text style={styles.title}>계정 설정</Text>
         <View style={styles.cardContainer}>
           <SettingsCard
@@ -97,33 +93,30 @@ export function SettingsScreen() {
             onPress={() => setIsDeleteAccountVisible(true)}
           />
         </View>
+      </ScrollView>
 
-        <ChangePasswordModal
-          visible={isChangePasswordVisible}
-          onClose={() => setIsChangePasswordVisible(false)}
-          onSubmit={handleChangePassword}
-          isLoading={isChangingPassword}
-        />
+      <ChangePasswordSheet
+        visible={isChangePasswordVisible}
+        onClose={() => setIsChangePasswordVisible(false)}
+        onSubmit={handleChangePassword}
+        isLoading={isChangingPassword}
+      />
 
-        <DeleteAccountModal
-          visible={isDeleteAccountVisible}
-          onClose={() => setIsDeleteAccountVisible(false)}
-          onConfirm={handleDeleteAccount}
-          isLoading={isDeletingAccount}
-        />
-      </View>
-    </SafeAreaView>
+      <DeleteAccountSheet
+        visible={isDeleteAccountVisible}
+        onClose={() => setIsDeleteAccountVisible(false)}
+        onConfirm={handleDeleteAccount}
+        isLoading={isDeletingAccount}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: colors.white,
   },
   title: {
     fontSize: 24,

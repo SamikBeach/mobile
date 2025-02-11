@@ -32,24 +32,24 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   content: {
-    paddingBottom: spacing.md,
+    paddingVertical: spacing.sm,
   },
   button: {
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     marginRight: spacing.sm,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.gray[50],
+    backgroundColor: colors.gray[100],
   },
   activeButton: {
-    backgroundColor: colors.primary[50],
+    backgroundColor: colors.gray[900],
   },
   text: {
     fontSize: 15,
-    fontWeight: '500',
-    color: colors.gray[500],
+    fontWeight: '600',
+    color: colors.gray[700],
   },
   activeText: {
-    color: colors.primary[600],
+    color: colors.white,
   },
 });

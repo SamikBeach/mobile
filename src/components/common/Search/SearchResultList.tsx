@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import { RootStackParamList } from '@/navigation/types';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 interface Props {
   books: Book[];
@@ -23,11 +24,12 @@ interface Props {
 export default function SearchResultList({ books, authors, onClose, searchValue }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const queryClient = useQueryClient();
+  const currentUser = useCurrentUser();
 
   const { mutate: saveSearch } = useMutation({
     mutationFn: (params: { bookId?: number; authorId?: number }) => userApi.saveSearch(params),
-    onError: () => {
-      console.error('Failed to save search history');
+    onError: (error: Error) => {
+      console.error('Failed to save search history', error);
     },
     onSuccess: () => {
       // 검색 기록이 변경되었으므로 관련 쿼리 무효화
@@ -36,7 +38,9 @@ export default function SearchResultList({ books, authors, onClose, searchValue 
   });
 
   const handleItemClick = ({ bookId, authorId }: { bookId?: number; authorId?: number }) => {
-    saveSearch({ bookId, authorId });
+    if (currentUser) {
+      saveSearch({ bookId, authorId });
+    }
 
     if (bookId) {
       navigation.navigate('BookDetail', { bookId });

@@ -1,10 +1,5 @@
 import { useCallback } from 'react';
-import {
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-  Easing,
-} from 'react-native-reanimated';
+import { useAnimatedStyle, withTiming, useSharedValue, Easing } from 'react-native-reanimated';
 
 interface Props {
   visible: boolean;

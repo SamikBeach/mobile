@@ -48,7 +48,6 @@ export function AuthorListHeader() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    paddingTop: spacing.lg,
   },
   top: {
     paddingHorizontal: spacing.md,

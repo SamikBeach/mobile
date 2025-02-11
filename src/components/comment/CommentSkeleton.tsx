@@ -26,6 +26,7 @@ export function CommentSkeleton() {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 6,
+    paddingHorizontal: 16,
     gap: 8,
   },
   header: {

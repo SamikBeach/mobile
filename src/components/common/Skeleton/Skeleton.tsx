@@ -50,5 +50,6 @@ export function Skeleton({ style }: Props) {
 const styles = StyleSheet.create({
   base: {
     backgroundColor: colors.gray[200],
+    borderRadius: 6,
   },
 });

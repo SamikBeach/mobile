@@ -58,13 +58,14 @@ export default function AuthorItem({ author, onClose, onDelete, onPress }: Props
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
     backgroundColor: colors.white,
   },
   image: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
   content: {
     flex: 1,

@@ -6,6 +6,8 @@ import {
   NativeSyntheticEvent,
   TextLayoutEventData,
   Alert,
+  Platform,
+  TouchableOpacity,
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
@@ -27,13 +29,21 @@ import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import { BookImage } from '@/components/book/BookImage';
 
 interface Props {
   review: Review;
   showBookInfo?: boolean;
+  hideUserInfo?: boolean;
+  hideDate?: boolean;
 }
 
-export function ReviewItem({ review, showBookInfo }: Props) {
+export function ReviewItem({
+  review,
+  showBookInfo,
+  hideUserInfo = false,
+  hideDate = false,
+}: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
@@ -168,23 +178,46 @@ export function ReviewItem({ review, showBookInfo }: Props) {
       style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <View style={styles.userInfo}>
-            <UserAvatar user={review.user} showNickname size="sm" />
-            <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
-          </View>
-          <View style={styles.headerActions}>
-            {isMyReview && <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />}
-          </View>
+          {!hideUserInfo && (
+            <>
+              <View style={styles.userInfo}>
+                <UserAvatar user={review.user} showNickname size="sm" />
+                {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
+              </View>
+              {isMyReview && (
+                <View style={styles.headerActions}>
+                  <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
+                </View>
+              )}
+            </>
+          )}
         </View>
+
         {showBookInfo && (
-          <Pressable
-            style={styles.bookInfo}
-            onPress={() => navigation.navigate('BookDetail', { bookId: review.book.id })}>
-            <Icon name="book-open" size={14} color={colors.gray[500]} />
-            <Text style={styles.bookTitle} numberOfLines={1}>
-              {review.book.title}
-            </Text>
-          </Pressable>
+          <View style={styles.bookInfoContainer}>
+            <TouchableOpacity
+              style={styles.bookCard}
+              onPress={() =>
+                navigation.navigate('BookDetail', {
+                  bookId: review.book.id,
+                })
+              }>
+              <BookImage imageUrl={review.book.imageUrl} size="xs" />
+              <View style={styles.bookInfo}>
+                <Text style={styles.bookTitle} numberOfLines={1}>
+                  {review.book.title}
+                </Text>
+                <Text style={styles.bookAuthor} numberOfLines={1}>
+                  {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            {isMyReview && (
+              <View style={styles.headerActions}>
+                <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
+              </View>
+            )}
+          </View>
         )}
       </View>
       <Text style={styles.title}>{review.title}</Text>
@@ -203,17 +236,15 @@ export function ReviewItem({ review, showBookInfo }: Props) {
           <Pressable style={styles.actionButton} onPress={handleLikePress}>
             <Icon
               name="thumbs-up"
-              size={16}
+              size={18}
               color={review.isLiked ? colors.gray[900] : colors.gray[400]}
             />
             <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
               {review.likeCount}
             </Text>
           </Pressable>
-          <Pressable
-            style={[styles.actionButton, isReplying && styles.activeActionButton]}
-            onPress={handleReplyPress}>
-            <Icon name="message-circle" size={16} color={colors.gray[400]} />
+          <Pressable style={styles.actionButton} onPress={handleReplyPress}>
+            <Icon name="message-circle" size={18} color={colors.gray[400]} />
             <Text style={styles.actionText}>{review.commentCount}</Text>
           </Pressable>
         </View>
@@ -241,7 +272,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     gap: spacing.sm,
-    paddingVertical: spacing.xl,
+    paddingVertical: spacing.md,
     paddingHorizontal: spacing.xs,
   },
   header: {
@@ -255,34 +286,52 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-  },
-  username: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.gray[900],
+    gap: spacing.xs,
   },
   date: {
     fontSize: 13,
     color: colors.gray[500],
+    marginLeft: spacing.sm,
   },
   headerActions: {
     alignItems: 'flex-end',
   },
-  bookInfo: {
+  bookInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    justifyContent: 'space-between',
+  },
+  bookCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
     backgroundColor: colors.gray[50],
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.sm,
     alignSelf: 'flex-start',
-    marginTop: spacing.xs,
+    marginTop: 4,
+    ...Platform.select({
+      android: {
+        paddingVertical: 6,
+      },
+    }),
+  },
+  bookAuthor: {
+    fontSize: 11,
+    color: colors.gray[500],
+  },
+  bookInfo: {
+    gap: 2,
   },
   bookTitle: {
-    fontSize: 13,
+    fontSize: 12,
+    fontWeight: '500',
     color: colors.gray[700],
+    ...Platform.select({
+      ios: {
+        marginTop: 6,
+      },
+    }),
   },
   title: {
     fontSize: 16,
@@ -305,13 +354,12 @@ const styles = StyleSheet.create({
   footer: {},
   actions: {
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.xs,
   },
   actionText: {
     fontSize: 14,
@@ -323,8 +371,5 @@ const styles = StyleSheet.create({
   replySection: {
     marginTop: spacing.md,
     paddingLeft: spacing.xl,
-  },
-  activeActionButton: {
-    opacity: 0.8,
   },
 });

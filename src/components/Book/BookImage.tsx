@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, View, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors } from '@/styles/theme';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
   imageUrl?: string | null;
@@ -12,16 +13,16 @@ interface Props {
 const getSizeStyle = (size: Props['size']) => {
   switch (size) {
     case 'xs':
-      return { width: 24, height: 36 };
+      return { width: 24, height: 36, borderRadius: 2 };
     case 'sm':
-      return { width: 40, height: 60 };
+      return { width: 40, height: 60, borderRadius: 4 };
     case 'md':
-      return { width: 80, height: 120 };
+      return { width: 80, height: 120, borderRadius: 6 };
     case 'lg':
-      return { width: 100, height: 150 };
+      return { width: 100, height: 150, borderRadius: 8 };
     case 'xl':
     default:
-      return { width: 120, height: 180 };
+      return { width: 120, height: 180, borderRadius: 10 };
   }
 };
 
@@ -38,20 +39,25 @@ export function BookImage({ imageUrl, size = 'xl', onPress }: Props) {
   }
 
   return (
-    <Container style={[styles.container, styles.fallbackContainer, sizeStyle]} onPress={onPress}>
-      <Icon
-        name="book"
-        size={sizeStyle.width * 0.5}
-        color={colors.gray[400]}
-        style={styles.fallbackIcon}
-      />
+    <Container style={[styles.container, sizeStyle]} onPress={onPress}>
+      <LinearGradient
+        colors={[colors.gray[50], colors.gray[100], colors.gray[50]]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.fallbackContainer, sizeStyle]}>
+        <Icon
+          name="book"
+          size={sizeStyle.width * 0.5}
+          color={colors.gray[400]}
+          style={styles.fallbackIcon}
+        />
+      </LinearGradient>
     </Container>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
     overflow: 'hidden',
   },
   image: {
@@ -59,7 +65,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   fallbackContainer: {
-    backgroundColor: colors.gray[100],
     alignItems: 'center',
     justifyContent: 'center',
   },
