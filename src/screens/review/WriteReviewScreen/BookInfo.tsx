@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing } from '@/styles/theme';
 import { format } from 'date-fns';
+import { BookImage } from '@/components/book/BookImage';
 
 interface Props {
   bookId: number;
@@ -25,7 +26,7 @@ export function BookInfo({ bookId }: Props) {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.image} resizeMode="cover" />
+      <BookImage imageUrl={book.imageUrl} size="xs" />
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={1}>
           {book.title}
@@ -44,11 +45,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-  },
-  image: {
-    width: 28,
-    height: 40,
-    borderRadius: borderRadius.sm,
   },
   info: {
     flex: 1,

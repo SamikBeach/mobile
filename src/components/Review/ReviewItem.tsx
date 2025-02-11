@@ -6,7 +6,6 @@ import {
   NativeSyntheticEvent,
   TextLayoutEventData,
   Alert,
-  Image,
   Platform,
   TouchableOpacity,
 } from 'react-native';
@@ -30,6 +29,7 @@ import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import { BookImage } from '@/components/book/BookImage';
 
 interface Props {
   review: Review;
@@ -186,10 +186,7 @@ export function ReviewItem({
                   bookId: review.book.id,
                 })
               }>
-              <Image
-                source={{ uri: review.book.imageUrl ?? undefined }}
-                style={styles.bookThumbnail}
-              />
+              <BookImage imageUrl={review.book.imageUrl} size="xs" />
               <View style={styles.bookInfo}>
                 <Text style={styles.bookTitle} numberOfLines={1}>
                   {review.book.title}
@@ -310,12 +307,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  bookThumbnail: {
-    width: 25,
-    height: 35,
-    borderRadius: borderRadius.sm,
-    backgroundColor: colors.gray[50],
-  },
+
   bookAuthor: {
     fontSize: 11,
     color: colors.gray[500],

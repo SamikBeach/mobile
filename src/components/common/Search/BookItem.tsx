@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common';
 import { colors, spacing } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
 import { Book } from '@/types/book';
+import { BookImage } from '@/components/book/BookImage';
 
 interface Props {
   book: Book;
@@ -21,7 +22,7 @@ export default function BookItem({ book, onClose, onDelete, onPress }: Props) {
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
-      <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.image} />
+      <BookImage imageUrl={book.imageUrl} size="md" />
       <View style={styles.content}>
         <View>
           <Text style={styles.title} numberOfLines={1}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
@@ -9,6 +9,7 @@ import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { format } from 'date-fns';
 import { RelativeBooksSkeleton } from '@/components/common/Skeleton';
+import { BookImage } from '@/components/book/BookImage';
 
 interface Props {
   bookId: number;
@@ -50,11 +51,7 @@ export function RelativeBooks({ bookId }: Props) {
             style={styles.bookItem}
             onPress={() => navigation.push('BookDetail', { bookId: book.id })}>
             <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: book.imageUrl ?? undefined }}
-                style={styles.bookImage}
-                resizeMode="cover"
-              />
+              <BookImage imageUrl={book.imageUrl} />
             </View>
             <View style={styles.bookInfo}>
               <Text style={styles.bookTitle} numberOfLines={2}>
@@ -114,12 +111,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     borderRadius: borderRadius.md,
     backgroundColor: colors.white,
-  },
-  bookImage: {
-    width: 120,
-    height: 180,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[100],
   },
   bookInfo: {
     marginTop: spacing.sm,

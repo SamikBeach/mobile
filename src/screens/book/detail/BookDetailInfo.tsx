@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
+import { View, StyleSheet, Pressable, Linking } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { Button } from '@/components/common/Button';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing } from '@/styles/theme';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import { useBookQueryData } from '@/hooks/useBookQueryData';
@@ -15,6 +15,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { BookDetailInfoSkeleton } from '@/components/common/Skeleton/BookDetailInfoSkeleton';
 import { CommentButton } from '@/components/common/CommentButton';
 import { LikeButton } from '@/components/common/LikeButton';
+import { BookImage } from '@/components/book/BookImage';
 
 interface Props {
   bookId: number;
@@ -89,11 +90,7 @@ export function BookDetailInfo({ bookId, onReviewPress }: Props) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={handleBookClick} style={styles.imageWrapper}>
-          <Image
-            source={{ uri: book.imageUrl ?? undefined }}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          <BookImage imageUrl={book.imageUrl} />
         </Pressable>
 
         <View style={styles.info}>
@@ -150,11 +147,6 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   imageWrapper: {},
-  image: {
-    width: 120,
-    height: 180,
-    borderRadius: borderRadius.md,
-  },
   info: {
     flex: 1,
     height: 180,

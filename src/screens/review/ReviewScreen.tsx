@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
@@ -26,6 +25,7 @@ import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import { spacing } from '@/styles/theme';
 import { colors } from '@/styles/theme';
 import { ReviewHeaderSkeleton } from './ReviewHeaderSkeleton';
+import { BookImage } from '@/components/book/BookImage';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Review'>;
 
@@ -88,10 +88,6 @@ export function ReviewScreen({ route }: Props) {
     toggleLike();
   };
 
-  if (!review && !isLoading) {
-    return null;
-  }
-
   const renderHeader = () => {
     if (isLoading) {
       return <ReviewHeaderSkeleton />;
@@ -113,10 +109,7 @@ export function ReviewScreen({ route }: Props) {
                   bookId: review.book.id,
                 })
               }>
-              <Image
-                source={{ uri: review.book.imageUrl ?? undefined }}
-                style={styles.bookThumbnail}
-              />
+              <BookImage imageUrl={review.book.imageUrl} size="xs" />
               <View style={styles.bookInfo}>
                 <Text style={styles.bookTitle} numberOfLines={1}>
                   {review.book.title}
@@ -228,12 +221,6 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
       },
     }),
-  },
-  bookThumbnail: {
-    width: 25,
-    height: 35,
-    borderRadius: 2,
-    backgroundColor: '#F3F4F6',
   },
   bookAuthor: {
     fontSize: 11,

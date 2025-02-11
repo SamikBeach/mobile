@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, Image, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Feather';
 import type { Book } from '@/types/book';
 import type { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing } from '@/styles/theme';
+import { BookImage } from './BookImage';
 
 interface Props {
   book: Book;
@@ -23,7 +24,7 @@ export function BookItem({ book }: Props) {
     <Pressable
       style={({ pressed }) => [styles.container, pressed && { opacity: 0.8 }]}
       onPress={handlePress}>
-      <Image source={{ uri: book.imageUrl ?? undefined }} style={styles.image} resizeMode="cover" />
+      <BookImage imageUrl={book.imageUrl} />
       <View style={styles.content}>
         <View style={styles.textContent}>
           <Text style={styles.title} numberOfLines={2}>
@@ -60,12 +61,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     gap: spacing.lg,
     paddingVertical: spacing.sm,
-  },
-  image: {
-    width: 120,
-    height: 180,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[100],
   },
   content: {
     flex: 1,
