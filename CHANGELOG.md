@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.16.1](https://github.com/SamikBeach/mobile/compare/1.16.0...1.16.1) (2025-02-12)
+
+
+### Bug Fixes
+
+* test ([54a078d](https://github.com/SamikBeach/mobile/commit/54a078dda7d62407c332bc916bf7717328c22e80))
+
 # [1.16.0](https://github.com/SamikBeach/mobile/compare/1.15.0...1.16.0) (2025-02-12)
 
 
