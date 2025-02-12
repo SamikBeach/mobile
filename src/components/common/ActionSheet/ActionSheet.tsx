@@ -28,7 +28,6 @@ export function ActionSheet({
   onClose,
   actions = [],
   title,
-  headerRight,
   customContent,
 }: ActionSheetProps) {
   const { animatedStyles, handleClose } = useActionSheet({ visible, onClose });

@@ -173,6 +173,7 @@ export function WriteReviewScreen({ route, navigation }: Props) {
   }, [navigation, checkUnsavedChanges]);
 
   const handleAgreeTerms = async () => {
+    setShowTermsSheet(false);
     await AsyncStorage.setItem(TERMS_AGREED_KEY, 'true');
     setHasAgreedToTerms(true);
     if (reviewId) {
