@@ -26,6 +26,7 @@ export type RootStackParamList = {
     onAgree: () => void;
   };
   Privacy: undefined;
+  BlockedUsers: undefined;
 };
 
 export type ParamList = RootStackParamList & TabParamList;

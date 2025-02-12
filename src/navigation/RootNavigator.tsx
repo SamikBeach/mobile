@@ -26,6 +26,7 @@ import { SearchModal } from '@/components/common/Search/SearchModal';
 import { NavigationContainer } from '@react-navigation/native';
 import { ResetPasswordRequestScreen } from '@/screens/auth/reset-password/ResetPasswordRequestScreen';
 import { colors } from '@/styles/theme';
+import { BlockedUsersScreen } from '@/screens/user/BlockedUsersScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
@@ -222,6 +223,14 @@ function StackNavigator({
           name="Settings"
           component={SettingsScreen}
           options={{ headerTitle: '설정' }}
+        />
+        <Stack.Screen
+          name="BlockedUsers"
+          component={BlockedUsersScreen}
+          options={{
+            headerShown: true,
+            title: '차단한 사용자',
+          }}
         />
         <Stack.Screen name="Terms" component={TermsScreen} options={{ headerTitle: '이용약관' }} />
         <Stack.Screen

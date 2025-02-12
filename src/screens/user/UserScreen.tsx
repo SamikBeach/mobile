@@ -61,6 +61,14 @@ export function UserScreen() {
       },
     },
     {
+      text: '차단한 사용자 보기',
+      icon: 'user-x',
+      onPress: () => {
+        setShowActionSheet(false);
+        navigation.navigate('BlockedUsers');
+      },
+    },
+    {
       text: '로그아웃',
       icon: 'log-out',
       onPress: () => {
