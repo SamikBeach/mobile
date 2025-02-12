@@ -12,6 +12,7 @@ import { RootStackParamList } from '@/navigation/types';
 import { AxiosError } from 'axios';
 import Toast from 'react-native-toast-message';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { colors } from '@/styles/theme';
 
 interface LoginFormData {
   email: string;
@@ -165,6 +166,12 @@ export default function LoginScreen() {
             로그인
           </Button>
 
+          <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>또는</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
           <Button
             variant="outline"
             onPress={handleGoogleLogin}
@@ -260,5 +267,20 @@ const styles = StyleSheet.create({
     color: '#3C4043',
     fontSize: 14,
     fontWeight: '500',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.gray[200],
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    color: colors.gray[500],
+    fontSize: 13,
   },
 });
