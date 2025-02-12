@@ -149,7 +149,6 @@ export default function LoginScreen() {
       if (identityToken) {
         appleLogin({
           idToken: identityToken,
-          clientType: Platform.OS === 'ios' ? 'ios' : 'android',
         });
       }
     } catch (error: any) {

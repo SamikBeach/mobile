@@ -128,7 +128,6 @@ export default function SignUpScreen({ navigation }: Props) {
       if (identityToken) {
         appleLogin({
           idToken: identityToken,
-          clientType: Platform.OS === 'ios' ? 'ios' : 'android',
         });
       }
     } catch (error: any) {
