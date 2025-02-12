@@ -98,4 +98,10 @@ export const userApi = {
 
   deleteSearch: (searchId: number) =>
     axios.delete<{ message: string }>(`/user/me/search/${searchId}`),
+
+  blockUser: (userId: number) => axios.post<void>(`/user/${userId}/block`),
+
+  unblockUser: (userId: number) => axios.delete<void>(`/user/${userId}/block`),
+
+  getBlockedUsers: () => axios.get<User[]>('/user/me/blocked'),
 };

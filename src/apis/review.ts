@@ -44,4 +44,7 @@ export const reviewApi = {
 
   toggleCommentLike: (reviewId: number, commentId: number) =>
     axios.post<{ liked: boolean }>(`/review/${reviewId}/comment/${commentId}/like`),
+
+  reportReview: (reviewId: number, data: { reason: string }) =>
+    axios.post<void>(`/review/${reviewId}/report`, data),
 };

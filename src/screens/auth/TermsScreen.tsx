@@ -66,6 +66,28 @@ export function TermsScreen() {
           그러하지 아니합니다.
         </Text>
       </Section>
+
+      <Section title="제7조 (콘텐츠 관리 및 제재)">
+        <Text style={styles.content}>
+          1. 회사는 다음과 같은 콘텐츠를 금지하며, 발견 시 즉시 삭제 조치합니다.
+        </Text>
+        <View style={styles.list}>
+          <Text style={styles.listItem}>• 타인을 비방하거나 명예를 훼손하는 내용</Text>
+          <Text style={styles.listItem}>• 음란물 또는 청소년에게 유해한 내용</Text>
+          <Text style={styles.listItem}>• 불법 정보 또는 범죄를 조장하는 내용</Text>
+          <Text style={styles.listItem}>• 타인의 저작권을 침해하는 내용</Text>
+          <Text style={styles.listItem}>• 악성코드나 스팸성 내용</Text>
+        </View>
+        <Text style={styles.content}>
+          2. 회원은 부적절한 콘텐츠를 발견할 경우 신고할 수 있으며, 회사는 신고된 콘텐츠를 24시간 이내에 검토하여 조치합니다.
+        </Text>
+        <Text style={styles.content}>
+          3. 회원은 다른 회원을 차단할 수 있으며, 차단된 회원의 콘텐츠는 더 이상 표시되지 않습니다.
+        </Text>
+        <Text style={styles.content}>
+          4. 제1항의 금지 콘텐츠를 반복적으로 게시하는 회원은 서비스 이용이 제한될 수 있습니다.
+        </Text>
+      </Section>
     </ScrollView>
   );
 }
