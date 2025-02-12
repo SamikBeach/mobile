@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, SafeAreaView, Image, Platform } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -137,6 +137,8 @@ export default function LoginScreen() {
     }
   };
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   const handleAppleLogin = async () => {
     try {
       const appleAuthRequestResponse = await appleAuth.performRequest({
@@ -159,6 +161,8 @@ export default function LoginScreen() {
         text1: '애플 로그인에 실패했습니다.',
         text2: error.message,
       });
+
+      setErrorMessage(error.message);
     }
   };
 
@@ -168,6 +172,8 @@ export default function LoginScreen() {
         <View style={styles.header}>
           <Text style={styles.title}>로그인</Text>
         </View>
+
+        {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
 
         <View style={styles.form}>
           <Controller
