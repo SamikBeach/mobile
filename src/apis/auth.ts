@@ -39,6 +39,15 @@ export const authApi = {
     return response;
   },
 
+  appleLogin: async ({ idToken }: { idToken: string }) => {
+    const response = await axios.post<AuthResponse>('/auth/login/apple', {
+      idToken,
+    });
+
+    await saveAuthTokens(response.data.accessToken, response.data.refreshToken);
+    return response;
+  },
+
   /**
    * 이메일 주소의 사용 가능 여부를 확인합니다.
    */
@@ -98,10 +107,5 @@ export const authApi = {
     axios.post<{ message: string }>('/auth/password/reset', {
       email,
       newPassword,
-    }),
-
-  appleLogin: ({ idToken }: { idToken: string }) =>
-    axios.post<AuthResponse>('/auth/login/apple', {
-      idToken,
     }),
 };
