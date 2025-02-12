@@ -56,3 +56,9 @@ export interface CommentSearchQuery extends PaginationQuery {
     reviewId?: number;
   };
 }
+
+export type ReportReason = 'INAPPROPRIATE' | 'SPAM' | 'COPYRIGHT' | 'HATE_SPEECH' | 'OTHER';
+
+export interface ReportReviewDto {
+  reason: ReportReason;
+}

@@ -30,6 +30,7 @@ import { ReviewActions } from './ReviewActions';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 import { BookImage } from '@/components/book/BookImage';
+import { ReportActions } from './ReportActions';
 
 interface Props {
   review: Review;
@@ -48,6 +49,7 @@ export function ReviewItem({
   const [isTruncated, setIsTruncated] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
+  const [actionSheetVisible, setActionSheetVisible] = useState(false);
 
   const currentUser = useCurrentUser();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -170,101 +172,127 @@ export function ReviewItem({
     ]);
   };
 
+  const handleMorePress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+
+    setActionSheetVisible(true);
+  };
+
   return (
-    <Animated.View
-      entering={FadeIn.duration(300)}
-      exiting={FadeOut.duration(300)}
-      layout={Layout.duration(300)}
-      style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          {!hideUserInfo && (
-            <>
-              <View style={styles.userInfo}>
-                <UserAvatar user={review.user} showNickname size="sm" />
-                {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
-              </View>
+    <>
+      <Animated.View
+        entering={FadeIn.duration(300)}
+        exiting={FadeOut.duration(300)}
+        layout={Layout.duration(300)}
+        style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            {!hideUserInfo && (
+              <>
+                <View style={styles.userInfo}>
+                  <UserAvatar user={review.user} showNickname size="sm" />
+                  {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
+                </View>
+                {isMyReview && (
+                  <View style={styles.headerActions}>
+                    <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
+                  </View>
+                )}
+              </>
+            )}
+          </View>
+
+          {showBookInfo && (
+            <View style={styles.bookInfoContainer}>
+              <TouchableOpacity
+                style={styles.bookCard}
+                onPress={() =>
+                  navigation.navigate('BookDetail', {
+                    bookId: review.book.id,
+                  })
+                }>
+                <BookImage imageUrl={review.book.imageUrl} size="xs" />
+                <View style={styles.bookInfo}>
+                  <Text style={styles.bookTitle} numberOfLines={1}>
+                    {review.book.title}
+                  </Text>
+                  <Text style={styles.bookAuthor} numberOfLines={1}>
+                    {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+                  </Text>
+                </View>
+              </TouchableOpacity>
               {isMyReview && (
                 <View style={styles.headerActions}>
                   <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
                 </View>
               )}
-            </>
+            </View>
           )}
         </View>
-
-        {showBookInfo && (
-          <View style={styles.bookInfoContainer}>
-            <TouchableOpacity
-              style={styles.bookCard}
-              onPress={() =>
-                navigation.navigate('BookDetail', {
-                  bookId: review.book.id,
-                })
-              }>
-              <BookImage imageUrl={review.book.imageUrl} size="xs" />
-              <View style={styles.bookInfo}>
-                <Text style={styles.bookTitle} numberOfLines={1}>
-                  {review.book.title}
-                </Text>
-                <Text style={styles.bookAuthor} numberOfLines={1}>
-                  {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
-                </Text>
-              </View>
-            </TouchableOpacity>
-            {isMyReview && (
-              <View style={styles.headerActions}>
-                <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
-              </View>
-            )}
+        <Text style={styles.title}>{review.title}</Text>
+        <Pressable
+          onPress={() => isTruncated && setIsExpanded(true)}
+          style={styles.contentContainer}>
+          <Text
+            style={styles.content}
+            numberOfLines={isExpanded ? undefined : 3}
+            ellipsizeMode="tail"
+            onTextLayout={onTextLayout}>
+            <LexicalContent content={review.content} />
+          </Text>
+          {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
+        </Pressable>
+        <View style={styles.footer}>
+          <View style={styles.actions}>
+            <Pressable style={styles.actionButton} onPress={handleLikePress}>
+              <Icon
+                name="thumbs-up"
+                size={18}
+                color={review.isLiked ? colors.gray[900] : colors.gray[400]}
+              />
+              <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
+                {review.likeCount}
+              </Text>
+            </Pressable>
+            <Pressable style={styles.actionButton} onPress={handleReplyPress}>
+              <Icon name="message-circle" size={18} color={colors.gray[400]} />
+              <Text style={styles.actionText}>{review.commentCount}</Text>
+            </Pressable>
+          </View>
+        </View>
+        {isReplying && (
+          <View style={styles.replySection}>
+            <CommentEditor
+              onSubmit={content => {
+                createComment(content);
+              }}
+              onCancel={() => {
+                setIsReplying(false);
+                setReplyToUser(null);
+              }}
+              replyToUser={replyToUser}
+            />
+            <CommentList reviewId={review.id} onReply={handleReply} />
           </View>
         )}
-      </View>
-      <Text style={styles.title}>{review.title}</Text>
-      <Pressable onPress={() => isTruncated && setIsExpanded(true)} style={styles.contentContainer}>
-        <Text
-          style={styles.content}
-          numberOfLines={isExpanded ? undefined : 3}
-          ellipsizeMode="tail"
-          onTextLayout={onTextLayout}>
-          <LexicalContent content={review.content} />
-        </Text>
-        {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
-      </Pressable>
-      <View style={styles.footer}>
-        <View style={styles.actions}>
-          <Pressable style={styles.actionButton} onPress={handleLikePress}>
-            <Icon
-              name="thumbs-up"
-              size={18}
-              color={review.isLiked ? colors.gray[900] : colors.gray[400]}
-            />
-            <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
-              {review.likeCount}
-            </Text>
-          </Pressable>
-          <Pressable style={styles.actionButton} onPress={handleReplyPress}>
-            <Icon name="message-circle" size={18} color={colors.gray[400]} />
-            <Text style={styles.actionText}>{review.commentCount}</Text>
-          </Pressable>
-        </View>
-      </View>
-      {isReplying && (
-        <View style={styles.replySection}>
-          <CommentEditor
-            onSubmit={content => {
-              createComment(content);
-            }}
-            onCancel={() => {
-              setIsReplying(false);
-              setReplyToUser(null);
-            }}
-            replyToUser={replyToUser}
-          />
-          <CommentList reviewId={review.id} onReply={handleReply} />
-        </View>
-      )}
-    </Animated.View>
+        {!isMyReview && (
+          <TouchableOpacity onPress={handleMorePress} style={styles.moreButton}>
+            <Icon name="more-horizontal" size={20} color={colors.gray[400]} />
+          </TouchableOpacity>
+        )}
+      </Animated.View>
+
+      <ReportActions
+        visible={actionSheetVisible}
+        onClose={() => setActionSheetVisible(false)}
+        reviewId={review.id}
+        userId={review.user.id}
+        userNickname={review.user.nickname}
+      />
+    </>
   );
 }
 
@@ -274,6 +302,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xs,
+    position: 'relative',
+    zIndex: 1,
   },
   header: {
     gap: spacing.xs,
@@ -371,5 +401,11 @@ const styles = StyleSheet.create({
   replySection: {
     marginTop: spacing.md,
     paddingLeft: spacing.xl,
+  },
+  moreButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 2,
   },
 });

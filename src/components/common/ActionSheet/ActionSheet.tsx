@@ -6,14 +6,14 @@ import { colors, spacing } from '@/styles/theme';
 import { useActionSheet } from './useActionSheet';
 import Animated from 'react-native-reanimated';
 
-interface Action {
+export interface Action {
   text: string;
   icon?: string;
   onPress: () => void;
   destructive?: boolean;
 }
 
-interface Props {
+export interface ActionSheetProps {
   visible: boolean;
   onClose: () => void;
   actions?: Action[];
@@ -28,9 +28,8 @@ export function ActionSheet({
   onClose,
   actions = [],
   title,
-  headerRight,
   customContent,
-}: Props) {
+}: ActionSheetProps) {
   const { animatedStyles, handleClose } = useActionSheet({ visible, onClose });
 
   return (
@@ -38,18 +37,16 @@ export function ActionSheet({
       <Pressable style={styles.overlay} onPress={handleClose}>
         <View style={styles.background} />
         <Animated.View style={[styles.sheet, animatedStyles]}>
-          {(title || headerRight) && (
+          {title && (
             <View style={styles.header}>
-              {title && <Text style={styles.title}>{title}</Text>}
-              {headerRight && <View style={styles.headerRight}>{headerRight}</View>}
+              <Text style={styles.title}>{title}</Text>
             </View>
           )}
-
+          {customContent && <View style={styles.customContent}>{customContent}</View>}
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             bounces={false}>
-            {customContent}
             {actions.length > 0 && (
               <View style={styles.actions}>
                 {actions.map((action, index) => (
@@ -57,11 +54,13 @@ export function ActionSheet({
                     key={action.text}
                     style={[styles.action, index < actions.length - 1 && styles.borderBottom]}
                     onPress={action.onPress}>
-                    <Icon
-                      name={action.icon ?? ''}
-                      size={20}
-                      color={action.destructive ? colors.red[500] : colors.gray[700]}
-                    />
+                    {action.icon && (
+                      <Icon
+                        name={action.icon}
+                        size={20}
+                        color={action.destructive ? colors.red[500] : colors.gray[700]}
+                      />
+                    )}
                     <Text style={[styles.actionText, action.destructive && styles.destructiveText]}>
                       {action.text}
                     </Text>
@@ -92,10 +91,9 @@ const styles = StyleSheet.create({
     maxHeight: '90%',
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     padding: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray[100],
   },
   title: {
     fontSize: 18,
@@ -131,5 +129,9 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: spacing.xl,
+  },
+  customContent: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray[100],
   },
 });

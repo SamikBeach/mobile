@@ -26,6 +26,8 @@ import { spacing } from '@/styles/theme';
 import { colors } from '@/styles/theme';
 import { ReviewHeaderSkeleton } from './ReviewHeaderSkeleton';
 import { BookImage } from '@/components/book/BookImage';
+import { ReportActions } from '@/components/review/ReportActions';
+import Icon from 'react-native-vector-icons/Feather';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Review'>;
 
@@ -37,12 +39,15 @@ export function ReviewScreen({ route }: Props) {
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const { createCommentQueryData } = useCommentQueryData();
   const contentRef = useRef<{ scrollToComments: () => void }>(null);
+  const [actionSheetVisible, setActionSheetVisible] = useState(false);
 
   const { data: review, isLoading } = useQuery({
     queryKey: ['review', reviewId],
     queryFn: () => reviewApi.getReviewDetail(reviewId),
     select: response => response.data,
   });
+
+  const isMyReview = currentUser?.id === review?.user.id;
 
   const { mutate: toggleLike } = useMutation({
     mutationFn: () => reviewApi.toggleReviewLike(reviewId),
@@ -88,6 +93,15 @@ export function ReviewScreen({ route }: Props) {
     toggleLike();
   };
 
+  const handleMorePress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+
+    setActionSheetVisible(true);
+  };
+
   const renderHeader = () => {
     if (isLoading) {
       return <ReviewHeaderSkeleton />;
@@ -101,7 +115,14 @@ export function ReviewScreen({ route }: Props) {
       <>
         <View style={styles.header}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{review.title}</Text>
+            <View style={styles.titleRow}>
+              <Text style={styles.title}>{review.title}</Text>
+              {!isMyReview && (
+                <TouchableOpacity onPress={handleMorePress}>
+                  <Icon name="more-horizontal" size={24} color={colors.gray[400]} />
+                </TouchableOpacity>
+              )}
+            </View>
             <TouchableOpacity
               style={styles.bookCard}
               onPress={() =>
@@ -182,6 +203,15 @@ export function ReviewScreen({ route }: Props) {
           />
         </View>
       </View>
+      {review && !isMyReview && (
+        <ReportActions
+          visible={actionSheetVisible}
+          onClose={() => setActionSheetVisible(false)}
+          reviewId={review.id}
+          userId={review.user.id}
+          userNickname={review.user.nickname}
+        />
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -202,6 +232,12 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     gap: 10,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
   },
   title: {
     fontSize: 24,

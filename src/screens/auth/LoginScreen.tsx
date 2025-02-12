@@ -12,6 +12,8 @@ import { RootStackParamList } from '@/navigation/types';
 import { AxiosError } from 'axios';
 import Toast from 'react-native-toast-message';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { colors } from '@/styles/theme';
+import appleAuth from '@invertase/react-native-apple-authentication';
 
 interface LoginFormData {
   email: string;
@@ -88,6 +90,25 @@ export default function LoginScreen() {
     },
   });
 
+  const { mutate: appleLogin, isPending: isAppleLoginPending } = useMutation({
+    mutationFn: authApi.appleLogin,
+    onSuccess: response => {
+      setCurrentUser(response.data.user);
+      Toast.show({
+        type: 'success',
+        text1: '애플 계정으로 로그인되었습니다.',
+      });
+      navigation.navigate('Home');
+    },
+    onError: (error: any) => {
+      Toast.show({
+        type: 'error',
+        text1: '애플 로그인에 실패했습니다.',
+        text2: error.response?.data?.message || '알 수 없는 오류가 발생했습니다.',
+      });
+    },
+  });
+
   const handleGoogleLogin = async () => {
     try {
       await GoogleSignin.hasPlayServices();
@@ -112,6 +133,31 @@ export default function LoginScreen() {
         type: 'error',
         text1: '구글 로그인에 실패했습니다.',
         text2: errorMessage,
+      });
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    try {
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+
+      const { identityToken } = appleAuthRequestResponse;
+
+      if (identityToken) {
+        appleLogin({
+          idToken: identityToken,
+        });
+      }
+    } catch (error: any) {
+      console.error('Apple Sign In Error:', error);
+
+      Toast.show({
+        type: 'error',
+        text1: '애플 로그인에 실패했습니다.',
+        text2: error.message,
       });
     }
   };
@@ -165,6 +211,12 @@ export default function LoginScreen() {
             로그인
           </Button>
 
+          <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>또는</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
           <Button
             variant="outline"
             onPress={handleGoogleLogin}
@@ -173,6 +225,17 @@ export default function LoginScreen() {
             <View style={styles.googleButton}>
               <Image source={require('@/assets/images/google.png')} style={styles.googleIcon} />
               <Text style={styles.googleText}>구글 계정으로 로그인</Text>
+            </View>
+          </Button>
+
+          <Button
+            variant="outline"
+            onPress={handleAppleLogin}
+            loading={isAppleLoginPending}
+            style={styles.appleButtonContainer}>
+            <View style={styles.appleButton}>
+              <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
+              <Text style={styles.appleText}>애플 계정으로 로그인</Text>
             </View>
           </Button>
 
@@ -216,7 +279,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   form: {
-    gap: 16,
+    gap: 8,
   },
   links: {
     flexDirection: 'row',
@@ -257,6 +320,41 @@ const styles = StyleSheet.create({
     height: 18,
   },
   googleText: {
+    color: '#3C4043',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.gray[200],
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    color: colors.gray[500],
+    fontSize: 13,
+  },
+  appleButtonContainer: {
+    borderColor: colors.gray[200],
+    backgroundColor: colors.white,
+  },
+  appleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  appleIcon: {
+    width: 18,
+    height: 18,
+    marginBottom: 2,
+  },
+  appleText: {
     color: '#3C4043',
     fontSize: 14,
     fontWeight: '500',
