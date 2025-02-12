@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.16.2](https://github.com/SamikBeach/mobile/compare/1.16.1...1.16.2) (2025-02-12)
+
+
+### Bug Fixes
+
+* fix appleLogin ([cd197e6](https://github.com/SamikBeach/mobile/commit/cd197e6151128a4e319f14dfe41b48e7ec2dcf40))
+
 ## [1.16.1](https://github.com/SamikBeach/mobile/compare/1.16.0...1.16.1) (2025-02-12)
 
 
