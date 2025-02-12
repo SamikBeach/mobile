@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
+    "build:android": "cd android && ./gradlew clean && ./gradlew bundleRelease",
     "dev-menu": "adb shell input keyevent 82"
   },
   "dependencies": {
