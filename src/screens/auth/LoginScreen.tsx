@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   form: {
-    gap: 16,
+    gap: 8,
   },
   links: {
     flexDirection: 'row',
