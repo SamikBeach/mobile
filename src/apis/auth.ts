@@ -99,4 +99,10 @@ export const authApi = {
       email,
       newPassword,
     }),
+
+  appleLogin: ({ idToken, clientType }: { idToken: string; clientType: 'ios' | 'android' }) =>
+    axios.post<AuthResponse>('/auth/login/apple', {
+      idToken,
+      clientType,
+    }),
 };

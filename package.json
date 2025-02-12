@@ -11,6 +11,7 @@
     "dev-menu": "adb shell input keyevent 82"
   },
   "dependencies": {
+    "@invertase/react-native-apple-authentication": "^2.4.0",
     "@react-native-async-storage/async-storage": "^2.1.0",
     "@react-native-google-signin/google-signin": "^13.1.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
