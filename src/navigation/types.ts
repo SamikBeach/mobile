@@ -22,7 +22,9 @@ export type RootStackParamList = {
   InitiateRegistration: { email: string };
   VerifyCode: { email: string };
   Settings: undefined;
-  Terms: undefined;
+  Terms: {
+    onAgree: () => void;
+  };
   Privacy: undefined;
 };
 

@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Dimensions,
+  Text,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
@@ -23,6 +24,8 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Toast from 'react-native-toast-message';
 import { BookInfo } from './BookInfo';
 import Icon from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActionSheet, Action } from '@/components/common/ActionSheet/ActionSheet';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WriteReview'>;
 
@@ -46,10 +49,14 @@ interface LexicalContent {
   root: LexicalNode;
 }
 
+const TERMS_AGREED_KEY = 'review_terms_agreed';
+
 export function WriteReviewScreen({ route, navigation }: Props) {
   const { bookId, reviewId } = route.params;
   const currentUser = useCurrentUser();
   const { createReviewDataQueryData, updateReviewDataQueryData } = useReviewQueryData();
+  const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
+  const [showTermsSheet, setShowTermsSheet] = useState(false);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -165,6 +172,16 @@ export function WriteReviewScreen({ route, navigation }: Props) {
     }
   }, [navigation, checkUnsavedChanges]);
 
+  const handleAgreeTerms = async () => {
+    await AsyncStorage.setItem(TERMS_AGREED_KEY, 'true');
+    setHasAgreedToTerms(true);
+    if (reviewId) {
+      updateReview();
+    } else {
+      createReview();
+    }
+  };
+
   const handleSubmit = () => {
     if (!title.trim()) {
       Toast.show({ type: 'error', text1: '제목을 입력해주세요.' });
@@ -173,6 +190,11 @@ export function WriteReviewScreen({ route, navigation }: Props) {
 
     if (!content.trim()) {
       Toast.show({ type: 'error', text1: '내용을 입력해주세요.' });
+      return;
+    }
+
+    if (!hasAgreedToTerms) {
+      setShowTermsSheet(true);
       return;
     }
 
@@ -207,59 +229,86 @@ export function WriteReviewScreen({ route, navigation }: Props) {
     });
   }, [navigation, handleCancel]);
 
+  const actions: Action[] = [
+    {
+      text: '동의하고 제출하기',
+      icon: 'check',
+      onPress: handleAgreeTerms,
+    },
+  ];
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.container}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}>
-        <ScrollView
-          style={styles.content}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled">
-          <View style={styles.formContainer}>
-            <BookInfo bookId={bookId} />
-            <TextInput
-              style={styles.titleInput}
-              placeholder="제목"
-              value={title}
-              onChangeText={setTitle}
-              maxLength={100}
-            />
-            <TextInput
-              style={styles.contentInput}
-              placeholder="내용을 입력하세요..."
-              value={content}
-              onChangeText={setContent}
-              multiline
-              textAlignVertical="top"
-              maxFontSizeMultiplier={1}
-            />
+    <>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.container}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}>
+          <ScrollView
+            style={styles.content}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled">
+            <View style={styles.formContainer}>
+              <BookInfo bookId={bookId} />
+              <TextInput
+                style={styles.titleInput}
+                placeholder="제목"
+                value={title}
+                onChangeText={setTitle}
+                maxLength={100}
+              />
+              <TextInput
+                style={styles.contentInput}
+                placeholder="내용을 입력하세요..."
+                value={content}
+                onChangeText={setContent}
+                multiline
+                textAlignVertical="top"
+                maxFontSizeMultiplier={1}
+              />
+            </View>
+          </ScrollView>
+          <View style={styles.footer}>
+            <View style={styles.buttonContainer}>
+              <Button
+                onPress={handleCancel}
+                style={styles.cancelButton}
+                textStyle={styles.cancelButtonText}>
+                취소
+              </Button>
+              <Button
+                onPress={handleSubmit}
+                disabled={isCreatePending || isUpdatePending}
+                style={styles.submitButton}
+                textStyle={styles.submitButtonText}>
+                {isCreatePending || isUpdatePending
+                  ? '제출 중...'
+                  : reviewId
+                  ? '수정하기'
+                  : '제출하기'}
+              </Button>
+            </View>
           </View>
-        </ScrollView>
-        <View style={styles.footer}>
-          <View style={styles.buttonContainer}>
-            <Button
-              onPress={handleCancel}
-              style={styles.cancelButton}
-              textStyle={styles.cancelButtonText}>
-              취소
-            </Button>
-            <Button
-              onPress={handleSubmit}
-              disabled={isCreatePending || isUpdatePending}
-              style={styles.submitButton}
-              textStyle={styles.submitButtonText}>
-              {isCreatePending || isUpdatePending
-                ? '제출 중...'
-                : reviewId
-                ? '수정하기'
-                : '제출하기'}
-            </Button>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+
+      <ActionSheet
+        visible={showTermsSheet}
+        onClose={() => setShowTermsSheet(false)}
+        title="이용 약관 동의"
+        customContent={
+          <View style={styles.termsContent}>
+            <Text style={styles.termsText}>
+              • 사용자는 다른 사용자를 존중해야 하며, 혐오 발언이나 차별적인 내용을 게시할 수
+              없습니다.{'\n'}• 불법적이거나 유해한 콘텐츠는 엄격히 금지됩니다.{'\n'}• 저작권을
+              침해하는 콘텐츠는 게시할 수 없습니다.{'\n'}• 스팸이나 광고성 콘텐츠는 제한됩니다.
+              {'\n\n'}위 내용에 동의하시면 '동의하고 계속하기'를 눌러주세요.
+            </Text>
           </View>
-        </View>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+        }
+        actions={actions}
+      />
+    </>
   );
 }
 
@@ -333,5 +382,13 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 16,
     fontWeight: '600',
+  },
+  termsContent: {
+    padding: spacing.lg,
+  },
+  termsText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.gray[700],
   },
 });
