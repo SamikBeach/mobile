@@ -212,7 +212,7 @@ export default function SignUpScreen({ navigation }: Props) {
           </Button>
 
           <View style={styles.links}>
-            <Text style={styles.linkText}>이미 계정이 있으신가요? </Text>{' '}
+            <Text style={styles.linkText}>이미 계정이 있으신가요? </Text>
             <Button
               variant="text"
               onPress={() => navigation.navigate('Login')}
