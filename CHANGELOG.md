@@ -1,5 +1,25 @@
 # 🚦 CHANGELOG
 
+# [1.16.0](https://github.com/SamikBeach/mobile/compare/1.15.0...1.16.0) (2025-02-12)
+
+
+### Bug Fixes
+
+* 구글 회원가입 구현 ([4bf392e](https://github.com/SamikBeach/mobile/commit/4bf392e9b0291c653cf60fb58902016edbebd87f))
+* 불필요한 param 제거 ([c6f63c8](https://github.com/SamikBeach/mobile/commit/c6f63c89275cd41bf87ffbea3222e40d876f98b1))
+* 스타일 수정 ([6b2f0e9](https://github.com/SamikBeach/mobile/commit/6b2f0e9b73ea2143b5ddc4b3c6183917aebe1afe))
+* 스타일 수정 ([01c326b](https://github.com/SamikBeach/mobile/commit/01c326b471b5259f18ea3edbbcff61e436142c1f))
+
+
+### Features
+
+* **review:** 리뷰 작성 시 약관 동의 UI 개선 ([71b987e](https://github.com/SamikBeach/mobile/commit/71b987ebc9b2b262e12685a8e64713902690accc))
+* **review:** 약관 동의 UX 개선 ([53037df](https://github.com/SamikBeach/mobile/commit/53037df6030e26189ef48ce5ae793100fd8026de))
+* 리뷰 신고 및 사용자 차단 기능 추가 ([29dbd59](https://github.com/SamikBeach/mobile/commit/29dbd5995a2846a1ee5775c980707a2effd694b3))
+* 애플 로그인 구현 ([c211311](https://github.com/SamikBeach/mobile/commit/c211311936bf6df8ab0c2d3e7af0eb566cd0238f))
+* 이용약관 수정 ([4ba804b](https://github.com/SamikBeach/mobile/commit/4ba804be342c4549ff479bd79cc9ad2d0070c503))
+* 차단 사용자 목록 구현 ([42510e0](https://github.com/SamikBeach/mobile/commit/42510e012b4ec165949b4214ad7e66819da65f00))
+
 # [1.15.0](https://github.com/SamikBeach/mobile/compare/1.14.0...1.15.0) (2025-02-11)
 
 
