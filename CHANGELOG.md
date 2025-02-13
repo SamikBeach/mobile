@@ -1,5 +1,19 @@
 # 🚦 CHANGELOG
 
+# [1.17.0](https://github.com/SamikBeach/mobile/compare/1.16.2...1.17.0) (2025-02-13)
+
+
+### Bug Fixes
+
+* currentUser가 있을 때에만 신고 버튼 활성화 ([5755979](https://github.com/SamikBeach/mobile/commit/575597928717e29c1a709c40bd808814ce65d887))
+* fix version code ([6c78dba](https://github.com/SamikBeach/mobile/commit/6c78dba9f68a13736eef27a426a7d61331135757))
+
+
+### Features
+
+* **book:** 다른 번역본 포함 여부 상태 관리 개선 ([4e5f6c2](https://github.com/SamikBeach/mobile/commit/4e5f6c29b01af11cbe225d7a54f7428203043739))
+* 빌드 스크립트 추가 ([a5778d4](https://github.com/SamikBeach/mobile/commit/a5778d48f3e9488ba06069af8d8afc7102bbadb9))
+
 ## [1.16.2](https://github.com/SamikBeach/mobile/compare/1.16.1...1.16.2) (2025-02-12)
 
 
