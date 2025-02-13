@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Pressable } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -15,13 +15,17 @@ import { RelativeBooks } from './RelativeBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
 import Animated, { Layout } from 'react-native-reanimated';
+import { useAtom } from 'jotai';
+import { includeOtherTranslationsAtom } from '@/atoms/book';
 
 interface Props {
   bookId: number;
 }
 
 export function BookDetailScreenContent({ bookId }: Props) {
-  const [includeOtherTranslations, setIncludeOtherTranslations] = useState(false);
+  const [includeOtherTranslations, setIncludeOtherTranslations] = useAtom(
+    includeOtherTranslationsAtom,
+  );
   const flatListRef = useRef<FlatList>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
