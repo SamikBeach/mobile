@@ -203,7 +203,7 @@ export function ReviewScreen({ route }: Props) {
           />
         </View>
       </View>
-      {review && !isMyReview && (
+      {review && !isMyReview && currentUser && (
         <ReportActions
           visible={actionSheetVisible}
           onClose={() => setActionSheetVisible(false)}

@@ -82,3 +82,5 @@ yarn-error.log
 
 /android/gradle.properties.production
 /android/gradle.properties
+
+/ios/mobile/AuthKey_B87FH5JM49.p8
