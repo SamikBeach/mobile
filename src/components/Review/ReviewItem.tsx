@@ -278,7 +278,7 @@ export function ReviewItem({
             <CommentList reviewId={review.id} onReply={handleReply} />
           </View>
         )}
-        {!isMyReview && (
+        {!isMyReview && currentUser && (
           <TouchableOpacity onPress={handleMorePress} style={styles.moreButton}>
             <Icon name="more-horizontal" size={20} color={colors.gray[400]} />
           </TouchableOpacity>
