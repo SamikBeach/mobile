@@ -12,7 +12,7 @@ export function HomeScreen() {
     setRefreshing(true);
     try {
       // 피드 데이터 새로고침
-      await queryClient.invalidateQueries({ queryKey: ['feeds'] });
+      await queryClient.invalidateQueries({ queryKey: ['reviews'] });
     } finally {
       setRefreshing(false);
     }
