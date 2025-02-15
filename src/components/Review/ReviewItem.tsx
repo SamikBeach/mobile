@@ -241,7 +241,7 @@ export function ReviewItem({
             numberOfLines={isExpanded ? undefined : 3}
             ellipsizeMode="tail"
             onTextLayout={onTextLayout}>
-            <LexicalContent content={review.content} />
+            <LexicalContent content={review.content} isExpanded={isExpanded} />
           </Text>
           {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
         </Pressable>
