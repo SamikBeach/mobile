@@ -45,14 +45,17 @@ export function AuthorSelect() {
 
   return (
     <>
-      <TouchableOpacity onPress={() => setIsOpen(true)} style={styles.button}>
+      <TouchableOpacity
+        onPress={() => setIsOpen(true)}
+        style={styles.button}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
         <Text numberOfLines={1} style={styles.buttonText}>
           {selectedAuthor?.nameInKor || '작가'}
         </Text>
         {selectedAuthor ? (
           <TouchableOpacity
             onPress={handleClear}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
             <Icon name="x" size={16} color={colors.gray[400]} />
           </TouchableOpacity>
         ) : (
@@ -66,7 +69,8 @@ export function AuthorSelect() {
             <Text style={styles.modalTitle}>작가 선택</Text>
             <TouchableOpacity
               onPress={() => setIsOpen(false)}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              style={styles.closeButton}>
               <Icon name="x" size={20} color={colors.gray[500]} />
             </TouchableOpacity>
           </View>
@@ -79,6 +83,7 @@ export function AuthorSelect() {
               placeholderTextColor={colors.gray[400]}
               value={search}
               onChangeText={handleSearch}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             />
           </View>
 
@@ -109,12 +114,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: colors.gray[50],
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.lg,
     minWidth: 120,
     gap: spacing.sm,
-    height: 38,
+    height: 44,
   },
   buttonText: {
     fontSize: 14,
@@ -141,7 +146,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    margin: spacing.lg,
+    margin: spacing.md,
     padding: spacing.md,
     backgroundColor: colors.gray[50],
     borderRadius: borderRadius.lg,
@@ -154,7 +159,7 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   list: {
-    padding: spacing.lg,
+    paddingHorizontal: spacing.lg,
   },
   authorItem: {
     flexDirection: 'row',
@@ -165,5 +170,8 @@ const styles = StyleSheet.create({
   authorName: {
     fontSize: 15,
     color: colors.gray[900],
+  },
+  closeButton: {
+    padding: spacing.xs,
   },
 });
