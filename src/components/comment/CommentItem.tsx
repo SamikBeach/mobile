@@ -210,8 +210,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    padding: 6,
-    minWidth: 38,
   },
   actionText: {
     fontSize: 14,

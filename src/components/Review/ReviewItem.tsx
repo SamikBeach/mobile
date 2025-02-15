@@ -247,7 +247,10 @@ export function ReviewItem({
         </Pressable>
         <View style={styles.footer}>
           <View style={styles.actions}>
-            <Pressable style={styles.actionButton} onPress={handleLikePress}>
+            <Pressable
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={styles.actionButton}
+              onPress={handleLikePress}>
               <Icon
                 name="thumbs-up"
                 size={18}
@@ -257,7 +260,10 @@ export function ReviewItem({
                 {review.likeCount}
               </Text>
             </Pressable>
-            <Pressable style={styles.actionButton} onPress={handleReplyPress}>
+            <Pressable
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={styles.actionButton}
+              onPress={handleReplyPress}>
               <Icon name="message-circle" size={18} color={colors.gray[400]} />
               <Text style={styles.actionText}>{review.commentCount}</Text>
             </Pressable>
@@ -384,7 +390,9 @@ const styles = StyleSheet.create({
   footer: {},
   actions: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.md,
+    alignItems: 'center',
+    paddingHorizontal: 4,
   },
   actionButton: {
     flexDirection: 'row',
