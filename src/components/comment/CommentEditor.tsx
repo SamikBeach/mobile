@@ -190,7 +190,6 @@ export function CommentEditor({
 
   const handleCancel = () => {
     setText('');
-    onCancel();
   };
 
   const isEditMode = Boolean(initialContent);
@@ -215,7 +214,7 @@ export function CommentEditor({
           editable={Boolean(currentUser)}
           autoFocus={autoFocus}
         />
-        {replyToUser && !isEditMode && (
+        {text.length > 0 && replyToUser && !isEditMode && (
           <Pressable onPress={handleCancel} hitSlop={8} style={styles.closeButton}>
             <Icon name="x" size={16} color={colors.gray[500]} />
           </Pressable>
