@@ -280,6 +280,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
               setReplyToUser(null);
             }}
             replyToUser={replyToUser}
+            autoFocus
             isReplying={isReplyAnimating}
           />
         </Animated.View>

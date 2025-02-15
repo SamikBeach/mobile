@@ -23,6 +23,7 @@ interface Props {
   replyToUser?: { nickname: string } | null;
   showAvatar?: boolean;
   isReplying?: boolean;
+  autoFocus?: boolean;
 }
 
 interface LexicalNode {
@@ -53,6 +54,7 @@ export function CommentEditor({
   replyToUser,
   showAvatar = true,
   isReplying = false,
+  autoFocus = false,
 }: Props) {
   const [text, setText] = useState('');
   const [mentions, setMentions] = useState<string[]>([]);
@@ -211,6 +213,7 @@ export function CommentEditor({
           multiline
           maxLength={1000}
           editable={Boolean(currentUser)}
+          autoFocus={autoFocus}
         />
         {replyToUser && !isEditMode && (
           <Pressable onPress={handleCancel} hitSlop={8} style={styles.closeButton}>
