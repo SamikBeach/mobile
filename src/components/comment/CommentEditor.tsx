@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   closeButton: {
-    padding: 4,
+    padding: 2,
     marginLeft: 4,
   },
   input: {
