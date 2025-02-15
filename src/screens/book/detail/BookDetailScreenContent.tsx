@@ -1,5 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Pressable, Switch, Platform, TextInput } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Pressable,
+  Switch,
+  Platform,
+  TextInput,
+  Dimensions,
+} from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
@@ -138,10 +147,14 @@ export function BookDetailScreenContent({ bookId }: Props) {
     if (!user) {
       const reviewIndex = reviews.findIndex(review => review.id === reviewId);
       if (reviewIndex !== -1) {
+        const editorContainerHeight = 106; // padding + input + buttons + bottom padding
+        const screenHeight = Dimensions.get('window').height;
+        const viewPosition = 1 - editorContainerHeight / screenHeight;
+
         flatListRef.current?.scrollToIndex({
           index: reviewIndex,
           animated: true,
-          viewPosition: 0,
+          viewPosition, // 화면 높이에서 에디터 높이를 뺀 비율
         });
       }
 
