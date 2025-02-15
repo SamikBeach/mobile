@@ -131,9 +131,6 @@ export function CommentEditor({
       if (text.trim() === mentionText && newText.length < mentionText.length) {
         setText('');
         setMentions([]);
-        if (!isEditMode) {
-          onCancel();
-        }
         return;
       }
     }
