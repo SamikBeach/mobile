@@ -122,7 +122,8 @@ export function BookDetailScreenContent({ bookId }: Props) {
       setActiveReviewId(null);
       setReplyToUser(null);
     },
-    onError: () => {
+    onError: (error: Error) => {
+      console.error(error);
       Toast.show({
         type: 'error',
         text1: '댓글 작성에 실패했습니다.',
