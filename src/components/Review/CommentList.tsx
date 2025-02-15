@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { CommentItem } from '../comment/CommentItem';
@@ -10,6 +10,7 @@ import type { Comment } from '@/types/comment';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
 import Animated, { Easing, FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   reviewId: number;
@@ -69,7 +70,15 @@ export function CommentList({ reviewId, onReply }: Props) {
           onPress={() => fetchNextPage()}
           disabled={isFetchingNextPage}
           style={styles.moreButton}>
-          {isFetchingNextPage ? '불러오는 중...' : '댓글 더보기'}
+          {isFetchingNextPage ? (
+            <Text style={styles.moreButtonText}>불러오는 중...</Text>
+          ) : (
+            <View style={styles.moreButtonInner}>
+              <View style={styles.moreButtonLine} />
+              <Text style={styles.moreButtonText}>답글 더보기</Text>
+              <View style={styles.moreButtonLine} />
+            </View>
+          )}
         </Button>
       )}
     </Animated.View>
@@ -82,7 +91,23 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   moreButton: {
-    alignSelf: 'flex-start',
+    marginTop: spacing.lg,
+    marginHorizontal: spacing.md,
+  },
+  moreButtonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  moreButtonLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.gray[200],
+  },
+  moreButtonText: {
+    fontSize: 13,
+    color: colors.gray[500],
+    fontWeight: '600',
   },
   emptyContainer: {
     alignItems: 'center',
