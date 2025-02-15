@@ -21,6 +21,7 @@ import { reviewApi } from '@/apis/review';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import Toast from 'react-native-toast-message';
 import { useMutation } from '@tanstack/react-query';
+import type { ReviewItemHandle } from '@/components/review/ReviewItem';
 
 interface Props {
   bookId: number;
@@ -34,6 +35,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
   const [activeReviewId, setActiveReviewId] = useState<number | null>(null);
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const { createCommentQueryData } = useCommentQueryData();
+  const reviewRefs = useRef<{ [key: number]: React.RefObject<ReviewItemHandle> }>({});
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
@@ -91,9 +93,23 @@ export function BookDetailScreenContent({ bookId }: Props) {
     }
   }, [isLoading]);
 
+  const getReviewRef = (reviewId: number) => {
+    if (!reviewRefs.current[reviewId]) {
+      reviewRefs.current[reviewId] = React.createRef();
+    }
+    return reviewRefs.current[reviewId];
+  };
+
   const { mutate: createComment } = useMutation({
     mutationFn: (params: { reviewId: number; content: string }) =>
       reviewApi.createComment(params.reviewId, { content: params.content }),
+    onMutate: async ({ reviewId }) => {
+      const reviewRef = getReviewRef(reviewId);
+
+      if (reviewRef?.current) {
+        reviewRef.current.showComments();
+      }
+    },
     onSuccess: (response, { reviewId }) => {
       createCommentQueryData({
         reviewId,
@@ -104,6 +120,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
         text1: '댓글이 등록되었습니다.',
       });
       setActiveReviewId(null);
+      setReplyToUser(null);
     },
     onError: () => {
       Toast.show({
@@ -207,6 +224,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
               <ReviewItemSkeleton />
             ) : (
               <ReviewItem
+                ref={getReviewRef(item.id)}
                 review={item}
                 showBookInfo={includeOtherTranslations && item.book.id !== bookId}
                 onCommentPress={handleCommentPress}
