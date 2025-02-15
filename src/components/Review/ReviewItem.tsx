@@ -286,7 +286,7 @@ export function ReviewItem({
         )}
         {!isMyReview && currentUser && (
           <TouchableOpacity onPress={handleMorePress} style={styles.moreButton}>
-            <Icon name="more-horizontal" size={20} color={colors.gray[400]} />
+            <Icon name="more-horizontal" size={20} color={colors.gray[500]} />
           </TouchableOpacity>
         )}
       </Animated.View>
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   },
   moreButton: {
     position: 'absolute',
-    top: 10,
+    top: 14,
     right: 10,
     zIndex: 2,
   },

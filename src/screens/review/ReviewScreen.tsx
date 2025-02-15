@@ -118,7 +118,7 @@ export function ReviewScreen({ route }: Props) {
               <Text style={styles.title}>{review.title}</Text>
               {!isMyReview && (
                 <TouchableOpacity onPress={handleMorePress}>
-                  <Icon name="more-horizontal" size={24} color={colors.gray[400]} />
+                  <Icon name="more-horizontal" size={24} color={colors.gray[500]} />
                 </TouchableOpacity>
               )}
             </View>
