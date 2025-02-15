@@ -23,20 +23,19 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { CommentEditor } from '@/components/comment/CommentEditor';
-import Toast from 'react-native-toast-message';
 import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
-import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 import { BookImage } from '@/components/book/BookImage';
 import { ReportActions } from './ReportActions';
+import Toast from 'react-native-toast-message';
 
 interface Props {
   review: Review;
   showBookInfo?: boolean;
   hideUserInfo?: boolean;
   hideDate?: boolean;
+  onCommentPress: (reviewId: number, user?: { nickname: string }) => void;
 }
 
 export function ReviewItem({
@@ -44,17 +43,16 @@ export function ReviewItem({
   showBookInfo,
   hideUserInfo = false,
   hideDate = false,
+  onCommentPress,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
-  const [isReplying, setIsReplying] = useState(false);
-  const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
   const currentUser = useCurrentUser();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { updateReviewLikeQueryData, deleteReviewDataQueryData } = useReviewQueryData();
-  const { createCommentQueryData } = useCommentQueryData();
   const isMyReview = currentUser?.id === review.user.id;
 
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
@@ -98,27 +96,6 @@ export function ReviewItem({
     },
   });
 
-  const { mutate: createComment } = useMutation({
-    mutationFn: (content: string) => reviewApi.createComment(review.id, { content }),
-    onSuccess: response => {
-      createCommentQueryData({
-        reviewId: review.id,
-        comment: response.data,
-      });
-      Toast.show({
-        type: 'success',
-        text1: '댓글이 등록되었습니다.',
-      });
-      setReplyToUser(null);
-    },
-    onError: () => {
-      Toast.show({
-        type: 'error',
-        text1: '댓글 작성에 실패했습니다.',
-      });
-    },
-  });
-
   const { mutate: deleteReview } = useMutation({
     mutationFn: () => reviewApi.deleteReview(review.id),
     onSuccess: () => {
@@ -150,12 +127,11 @@ export function ReviewItem({
   };
 
   const handleReply = (user: { nickname: string }) => {
-    setIsReplying(true);
-    setReplyToUser(user);
+    onCommentPress(review.id, user);
   };
 
   const handleReplyPress = () => {
-    setIsReplying(prev => !prev);
+    setShowComments(prev => !prev);
   };
 
   const handleEditPress = () => {
@@ -264,23 +240,25 @@ export function ReviewItem({
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               style={styles.actionButton}
               onPress={handleReplyPress}>
-              <Icon name="message-circle" size={18} color={colors.gray[400]} />
-              <Text style={styles.actionText}>{review.commentCount}</Text>
+              <Icon
+                name="message-circle"
+                size={18}
+                color={showComments ? colors.primary[500] : colors.gray[400]}
+              />
+              <Text style={[styles.actionText, showComments && styles.activeActionText]}>
+                {review.commentCount}
+              </Text>
+            </Pressable>
+            <Pressable
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={styles.actionButton}
+              onPress={() => onCommentPress(review.id)}>
+              <Text style={styles.replyButtonText}>답글 달기</Text>
             </Pressable>
           </View>
         </View>
-        {isReplying && (
-          <View style={styles.replySection}>
-            <CommentEditor
-              onSubmit={content => {
-                createComment(content);
-              }}
-              onCancel={() => {
-                setIsReplying(false);
-                setReplyToUser(null);
-              }}
-              replyToUser={replyToUser}
-            />
+        {showComments && (
+          <View style={styles.commentSection}>
             <CommentList reviewId={review.id} onReply={handleReply} />
           </View>
         )}
@@ -406,9 +384,14 @@ const styles = StyleSheet.create({
   activeActionText: {
     color: colors.gray[900],
   },
-  replySection: {
+  commentSection: {
     marginTop: spacing.md,
     paddingLeft: spacing.xl,
+  },
+  replyButtonText: {
+    fontSize: 14,
+    color: colors.gray[600],
+    marginLeft: spacing.xs,
   },
   moreButton: {
     position: 'absolute',
