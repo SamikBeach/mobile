@@ -54,13 +54,7 @@ export function AuthorList({ userId }: Props) {
   }
 
   if (!authors.length) {
-    return (
-      <Empty
-        icon={<Icon name="heart" size={48} color={colors.gray[400]} />}
-        message="좋아한 작가가 없어요"
-        description="마음에 드는 작가를 찾아보세요"
-      />
-    );
+    return <Empty message="좋아한 작가가 없어요" description="마음에 드는 작가를 찾아보세요" />;
   }
 
   return (
