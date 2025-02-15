@@ -256,7 +256,9 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
               <Pressable
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 style={styles.actionButton}
-                onPress={() => onCommentPress?.(review.id)}>
+                onPress={() => {
+                  onCommentPress?.(review.id);
+                }}>
                 <Text style={styles.replyButtonText}>답글 달기</Text>
               </Pressable>
             </View>
