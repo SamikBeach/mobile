@@ -13,21 +13,7 @@ import { BookDetailInfo } from './BookDetailInfo';
 import { RelativeBooks } from './RelativeBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
-import Animated, {
-  Layout,
-  FadeIn,
-  withSpring,
-  withTiming,
-  interpolateColor,
-  useAnimatedStyle,
-  withSequence,
-  withDelay,
-  useSharedValue,
-  interpolate,
-  withRepeat,
-  Easing,
-  SlideInDown,
-} from 'react-native-reanimated';
+import Animated, { Layout, SlideInDown } from 'react-native-reanimated';
 import { useAtom } from 'jotai';
 import { includeOtherTranslationsAtom } from '@/atoms/book';
 import { CommentEditor } from '@/components/comment/CommentEditor';
