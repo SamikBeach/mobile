@@ -10,7 +10,6 @@ import type { Comment } from '@/types/comment';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
 import Animated, { Easing, FadeIn, FadeOut, Layout } from 'react-native-reanimated';
-import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   reviewId: number;
@@ -91,7 +90,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   moreButton: {
-    marginTop: spacing.lg,
     marginHorizontal: spacing.md,
   },
   moreButtonInner: {
