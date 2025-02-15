@@ -243,6 +243,7 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
               <Pressable
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 style={styles.actionButton}
+                disabled={review.commentCount === 0}
                 onPress={handleReplyPress}>
                 <Icon
                   name="message-circle"
@@ -397,7 +398,7 @@ const styles = StyleSheet.create({
   },
   replyButtonText: {
     fontSize: 14,
-    color: colors.gray[600],
+    color: colors.gray[500],
     marginLeft: spacing.xs,
   },
   moreButton: {
