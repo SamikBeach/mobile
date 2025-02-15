@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Pressable, Switch, Platform } from 'react-native';
+import { View, StyleSheet, FlatList, Pressable, Switch, Platform, TextInput } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
@@ -13,7 +13,21 @@ import { BookDetailInfo } from './BookDetailInfo';
 import { RelativeBooks } from './RelativeBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
-import Animated, { Layout } from 'react-native-reanimated';
+import Animated, {
+  Layout,
+  FadeIn,
+  withSpring,
+  withTiming,
+  interpolateColor,
+  useAnimatedStyle,
+  withSequence,
+  withDelay,
+  useSharedValue,
+  interpolate,
+  withRepeat,
+  Easing,
+  SlideInDown,
+} from 'react-native-reanimated';
 import { useAtom } from 'jotai';
 import { includeOtherTranslationsAtom } from '@/atoms/book';
 import { CommentEditor } from '@/components/comment/CommentEditor';
@@ -34,8 +48,11 @@ export function BookDetailScreenContent({ bookId }: Props) {
   const flatListRef = useRef<FlatList>(null);
   const [activeReviewId, setActiveReviewId] = useState<number | null>(null);
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
+  const [isReplyAnimating, setIsReplyAnimating] = useState(false);
   const { createCommentQueryData } = useCommentQueryData();
   const reviewRefs = useRef<{ [key: number]: React.RefObject<ReviewItemHandle> }>({});
+
+  const commentEditorRef = useRef<TextInput>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
@@ -147,6 +164,11 @@ export function BookDetailScreenContent({ bookId }: Props) {
     } else {
       setReplyToUser(null);
     }
+
+    setIsReplyAnimating(true);
+    setTimeout(() => {
+      setIsReplyAnimating(false);
+    }, 3000);
   };
 
   const onScrollToIndexFailed = (info: {
@@ -247,8 +269,9 @@ export function BookDetailScreenContent({ bookId }: Props) {
         ]}
       />
       {activeReviewId && (
-        <View style={styles.commentEditorContainer}>
+        <Animated.View entering={SlideInDown.duration(300)} style={styles.commentEditorContainer}>
           <CommentEditor
+            textInputRef={commentEditorRef}
             onSubmit={content => {
               createComment({ reviewId: activeReviewId, content });
             }}
@@ -257,9 +280,9 @@ export function BookDetailScreenContent({ bookId }: Props) {
               setReplyToUser(null);
             }}
             replyToUser={replyToUser}
-            autoFocus
+            isReplying={isReplyAnimating}
           />
-        </View>
+        </Animated.View>
       )}
     </View>
   );
