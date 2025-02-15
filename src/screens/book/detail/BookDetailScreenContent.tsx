@@ -149,12 +149,6 @@ export function BookDetailScreenContent({ bookId }: Props) {
     }, 100);
   };
 
-  const getItemLayout = (data: any, index: number) => ({
-    length: 200,
-    offset: 200 * index,
-    index,
-  });
-
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
       <BookDetailInfo bookId={bookId} onReviewPress={handleReviewPress} />
