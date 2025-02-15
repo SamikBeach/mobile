@@ -131,6 +131,24 @@ export function BookDetailScreenContent({ bookId }: Props) {
     }
   };
 
+  const onScrollToIndexFailed = (info: {
+    index: number;
+    highestMeasuredFrameIndex: number;
+    averageItemLength: number;
+  }) => {
+    const offset = info.averageItemLength * info.index;
+    flatListRef.current?.scrollToOffset({ offset, animated: false });
+    setTimeout(() => {
+      if (flatListRef.current !== null) {
+        flatListRef.current.scrollToIndex({
+          index: info.index,
+          animated: true,
+          viewPosition: 0,
+        });
+      }
+    }, 100);
+  };
+
   const getItemLayout = (data: any, index: number) => ({
     length: 200,
     offset: 200 * index,
@@ -188,6 +206,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
       <Animated.FlatList
         ref={flatListRef}
         data={reviews}
+        onScrollToIndexFailed={onScrollToIndexFailed}
         renderItem={({ item }) => (
           <View style={styles.reviewItemContainer}>
             {isLoading ? (
@@ -213,7 +232,6 @@ export function BookDetailScreenContent({ bookId }: Props) {
           styles.reviewList,
           activeReviewId ? { paddingBottom: Platform.OS === 'ios' ? 90 : 56 } : undefined,
         ]}
-        getItemLayout={getItemLayout}
       />
       {activeReviewId && (
         <View style={styles.commentEditorContainer}>
