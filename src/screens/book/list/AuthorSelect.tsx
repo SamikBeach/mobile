@@ -117,9 +117,9 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.lg,
-    minWidth: 120,
+    minWidth: 94,
     gap: spacing.sm,
-    height: 44,
+    height: 38,
   },
   buttonText: {
     fontSize: 14,
