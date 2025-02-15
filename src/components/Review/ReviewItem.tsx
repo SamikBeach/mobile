@@ -243,7 +243,7 @@ export function ReviewItem({
               <Icon
                 name="message-circle"
                 size={18}
-                color={showComments ? colors.primary[500] : colors.gray[400]}
+                color={showComments ? colors.gray[900] : colors.gray[400]}
               />
               <Text style={[styles.actionText, showComments && styles.activeActionText]}>
                 {review.commentCount}

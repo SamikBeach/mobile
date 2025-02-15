@@ -305,9 +305,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.white,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
-    paddingBottom: Platform.OS === 'ios' ? 34 : 0,
+    padding: spacing.lg,
+    backgroundColor: colors.white,
+    ...Platform.select({
+      ios: {
+        paddingBottom: spacing.lg,
+      },
+    }),
   },
 });
