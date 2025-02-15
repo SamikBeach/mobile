@@ -9,7 +9,7 @@ import { colors, spacing } from '@/styles/theme';
 import type { Comment } from '@/types/comment';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import Animated, { Easing, FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 
 interface Props {
   reviewId: number;
@@ -58,7 +58,7 @@ export function CommentList({ reviewId, onReply }: Props) {
     <Animated.View
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(200)}
-      layout={Layout.springify()}
+      layout={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
       style={styles.container}>
       {comments.map(comment => (
         <CommentItem key={comment.id} comment={comment} reviewId={reviewId} onReply={onReply} />

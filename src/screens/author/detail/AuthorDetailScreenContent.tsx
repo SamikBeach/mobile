@@ -13,7 +13,7 @@ import { AuthorDetailInfo } from './AuthorDetailInfo';
 import { AuthorBooks } from './AuthorBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
-import Animated, { Layout } from 'react-native-reanimated';
+import Animated, { Easing, Layout } from 'react-native-reanimated';
 
 interface Props {
   authorId: number;
@@ -102,7 +102,7 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
           {isLoading ? <ReviewItemSkeleton /> : <ReviewItem review={item} showBookInfo />}
         </View>
       )}
-      itemLayoutAnimation={Layout.springify()}
+      itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
       ListHeaderComponent={ListHeaderComponent}
       ListEmptyComponent={ListEmptyComponent}
       keyExtractor={item => item.id.toString()}

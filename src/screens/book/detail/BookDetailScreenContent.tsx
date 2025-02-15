@@ -13,7 +13,7 @@ import { BookDetailInfo } from './BookDetailInfo';
 import { RelativeBooks } from './RelativeBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
-import Animated, { Layout, SlideInDown } from 'react-native-reanimated';
+import Animated, { Easing, Layout, SlideInDown } from 'react-native-reanimated';
 import { useAtom } from 'jotai';
 import { includeOtherTranslationsAtom } from '@/atoms/book';
 import { CommentEditor } from '@/components/comment/CommentEditor';
@@ -243,7 +243,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
             )}
           </View>
         )}
-        itemLayoutAnimation={Layout.springify()}
+        itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
         ListHeaderComponent={ListHeaderComponent}
         ListEmptyComponent={ListEmptyComponent}
         keyExtractor={item => item.id.toString()}

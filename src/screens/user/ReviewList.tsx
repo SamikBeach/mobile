@@ -8,7 +8,7 @@ import { spacing, colors } from '@/styles/theme';
 import type { Review } from '@/types/review';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import Animated, { Easing, FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 import { ReviewListSkeleton } from '@/components/common/Skeleton';
 
 interface Props {
@@ -66,7 +66,7 @@ export function ReviewList({ userId }: Props) {
       contentContainerStyle={styles.container}
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(200)}
-      itemLayoutAnimation={Layout.springify()}
+      itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
     />
   );
 }

@@ -39,7 +39,7 @@ interface Props {
   showBookInfo?: boolean;
   hideUserInfo?: boolean;
   hideDate?: boolean;
-  onCommentPress: (reviewId: number, user?: { nickname: string }) => void;
+  onCommentPress?: (reviewId: number, user?: { nickname: string }) => void;
   ref?: React.RefObject<ReviewItemHandle>;
 }
 
@@ -127,7 +127,7 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
     };
 
     const handleReply = (user: { nickname: string }) => {
-      onCommentPress(review.id, user);
+      onCommentPress?.(review.id, user);
     };
 
     const handleReplyPress = () => {
@@ -256,7 +256,7 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
               <Pressable
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 style={styles.actionButton}
-                onPress={() => onCommentPress(review.id)}>
+                onPress={() => onCommentPress?.(review.id)}>
                 <Text style={styles.replyButtonText}>답글 달기</Text>
               </Pressable>
             </View>
