@@ -149,13 +149,15 @@ export function BookDetailScreenContent({ bookId }: Props) {
   });
 
   const handleCommentPress = (reviewId: number, user?: { nickname: string }) => {
-    const reviewIndex = reviews.findIndex(review => review.id === reviewId);
-    if (reviewIndex !== -1) {
-      flatListRef.current?.scrollToIndex({
-        index: reviewIndex,
-        animated: true,
-        viewPosition: 0,
-      });
+    if (!user) {
+      const reviewIndex = reviews.findIndex(review => review.id === reviewId);
+      if (reviewIndex !== -1) {
+        flatListRef.current?.scrollToIndex({
+          index: reviewIndex,
+          animated: true,
+          viewPosition: 0,
+        });
+      }
     }
 
     setActiveReviewId(reviewId);
