@@ -144,6 +144,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
           viewPosition: 0,
         });
       }
+      commentEditorRef.current?.clear();
     }
 
     setActiveReviewId(reviewId);
