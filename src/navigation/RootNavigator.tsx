@@ -70,6 +70,7 @@ function TabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#666',
+        tabBarHideOnKeyboard: true,
       }}>
       <Tab.Screen
         name="HomeTab"
@@ -270,6 +271,7 @@ function withTabNavigator(Component: React.ComponentType<any>) {
           headerShown: false,
           tabBarActiveTintColor: '#007AFF',
           tabBarInactiveTintColor: '#666',
+          tabBarHideOnKeyboard: true,
         }}>
         <Tab.Screen
           name="HomeTab"
