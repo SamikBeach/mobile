@@ -159,8 +159,6 @@ export function BookDetailScreenContent({ bookId }: Props) {
     setTimeout(() => {
       setIsReplyAnimating(false);
     }, 3000);
-
-    commentEditorRef.current?.focus();
   };
 
   const onScrollToIndexFailed = (info: {
