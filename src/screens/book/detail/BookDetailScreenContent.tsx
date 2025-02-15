@@ -99,6 +99,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
             <Pressable
               style={styles.toggleContainer}
               onPress={() => setIncludeOtherTranslations(prev => !prev)}>
+              <Text style={styles.toggleLabel}>다른 번역본 리뷰 포함</Text>
               <Switch
                 value={includeOtherTranslations}
                 onValueChange={setIncludeOtherTranslations}
@@ -111,7 +112,6 @@ export function BookDetailScreenContent({ bookId }: Props) {
                   },
                 })}
               />
-              <Text style={styles.toggleLabel}>다른 번역본 리뷰 포함</Text>
             </Pressable>
           </View>
         </View>
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   toggleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.xs,
     paddingVertical: spacing.sm,
     cursor: 'pointer',
   },

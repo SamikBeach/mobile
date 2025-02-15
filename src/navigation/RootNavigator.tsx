@@ -151,7 +151,7 @@ function StackNavigator({
           component={HomeScreen}
           options={{
             headerStyle: {
-              height: Platform.OS === 'ios' ? 120 : 60,
+              height: Platform.OS === 'ios' ? 100 : 60,
             },
             headerLeft: () => (
               <View style={styles.headerLeftContainer}>
