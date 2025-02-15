@@ -1,11 +1,10 @@
 import React, { useRef, useEffect } from 'react';
-import { View, StyleSheet, FlatList, Pressable } from 'react-native';
+import { View, StyleSheet, FlatList, Pressable, Switch, Platform } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { ReviewItem } from '@/components/review/ReviewItem';
-import { Checkbox } from '@/components/common/Checkbox';
 import type { Review } from '@/types/review';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
@@ -96,12 +95,25 @@ export function BookDetailScreenContent({ bookId }: Props) {
               <Text style={styles.badgeText}>{book?.reviewCount ?? 0}</Text>
             </View>
           </View>
-          <Pressable
-            style={styles.checkboxContainer}
-            onPress={() => setIncludeOtherTranslations(prev => !prev)}>
-            <Checkbox checked={includeOtherTranslations} onChange={setIncludeOtherTranslations} />
-            <Text style={styles.checkboxLabel}>다른 번역본 리뷰 포함</Text>
-          </Pressable>
+          <View style={styles.toggleContainer}>
+            <Pressable
+              style={styles.toggleContainer}
+              onPress={() => setIncludeOtherTranslations(prev => !prev)}>
+              <Switch
+                value={includeOtherTranslations}
+                onValueChange={setIncludeOtherTranslations}
+                trackColor={{ false: colors.gray[200], true: colors.gray[900] }}
+                thumbColor={colors.white}
+                ios_backgroundColor={colors.gray[200]}
+                style={Platform.select({
+                  ios: {
+                    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+                  },
+                })}
+              />
+              <Text style={styles.toggleLabel}>다른 번역본 리뷰 포함</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </View>
@@ -180,13 +192,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.gray[600],
   },
-  checkboxContainer: {
+  toggleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
+    cursor: 'pointer',
   },
-  checkboxLabel: {
+  toggleLabel: {
     fontSize: 14,
     color: colors.gray[600],
   },
