@@ -51,6 +51,18 @@ interface LexicalContent {
 
 const TERMS_AGREED_KEY = 'review_terms_agreed';
 
+function parseLexicalContent(node: LexicalNode): string {
+  if (node.type === 'text') {
+    return node.text || '';
+  }
+
+  if (node.children) {
+    return node.children.map(child => parseLexicalContent(child)).join('\n');
+  }
+
+  return '';
+}
+
 export function WriteReviewScreen({ route, navigation }: Props) {
   const { bookId, reviewId } = route.params;
   const currentUser = useCurrentUser();
@@ -211,8 +223,8 @@ export function WriteReviewScreen({ route, navigation }: Props) {
       setTitle(reviewData.data.title);
       try {
         const parsedContent: LexicalContent = JSON.parse(reviewData.data.content);
-        const plainText = parsedContent.root.children?.[0]?.children?.[0]?.text || '';
-        setContent(plainText);
+        const plainText = parseLexicalContent(parsedContent.root);
+        setContent(plainText.trim());
       } catch (error) {
         console.warn('Failed to parse review content:', error);
         setContent('');
