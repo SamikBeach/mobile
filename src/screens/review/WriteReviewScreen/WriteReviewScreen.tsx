@@ -206,7 +206,7 @@ export function WriteReviewScreen({ route, navigation }: Props) {
       return;
     }
 
-    if (!hasAgreedToTerms) {
+    if (!reviewId && !hasAgreedToTerms) {
       setShowTermsSheet(true);
       return;
     }
