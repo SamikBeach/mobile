@@ -23,9 +23,10 @@ interface Props {
   comment: Comment;
   reviewId: number;
   onReply: (user: { nickname: string }) => void;
+  hideReplyButton?: boolean;
 }
 
-export function CommentItem({ comment, reviewId, onReply }: Props) {
+export function CommentItem({ comment, reviewId, onReply, hideReplyButton = false }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const currentUser = useCurrentUser();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -150,12 +151,14 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
             {comment.likeCount}
           </Text>
         </Pressable>
-        <Pressable
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          style={styles.actionButton}
-          onPress={handleReplyPress}>
-          <Text style={styles.actionText}>답글 달기</Text>
-        </Pressable>
+        {!hideReplyButton && (
+          <Pressable
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.actionButton}
+            onPress={handleReplyPress}>
+            <Text style={styles.actionText}>답글 달기</Text>
+          </Pressable>
+        )}
       </View>
     </Animated.View>
   );

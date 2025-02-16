@@ -14,9 +14,10 @@ import Animated, { Easing, FadeIn, FadeOut, Layout } from 'react-native-reanimat
 interface Props {
   reviewId: number;
   onReply: (user: { nickname: string }) => void;
+  hideReplyButton?: boolean;
 }
 
-export function CommentList({ reviewId, onReply }: Props) {
+export function CommentList({ reviewId, onReply, hideReplyButton = false }: Props) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Comment>>
   >({
@@ -61,7 +62,13 @@ export function CommentList({ reviewId, onReply }: Props) {
       layout={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
       style={styles.container}>
       {comments.map(comment => (
-        <CommentItem key={comment.id} comment={comment} reviewId={reviewId} onReply={onReply} />
+        <CommentItem
+          key={comment.id}
+          comment={comment}
+          reviewId={reviewId}
+          onReply={onReply}
+          hideReplyButton={hideReplyButton}
+        />
       ))}
       {hasNextPage && (
         <Button

@@ -52,7 +52,7 @@ export function ReviewList({ userId }: Props) {
       data={reviews}
       renderItem={({ item }) => (
         <View style={styles.reviewItemContainer}>
-          <ReviewItem review={item} showBookInfo hideUserInfo hideDate />
+          <ReviewItem review={item} showBookInfo hideUserInfo hideDate hideReplyButton />
         </View>
       )}
       ItemSeparatorComponent={() => <View style={styles.divider} />}

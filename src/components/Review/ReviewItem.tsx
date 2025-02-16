@@ -41,10 +41,21 @@ interface Props {
   hideDate?: boolean;
   onCommentPress?: (reviewId: number, user?: { nickname: string }) => void;
   ref?: React.RefObject<ReviewItemHandle>;
+  hideReplyButton?: boolean;
 }
 
 export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
-  ({ review, showBookInfo, hideUserInfo = false, hideDate = false, onCommentPress }, ref) => {
+  (
+    {
+      review,
+      showBookInfo,
+      hideUserInfo = false,
+      hideDate = false,
+      onCommentPress,
+      hideReplyButton = false,
+    },
+    ref,
+  ) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isTruncated, setIsTruncated] = useState(false);
     const [actionSheetVisible, setActionSheetVisible] = useState(false);
@@ -254,19 +265,21 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
                   {review.commentCount}
                 </Text>
               </Pressable>
-              <Pressable
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                style={styles.actionButton}
-                onPress={() => {
-                  onCommentPress?.(review.id);
-                }}>
-                <Text style={styles.replyButtonText}>답글 달기</Text>
-              </Pressable>
+              {!hideReplyButton && (
+                <Pressable
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  style={styles.actionButton}
+                  onPress={() => {
+                    onCommentPress?.(review.id);
+                  }}>
+                  <Text style={styles.replyButtonText}>답글 달기</Text>
+                </Pressable>
+              )}
             </View>
           </View>
           {showComments && (
             <View style={styles.commentSection}>
-              <CommentList reviewId={review.id} onReply={handleReply} />
+              <CommentList reviewId={review.id} onReply={handleReply} hideReplyButton={hideReplyButton} />
             </View>
           )}
           {!isMyReview && currentUser && (
