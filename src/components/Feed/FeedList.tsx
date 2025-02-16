@@ -9,6 +9,7 @@ import type { Review } from '@/types/review';
 import { AxiosResponse } from 'axios';
 import { PaginatedResponse } from '@/types/common';
 import { colors, spacing } from '@/styles/theme';
+import Animated, { Easing, Layout } from 'react-native-reanimated';
 
 interface Props {
   refreshControl?: React.ReactElement<RefreshControlProps>;
@@ -55,7 +56,7 @@ function FeedListContent({ refreshControl }: Props) {
         value={tab}
         onChange={value => setTab(value as 'popular' | 'recent')}
       />
-      <FlatList
+      <Animated.FlatList
         data={reviews}
         renderItem={({ item }) => (
           <Feed key={item.id} review={item} user={item.user} book={item.book} />
@@ -66,6 +67,7 @@ function FeedListContent({ refreshControl }: Props) {
         ListFooterComponent={hasNextPage ? <FeedSkeleton /> : null}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
         contentContainerStyle={styles.listContent}
+        itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
         refreshControl={refreshControl}
       />
     </View>
