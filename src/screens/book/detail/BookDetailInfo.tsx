@@ -77,7 +77,7 @@ export function BookDetailInfo({ bookId, onReviewPress }: Props) {
       return;
     }
 
-    navigation.navigate('WriteReview', { bookId: bookId });
+    navigation.navigate('WriteReview', { bookId });
   };
 
   const handleAuthorPress = () => {

@@ -51,6 +51,11 @@ export default function RootNavigator() {
           options={{ headerTitle: '작가 상세' }}
         />
         <Stack.Screen
+          name="WriteReview"
+          component={WriteReviewScreen}
+          options={{ headerTitle: '리뷰 작성' }}
+        />
+        <Stack.Screen
           name="User"
           component={withTabNavigator(UserScreen)}
           options={{ headerShown: false }}

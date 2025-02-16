@@ -279,7 +279,11 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
           </View>
           {showComments && (
             <View style={styles.commentSection}>
-              <CommentList reviewId={review.id} onReply={handleReply} hideReplyButton={hideReplyButton} />
+              <CommentList
+                reviewId={review.id}
+                onReply={handleReply}
+                hideReplyButton={hideReplyButton}
+              />
             </View>
           )}
           {!isMyReview && currentUser && (
@@ -343,20 +347,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.sm,
-    alignSelf: 'flex-start',
     marginTop: 4,
+    maxWidth: '85%',
     ...Platform.select({
       android: {
         paddingVertical: 6,
       },
     }),
   },
-  bookAuthor: {
-    fontSize: 11,
-    color: colors.gray[500],
-  },
   bookInfo: {
     gap: 2,
+    marginRight: spacing.sm,
+    maxWidth: '85%',
   },
   bookTitle: {
     fontSize: 12,
@@ -367,6 +369,10 @@ const styles = StyleSheet.create({
         marginTop: 6,
       },
     }),
+  },
+  bookAuthor: {
+    fontSize: 11,
+    color: colors.gray[500],
   },
   title: {
     fontSize: 16,
