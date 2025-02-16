@@ -57,7 +57,9 @@ function FeedListContent({ refreshControl }: Props) {
       />
       <FlatList
         data={reviews}
-        renderItem={({ item }) => <Feed review={item} user={item.user} book={item.book} />}
+        renderItem={({ item }) => (
+          <Feed key={item.id} review={item} user={item.user} book={item.book} />
+        )}
         keyExtractor={item => String(item.id)}
         onEndReached={() => hasNextPage && fetchNextPage()}
         onEndReachedThreshold={0.5}
