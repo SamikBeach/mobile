@@ -9,9 +9,9 @@ export type TabParamList = {
 export type RootStackParamList = {
   Tabs: undefined;
   Home: undefined;
-  BookList: undefined;
-  AuthorList: undefined;
-  User: { userId: number };
+  BookList: { ref?: React.MutableRefObject<null> };
+  AuthorList: { ref?: React.MutableRefObject<null> };
+  User: { userId: string; ref?: React.MutableRefObject<null> };
   BookDetail: { bookId: number };
   AuthorDetail: { authorId: number };
   Review: { reviewId: number };

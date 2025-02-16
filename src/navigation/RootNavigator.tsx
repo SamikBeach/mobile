@@ -108,9 +108,7 @@ function TabNavigator() {
             tabBarLabel: '마이페이지',
             tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
           }}>
-          {() => (
-            <StackNavigator initialRouteName="User" initialParams={{ userId: currentUser.id }} />
-          )}
+          {() => <StackNavigator initialRouteName="User" />}
         </Tab.Screen>
       ) : (
         <Tab.Screen
@@ -126,13 +124,7 @@ function TabNavigator() {
   );
 }
 
-function StackNavigator({
-  initialRouteName,
-  initialParams,
-}: {
-  initialRouteName: keyof RootStackParamList;
-  initialParams?: Record<string, any>;
-}) {
+function StackNavigator({ initialRouteName }: { initialRouteName: keyof RootStackParamList }) {
   const [searchVisible, setSearchVisible] = useState(false);
 
   const SearchButton = () => (
@@ -186,7 +178,6 @@ function StackNavigator({
           name="User"
           component={UserScreen}
           options={{ headerTitle: '마이페이지', headerShown: false }}
-          initialParams={initialParams}
         />
         <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />

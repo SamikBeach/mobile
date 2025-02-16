@@ -25,7 +25,11 @@ interface PaginatedResponse<T> {
   meta: PaginationMeta;
 }
 
-export function BookList() {
+type BookListProps = {
+  scrollRef?: React.MutableRefObject<null>;
+};
+
+export function BookList({ scrollRef }: BookListProps) {
   const genre = useAtomValue(bookGenreAtom);
   const searchKeyword = useAtomValue(bookSearchKeywordAtom);
   const sortMode = useAtomValue(bookSortModeAtom);
@@ -99,6 +103,7 @@ export function BookList() {
 
   return (
     <FlatList<Book>
+      ref={scrollRef}
       data={books}
       renderItem={({ item }) => <BookItem book={item} />}
       keyExtractor={item => item.id.toString()}
