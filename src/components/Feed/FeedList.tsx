@@ -1,5 +1,5 @@
-import React, { Suspense, useMemo, useState } from 'react';
-import { View, StyleSheet, RefreshControlProps } from 'react-native';
+import React, { Suspense, useMemo, useState, forwardRef } from 'react';
+import { View, StyleSheet, RefreshControlProps, FlatList } from 'react-native';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { Tab } from '@/components/common/Tab';
 import { Feed } from './Feed';
@@ -15,7 +15,7 @@ interface Props {
   refreshControl?: React.ReactElement<RefreshControlProps>;
 }
 
-function FeedListContent({ refreshControl }: Props) {
+const FeedListContent = forwardRef<FlatList, Props>(({ refreshControl }, ref) => {
   const [tab, setTab] = useState<'popular' | 'recent'>('popular');
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery<
@@ -63,6 +63,7 @@ function FeedListContent({ refreshControl }: Props) {
         onChange={value => setTab(value as 'popular' | 'recent')}
       />
       <Animated.FlatList
+        ref={ref}
         data={reviews}
         renderItem={({ item }) => (
           <Feed key={item.id} review={item} user={item.user} book={item.book} />
@@ -78,9 +79,11 @@ function FeedListContent({ refreshControl }: Props) {
       />
     </View>
   );
-}
+});
 
-export function FeedList({ refreshControl }: Props) {
+FeedListContent.displayName = 'FeedListContent';
+
+export const FeedList = forwardRef<FlatList, Props>(({ refreshControl }, ref) => {
   return (
     <Suspense
       fallback={
@@ -98,10 +101,12 @@ export function FeedList({ refreshControl }: Props) {
           ))}
         </View>
       }>
-      <FeedListContent refreshControl={refreshControl} />
+      <FeedListContent refreshControl={refreshControl} ref={ref} />
     </Suspense>
   );
-}
+});
+
+FeedList.displayName = 'FeedList';
 
 const styles = StyleSheet.create({
   container: {
