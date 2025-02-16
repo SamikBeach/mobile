@@ -26,7 +26,7 @@ const FeedListContent = forwardRef<FlatList, Props>(({ refreshControl }, ref) =>
     queryFn: async ({ pageParam = 1 }) => {
       const response = await reviewApi.searchReviews({
         page: pageParam as number,
-        limit: 10,
+        limit: 5,
         sortBy: tab === 'popular' ? 'likeCount:DESC' : 'createdAt:DESC',
       });
       return response;
