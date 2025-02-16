@@ -124,6 +124,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
       });
       setActiveReviewId(null);
       setReplyToUser(null);
+      handleCommentSuccess(reviewId);
     },
     onError: (error: Error) => {
       console.error(error);
@@ -177,6 +178,17 @@ export function BookDetailScreenContent({ bookId }: Props) {
         });
       }
     }, 100);
+  };
+
+  const handleCommentSuccess = (reviewId: number) => {
+    const reviewIndex = reviews.findIndex(review => review.id === reviewId);
+    if (reviewIndex !== -1) {
+      flatListRef.current?.scrollToIndex({
+        index: reviewIndex,
+        animated: true,
+        viewPosition: 0,
+      });
+    }
   };
 
   const ListHeaderComponent = (
