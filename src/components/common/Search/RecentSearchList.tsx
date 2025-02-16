@@ -84,7 +84,10 @@ export default function RecentSearchList({ onClose }: Props) {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      keyboardShouldPersistTaps="always"
+      keyboardDismissMode="on-drag">
       <Text style={styles.title}>최근 검색</Text>
       {searches.map(search => {
         if (search.book) {

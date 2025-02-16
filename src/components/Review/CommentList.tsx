@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import { CommentItem } from '../comment/CommentItem';
@@ -9,14 +9,15 @@ import { colors, spacing } from '@/styles/theme';
 import type { Comment } from '@/types/comment';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
+import Animated, { Easing, FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 
 interface Props {
   reviewId: number;
   onReply: (user: { nickname: string }) => void;
+  hideReplyButton?: boolean;
 }
 
-export function CommentList({ reviewId, onReply }: Props) {
+export function CommentList({ reviewId, onReply, hideReplyButton = false }: Props) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Comment>>
   >({
@@ -58,10 +59,16 @@ export function CommentList({ reviewId, onReply }: Props) {
     <Animated.View
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(200)}
-      layout={Layout.springify()}
+      layout={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
       style={styles.container}>
       {comments.map(comment => (
-        <CommentItem key={comment.id} comment={comment} reviewId={reviewId} onReply={onReply} />
+        <CommentItem
+          key={comment.id}
+          comment={comment}
+          reviewId={reviewId}
+          onReply={onReply}
+          hideReplyButton={hideReplyButton}
+        />
       ))}
       {hasNextPage && (
         <Button
@@ -69,7 +76,15 @@ export function CommentList({ reviewId, onReply }: Props) {
           onPress={() => fetchNextPage()}
           disabled={isFetchingNextPage}
           style={styles.moreButton}>
-          {isFetchingNextPage ? '불러오는 중...' : '댓글 더보기'}
+          {isFetchingNextPage ? (
+            <Text style={styles.moreButtonText}>불러오는 중...</Text>
+          ) : (
+            <View style={styles.moreButtonInner}>
+              <View style={styles.moreButtonLine} />
+              <Text style={styles.moreButtonText}>답글 더보기</Text>
+              <View style={styles.moreButtonLine} />
+            </View>
+          )}
         </Button>
       )}
     </Animated.View>
@@ -82,7 +97,22 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   moreButton: {
-    alignSelf: 'flex-start',
+    marginHorizontal: spacing.md,
+  },
+  moreButtonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  moreButtonLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.gray[200],
+  },
+  moreButtonText: {
+    fontSize: 13,
+    color: colors.gray[500],
+    fontWeight: '600',
   },
   emptyContainer: {
     alignItems: 'center',

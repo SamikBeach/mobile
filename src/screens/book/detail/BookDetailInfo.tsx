@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Pressable, Linking } from 'react-native';
+import { View, StyleSheet, Pressable, Linking, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { Button } from '@/components/common/Button';
 import Icon from 'react-native-vector-icons/Feather';
@@ -77,14 +77,18 @@ export function BookDetailInfo({ bookId, onReviewPress }: Props) {
       return;
     }
 
-    navigation.navigate('WriteReview', { bookId: bookId });
+    navigation.navigate('WriteReview', { bookId });
   };
 
-  if (isLoading) {
+  const handleAuthorPress = () => {
+    if (!book?.authorBooks[0].author.id) return;
+
+    navigation.navigate('AuthorDetail', { authorId: book?.authorBooks[0].author.id });
+  };
+
+  if (isLoading || !book) {
     return <BookDetailInfoSkeleton />;
   }
-
-  if (!book) return null;
 
   return (
     <View style={styles.container}>
@@ -99,12 +103,16 @@ export function BookDetailInfo({ bookId, onReviewPress }: Props) {
               <Text style={styles.title} numberOfLines={3}>
                 {book.title}
               </Text>
-              <Text style={styles.author} numberOfLines={1}>
-                {book.authorBooks
-                  .map(ab => ab.author.nameInKor)
-                  .join(', ')
-                  .trim()}
-              </Text>
+              <TouchableOpacity
+                onPress={handleAuthorPress}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Text style={styles.author} numberOfLines={1}>
+                  {book.authorBooks
+                    .map(ab => ab.author.nameInKor)
+                    .join(', ')
+                    .trim()}
+                </Text>
+              </TouchableOpacity>
               <Text style={styles.meta} numberOfLines={2}>
                 {book.publisher}
                 {book.publisher && formattedPublicationDate && ' · '}
@@ -172,7 +180,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    marginBottom: spacing.xs,
   },
   statItem: {
     flexDirection: 'row',

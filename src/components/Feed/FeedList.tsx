@@ -1,5 +1,5 @@
-import React, { Suspense, useMemo, useState } from 'react';
-import { View, FlatList, StyleSheet, RefreshControlProps } from 'react-native';
+import React, { Suspense, useMemo, useState, forwardRef } from 'react';
+import { View, StyleSheet, RefreshControlProps, FlatList } from 'react-native';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { Tab } from '@/components/common/Tab';
 import { Feed } from './Feed';
@@ -9,15 +9,16 @@ import type { Review } from '@/types/review';
 import { AxiosResponse } from 'axios';
 import { PaginatedResponse } from '@/types/common';
 import { colors, spacing } from '@/styles/theme';
+import Animated, { Easing, Layout } from 'react-native-reanimated';
 
 interface Props {
   refreshControl?: React.ReactElement<RefreshControlProps>;
 }
 
-function FeedListContent({ refreshControl }: Props) {
+const FeedListContent = forwardRef<FlatList, Props>(({ refreshControl }, ref) => {
   const [tab, setTab] = useState<'popular' | 'recent'>('popular');
 
-  const { data, fetchNextPage, hasNextPage } = useSuspenseInfiniteQuery<
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
     Error
   >({
@@ -25,7 +26,7 @@ function FeedListContent({ refreshControl }: Props) {
     queryFn: async ({ pageParam = 1 }) => {
       const response = await reviewApi.searchReviews({
         page: pageParam as number,
-        limit: 10,
+        limit: 5,
         sortBy: tab === 'popular' ? 'likeCount:DESC' : 'createdAt:DESC',
       });
       return response;
@@ -45,6 +46,12 @@ function FeedListContent({ refreshControl }: Props) {
 
   const reviews = useMemo(() => data?.pages?.flatMap(page => page.data.data) ?? [], [data]);
 
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Tab
@@ -55,22 +62,28 @@ function FeedListContent({ refreshControl }: Props) {
         value={tab}
         onChange={value => setTab(value as 'popular' | 'recent')}
       />
-      <FlatList
+      <Animated.FlatList
+        ref={ref}
         data={reviews}
-        renderItem={({ item }) => <Feed review={item} user={item.user} book={item.book} />}
+        renderItem={({ item }) => (
+          <Feed key={item.id} review={item} user={item.user} book={item.book} />
+        )}
         keyExtractor={item => String(item.id)}
-        onEndReached={() => hasNextPage && fetchNextPage()}
+        onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={hasNextPage ? <FeedSkeleton /> : null}
+        ListFooterComponent={isFetchingNextPage ? <FeedSkeleton /> : null}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
         contentContainerStyle={styles.listContent}
+        itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
         refreshControl={refreshControl}
       />
     </View>
   );
-}
+});
 
-export function FeedList({ refreshControl }: Props) {
+FeedListContent.displayName = 'FeedListContent';
+
+export const FeedList = forwardRef<FlatList, Props>(({ refreshControl }, ref) => {
   return (
     <Suspense
       fallback={
@@ -88,10 +101,12 @@ export function FeedList({ refreshControl }: Props) {
           ))}
         </View>
       }>
-      <FeedListContent refreshControl={refreshControl} />
+      <FeedListContent refreshControl={refreshControl} ref={ref} />
     </Suspense>
   );
-}
+});
+
+FeedList.displayName = 'FeedList';
 
 const styles = StyleSheet.create({
   container: {

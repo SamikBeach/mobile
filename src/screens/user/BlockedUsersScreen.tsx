@@ -21,6 +21,9 @@ export function BlockedUsersScreen() {
     mutationFn: (userId: number) => userApi.unblockUser(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blockedUsers'] });
+      queryClient.invalidateQueries({ queryKey: ['reviews'] });
+      queryClient.invalidateQueries({ queryKey: ['review'] });
+
       Toast.show({
         type: 'success',
         text1: '차단이 해제되었습니다.',

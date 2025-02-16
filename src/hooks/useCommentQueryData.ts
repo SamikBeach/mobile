@@ -19,11 +19,6 @@ interface DeleteCommentParams {
   commentId: number;
 }
 
-interface CreateCommentParams {
-  reviewId: number;
-  comment: Comment;
-}
-
 interface UpdateCommentParams {
   reviewId: number;
   commentId: number;
@@ -101,7 +96,13 @@ export function useCommentQueryData() {
     });
   }
 
-  function createCommentQueryData({ reviewId, comment }: CreateCommentParams) {
+  const createCommentQueryData = ({
+    reviewId,
+    comment,
+  }: {
+    reviewId: number;
+    comment: Comment;
+  }) => {
     // 댓글 목록 업데이트
     queryClient.setQueryData<InfiniteData<AxiosResponse<PaginatedResponse<Comment>>>>(
       ['comments', reviewId],
@@ -127,17 +128,40 @@ export function useCommentQueryData() {
     );
 
     // 리뷰의 댓글 수 업데이트
-    queryClient.setQueryData<AxiosResponse<Review>>(['review', reviewId], reviewData => {
-      if (!reviewData) return reviewData;
+    // 1. 도서 리뷰 목록에서 업데이트
+    queryClient.setQueriesData<InfiniteData<AxiosResponse<PaginatedResponse<Review>>>>(
+      { queryKey: ['book-reviews'], exact: false },
+      old => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map(page => ({
+            ...page,
+            data: {
+              ...page.data,
+              data: page.data.data.map(review =>
+                review.id === reviewId
+                  ? { ...review, commentCount: (review.commentCount ?? 0) + 1 }
+                  : review,
+              ),
+            },
+          })),
+        };
+      },
+    );
+
+    // 2. 단일 리뷰 상세에서도 업데이트
+    queryClient.setQueryData<AxiosResponse<Review>>(['review', reviewId], old => {
+      if (!old) return old;
       return {
-        ...reviewData,
+        ...old,
         data: {
-          ...reviewData.data,
-          commentCount: reviewData.data.commentCount + 1,
+          ...old.data,
+          commentCount: (old.data.commentCount ?? 0) + 1,
         },
       };
     });
-  }
+  };
 
   function updateCommentQueryData({ reviewId, commentId, content }: UpdateCommentParams) {
     queryClient.setQueryData<InfiniteData<AxiosResponse<PaginatedResponse<Comment>>>>(

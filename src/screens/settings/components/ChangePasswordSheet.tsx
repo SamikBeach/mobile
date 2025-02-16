@@ -128,9 +128,7 @@ export function ChangePasswordSheet({ visible, onClose, onSubmit, isLoading }: P
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: {},
   content: {
     padding: spacing.xl,
     gap: spacing.xl,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Alert } from 'react-native';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { userApi } from '@/apis/user';
 import { ActionSheet } from '../common/ActionSheet/ActionSheet';
 import { ReportReasonActions } from './ReportReasonActions';
@@ -15,15 +15,22 @@ interface Props {
 }
 
 export function ReportActions({ visible, onClose, reviewId, userId, userNickname }: Props) {
+  const queryClient = useQueryClient();
+
   const [showReportReason, setShowReportReason] = useState(false);
 
   const { mutate: blockUser } = useMutation({
     mutationFn: () => userApi.blockUser(userId),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['review'] });
+      queryClient.invalidateQueries({ queryKey: ['reviews'] });
+      queryClient.invalidateQueries({ queryKey: ['blockedUsers'] });
+
       Toast.show({
         type: 'success',
         text1: '사용자를 차단했습니다.',
       });
+
       onClose();
     },
   });

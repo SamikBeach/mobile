@@ -6,13 +6,23 @@ import Icon from 'react-native-vector-icons/Feather';
 import { UserAvatar } from '@/components/common/UserAvatar';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Toast from 'react-native-toast-message';
+import { useComposedRef } from '@/hooks/useComposedRef';
+import Animated, {
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 
 interface Props {
+  textInputRef?: React.RefObject<TextInput>;
   onSubmit: (content: string) => void;
   onCancel: () => void;
   initialContent?: string;
   replyToUser?: { nickname: string } | null;
   showAvatar?: boolean;
+  isReplying?: boolean;
   autoFocus?: boolean;
 }
 
@@ -37,17 +47,49 @@ interface LexicalContent {
 }
 
 export function CommentEditor({
+  textInputRef,
   onSubmit,
   onCancel,
   initialContent,
   replyToUser,
   showAvatar = true,
+  isReplying = false,
   autoFocus = false,
 }: Props) {
   const [text, setText] = useState('');
   const [mentions, setMentions] = useState<string[]>([]);
   const currentUser = useCurrentUser();
   const inputRef = useRef<TextInput>(null);
+  const borderProgress = useSharedValue(0);
+  const composedRef = useComposedRef(textInputRef, inputRef);
+
+  useEffect(() => {
+    if (isReplying) {
+      borderProgress.value = 0;
+      borderProgress.value = withTiming(1, {
+        duration: 3000,
+        easing: Easing.bezier(0.4, 0, 0.2, 1),
+      });
+    }
+  }, [isReplying, borderProgress]);
+
+  const animatedInputStyle = useAnimatedStyle(() => ({
+    borderColor: interpolateColor(
+      borderProgress.value,
+      [0, 0.5, 1],
+      [colors.gray[200], colors.gray[900], colors.gray[200]],
+    ),
+    borderWidth: 1.5,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: colors.gray[50],
+    borderRadius: 20,
+    paddingLeft: 16,
+    paddingRight: 8,
+    paddingVertical: 8,
+    minHeight: 40,
+  }));
 
   useEffect(() => {
     if (initialContent) {
@@ -83,14 +125,6 @@ export function CommentEditor({
     }
   }, [initialContent, replyToUser]);
 
-  useEffect(() => {
-    if (autoFocus || replyToUser) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-    }
-  }, [autoFocus, replyToUser]);
-
   const handleTextChange = (newText: string) => {
     if (newText.length < text.length && mentions.length > 0) {
       const lastMention = mentions[mentions.length - 1];
@@ -99,9 +133,6 @@ export function CommentEditor({
       if (text.trim() === mentionText && newText.length < mentionText.length) {
         setText('');
         setMentions([]);
-        if (!isEditMode) {
-          onCancel();
-        }
         return;
       }
     }
@@ -159,7 +190,6 @@ export function CommentEditor({
 
   const handleCancel = () => {
     setText('');
-    onCancel();
   };
 
   const isEditMode = Boolean(initialContent);
@@ -171,9 +201,9 @@ export function CommentEditor({
           <UserAvatar user={currentUser} size="sm" />
         </View>
       )}
-      <View style={styles.inputContainer}>
+      <Animated.View style={animatedInputStyle}>
         <TextInput
-          ref={inputRef}
+          ref={composedRef}
           style={styles.input}
           placeholder={currentUser ? '댓글을 입력하세요.' : '로그인 후 댓글을 작성할 수 있습니다.'}
           placeholderTextColor={colors.gray[400]}
@@ -182,13 +212,14 @@ export function CommentEditor({
           multiline
           maxLength={1000}
           editable={Boolean(currentUser)}
+          autoFocus={autoFocus}
         />
-        {replyToUser && !isEditMode && (
+        {text.length > 0 && replyToUser && !isEditMode && (
           <Pressable onPress={handleCancel} hitSlop={8} style={styles.closeButton}>
             <Icon name="x" size={16} color={colors.gray[500]} />
           </Pressable>
         )}
-      </View>
+      </Animated.View>
       <View style={styles.buttonContainer}>
         {isEditMode && (
           <Pressable style={styles.cancelButton} onPress={onCancel}>
@@ -237,7 +268,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   closeButton: {
-    padding: 4,
+    padding: 2,
     marginLeft: 4,
   },
   input: {

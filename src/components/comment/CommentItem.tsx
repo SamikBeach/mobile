@@ -10,21 +10,26 @@ import { reviewApi } from '@/apis/review';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import { CommentActions } from './CommentActions';
 import Icon from 'react-native-vector-icons/Feather';
-import { colors } from '@/styles/theme';
+import { colors, spacing } from '@/styles/theme';
 import { LexicalContent } from '../common/LexicalContent';
 import { CommentEditor } from './CommentEditor';
 import Toast from 'react-native-toast-message';
 import Animated, { FadeInRight, FadeOutRight, Layout } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '@/navigation/types';
 
 interface Props {
   comment: Comment;
   reviewId: number;
   onReply: (user: { nickname: string }) => void;
+  hideReplyButton?: boolean;
 }
 
-export function CommentItem({ comment, reviewId, onReply }: Props) {
+export function CommentItem({ comment, reviewId, onReply, hideReplyButton = false }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const currentUser = useCurrentUser();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isMyComment = comment.user.id === currentUser?.id;
 
   const { updateCommentLikeQueryData, deleteCommentQueryData, updateCommentQueryData } =
@@ -87,6 +92,22 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
     },
   });
 
+  const handleLikePress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    toggleLike();
+  };
+
+  const handleReplyPress = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    onReply(comment.user);
+  };
+
   return (
     <Animated.View
       entering={FadeInRight.duration(300)}
@@ -117,19 +138,27 @@ export function CommentItem({ comment, reviewId, onReply }: Props) {
       </View>
 
       <View style={styles.actions}>
-        <Pressable style={styles.likeButton} onPress={() => toggleLike()}>
+        <Pressable
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={styles.likeButton}
+          onPress={handleLikePress}>
           <Icon
             name="thumbs-up"
-            size={14}
+            size={18}
             color={comment.isLiked ? colors.gray[900] : colors.gray[500]}
           />
           <Text style={[styles.actionText, comment.isLiked && styles.activeActionText]}>
             {comment.likeCount}
           </Text>
         </Pressable>
-        <Pressable style={styles.actionButton} onPress={() => onReply(comment.user)}>
-          <Text style={styles.actionText}>답글 달기</Text>
-        </Pressable>
+        {!hideReplyButton && (
+          <Pressable
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.actionButton}
+            onPress={handleReplyPress}>
+            <Text style={styles.actionText}>답글 달기</Text>
+          </Pressable>
+        )}
       </View>
     </Animated.View>
   );
@@ -170,24 +199,23 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    gap: spacing.xs,
     paddingHorizontal: 4,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    padding: 4,
+    gap: 6,
+    padding: 6,
   },
   likeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    padding: 4,
-    minWidth: 34,
+    gap: 6,
   },
   actionText: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.gray[500],
   },
   activeActionText: {

@@ -29,7 +29,11 @@ interface PaginatedResponse<T> {
   meta: PaginationMeta;
 }
 
-export function AuthorList() {
+type AuthorListProps = {
+  scrollRef?: React.MutableRefObject<null>;
+};
+
+export function AuthorList({ scrollRef }: AuthorListProps) {
   const genre = useAtomValue(authorGenreAtom);
   const searchKeyword = useAtomValue(authorSearchKeywordAtom);
   const sortMode = useAtomValue(authorSortModeAtom);
@@ -111,6 +115,7 @@ export function AuthorList() {
 
   return (
     <FlatList<Author>
+      ref={scrollRef}
       data={authors}
       renderItem={({ item }) => <AuthorItem author={item} />}
       keyExtractor={item => item.id.toString()}
@@ -118,6 +123,8 @@ export function AuthorList() {
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <AuthorListSkeleton /> : null}
+      keyboardShouldPersistTaps="always"
+      keyboardDismissMode="on-drag"
     />
   );
 }

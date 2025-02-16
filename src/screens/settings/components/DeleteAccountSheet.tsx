@@ -62,9 +62,7 @@ export function DeleteAccountSheet({ visible, onClose, onConfirm, isLoading }: P
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: {},
   content: {
     padding: spacing.xl,
     gap: spacing.xl,

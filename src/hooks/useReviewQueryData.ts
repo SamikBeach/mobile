@@ -367,6 +367,28 @@ export function useReviewQueryData() {
       },
     );
 
+    // 전체 리뷰 목록 업데이트
+    queryClient.setQueriesData<InfiniteData<AxiosResponse<PaginatedResponse<Review>>>>(
+      { queryKey: ['reviews'] },
+      reviewListData => {
+        if (!reviewListData) return reviewListData;
+        return {
+          ...reviewListData,
+          pages: reviewListData.pages.map(reviewPage => ({
+            ...reviewPage,
+            data: {
+              ...reviewPage.data,
+              data: reviewPage.data.data.filter(review => review.id !== reviewId),
+              meta: {
+                ...reviewPage.data.meta,
+                totalItems: reviewPage.data.meta.totalItems - 1,
+              },
+            },
+          })),
+        };
+      },
+    );
+
     // 작가의 리뷰 목록 업데이트
     if (authorId) {
       queryClient.setQueriesData<InfiniteData<AxiosResponse<PaginatedResponse<Review>>>>(
@@ -436,8 +458,8 @@ export function useReviewQueryData() {
   }
 
   function createReviewDataQueryData({ bookId, newReview, currentUser }: CreateReviewParams) {
-    const bookDetailData = queryClient.getQueryData<AxiosResponse<Book>>(['book', bookId])?.data;
-    if (!bookDetailData) return;
+    const bookData = queryClient.getQueryData<AxiosResponse<Book>>(['book', bookId])?.data;
+    if (!bookData) return;
 
     // 책의 리뷰 목록 업데이트
     queryClient.setQueriesData<InfiniteData<AxiosResponse<PaginatedResponse<Review>>>>(
@@ -456,7 +478,7 @@ export function useReviewQueryData() {
                     data: [
                       {
                         ...newReview,
-                        book: bookDetailData,
+                        book: bookData,
                         user: currentUser,
                       },
                       ...reviewPage.data.data,
@@ -502,7 +524,7 @@ export function useReviewQueryData() {
                     data: [
                       {
                         ...newReview,
-                        book: bookDetailData,
+                        book: bookData,
                         user: currentUser,
                       },
                       ...reviewPage.data.data,

@@ -51,6 +51,11 @@ export default function RootNavigator() {
           options={{ headerTitle: '작가 상세' }}
         />
         <Stack.Screen
+          name="WriteReview"
+          component={WriteReviewScreen}
+          options={{ headerTitle: '리뷰 작성' }}
+        />
+        <Stack.Screen
           name="User"
           component={withTabNavigator(UserScreen)}
           options={{ headerShown: false }}
@@ -70,6 +75,7 @@ function TabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#666',
+        tabBarHideOnKeyboard: true,
       }}>
       <Tab.Screen
         name="HomeTab"
@@ -102,9 +108,7 @@ function TabNavigator() {
             tabBarLabel: '마이페이지',
             tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
           }}>
-          {() => (
-            <StackNavigator initialRouteName="User" initialParams={{ userId: currentUser.id }} />
-          )}
+          {() => <StackNavigator initialRouteName="User" />}
         </Tab.Screen>
       ) : (
         <Tab.Screen
@@ -120,13 +124,7 @@ function TabNavigator() {
   );
 }
 
-function StackNavigator({
-  initialRouteName,
-  initialParams,
-}: {
-  initialRouteName: keyof RootStackParamList;
-  initialParams?: Record<string, any>;
-}) {
+function StackNavigator({ initialRouteName }: { initialRouteName: keyof RootStackParamList }) {
   const [searchVisible, setSearchVisible] = useState(false);
 
   const SearchButton = () => (
@@ -151,7 +149,7 @@ function StackNavigator({
           component={HomeScreen}
           options={{
             headerStyle: {
-              height: Platform.OS === 'ios' ? 120 : 60,
+              height: Platform.OS === 'ios' ? 100 : 60,
             },
             headerLeft: () => (
               <View style={styles.headerLeftContainer}>
@@ -180,7 +178,6 @@ function StackNavigator({
           name="User"
           component={UserScreen}
           options={{ headerTitle: '마이페이지', headerShown: false }}
-          initialParams={initialParams}
         />
         <Stack.Screen name="Review" component={ReviewScreen} options={{ headerTitle: '리뷰' }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerTitle: '로그인' }} />
@@ -270,6 +267,7 @@ function withTabNavigator(Component: React.ComponentType<any>) {
           headerShown: false,
           tabBarActiveTintColor: '#007AFF',
           tabBarInactiveTintColor: '#666',
+          tabBarHideOnKeyboard: true,
         }}>
         <Tab.Screen
           name="HomeTab"

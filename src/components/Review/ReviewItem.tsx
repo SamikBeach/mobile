@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import {
   View,
   StyleSheet,
@@ -23,278 +23,287 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { CommentEditor } from '@/components/comment/CommentEditor';
-import Toast from 'react-native-toast-message';
 import { CommentList } from './CommentList';
 import { ReviewActions } from './ReviewActions';
-import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated';
 import { BookImage } from '@/components/book/BookImage';
 import { ReportActions } from './ReportActions';
+import Toast from 'react-native-toast-message';
+
+export interface ReviewItemHandle {
+  showComments: () => void;
+}
 
 interface Props {
   review: Review;
   showBookInfo?: boolean;
   hideUserInfo?: boolean;
   hideDate?: boolean;
+  onCommentPress?: (reviewId: number, user?: { nickname: string }) => void;
+  ref?: React.RefObject<ReviewItemHandle>;
+  hideReplyButton?: boolean;
 }
 
-export function ReviewItem({
-  review,
-  showBookInfo,
-  hideUserInfo = false,
-  hideDate = false,
-}: Props) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isTruncated, setIsTruncated] = useState(false);
-  const [isReplying, setIsReplying] = useState(false);
-  const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
-  const [actionSheetVisible, setActionSheetVisible] = useState(false);
+export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
+  (
+    {
+      review,
+      showBookInfo,
+      hideUserInfo = false,
+      hideDate = false,
+      onCommentPress,
+      hideReplyButton = false,
+    },
+    ref,
+  ) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [isTruncated, setIsTruncated] = useState(false);
+    const [actionSheetVisible, setActionSheetVisible] = useState(false);
+    const [showComments, setShowComments] = useState(false);
 
-  const currentUser = useCurrentUser();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { updateReviewLikeQueryData, deleteReviewDataQueryData } = useReviewQueryData();
-  const { createCommentQueryData } = useCommentQueryData();
-  const isMyReview = currentUser?.id === review.user.id;
+    const currentUser = useCurrentUser();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const { updateReviewLikeQueryData, deleteReviewDataQueryData } = useReviewQueryData();
+    const isMyReview = currentUser?.id === review.user.id;
 
-  const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
-    if (!isExpanded) {
-      const { lines } = event.nativeEvent;
-      if (lines.length >= 3) {
-        setIsTruncated(true);
-      } else {
-        setIsTruncated(false);
+    const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
+      if (!isExpanded) {
+        const { lines } = event.nativeEvent;
+        if (lines.length >= 3) {
+          setIsTruncated(true);
+        } else {
+          setIsTruncated(false);
+        }
       }
-    }
-  };
+    };
 
-  const { mutate: toggleLike } = useMutation({
-    mutationFn: () => reviewApi.toggleReviewLike(review.id),
-    onMutate: async () => {
-      updateReviewLikeQueryData({
-        reviewId: review.id,
-        bookId: review.book.id,
-        authorId: review.book.authorBooks?.[0]?.author.id,
-        userId: review.user.id,
-        isOptimistic: true,
-      });
-    },
-    onError: () => {
-      updateReviewLikeQueryData({
-        reviewId: review.id,
-        bookId: review.book.id,
-        authorId: review.book.authorBooks?.[0]?.author.id,
-        userId: review.user.id,
-        isOptimistic: false,
-        currentStatus: {
-          isLiked: review.isLiked ?? false,
-          likeCount: review.likeCount,
-        },
-      });
-      Toast.show({
-        type: 'error',
-        text1: '좋아요 처리에 실패했습니다.',
-      });
-    },
-  });
-
-  const { mutate: createComment } = useMutation({
-    mutationFn: (content: string) => reviewApi.createComment(review.id, { content }),
-    onSuccess: response => {
-      createCommentQueryData({
-        reviewId: review.id,
-        comment: response.data,
-      });
-      Toast.show({
-        type: 'success',
-        text1: '댓글이 등록되었습니다.',
-      });
-      setReplyToUser(null);
-    },
-    onError: () => {
-      Toast.show({
-        type: 'error',
-        text1: '댓글 작성에 실패했습니다.',
-      });
-    },
-  });
-
-  const { mutate: deleteReview } = useMutation({
-    mutationFn: () => reviewApi.deleteReview(review.id),
-    onSuccess: () => {
-      deleteReviewDataQueryData({
-        reviewId: review.id,
-        bookId: review.book.id,
-        authorId: review.book.authorBooks?.[0]?.author.id,
-        userId: review.user.id,
-      });
-      Toast.show({
-        type: 'success',
-        text1: '리뷰가 삭제되었습니다.',
-      });
-    },
-    onError: () => {
-      Toast.show({
-        type: 'error',
-        text1: '리뷰 삭제에 실패했습니다.',
-      });
-    },
-  });
-
-  const handleLikePress = () => {
-    if (!currentUser) {
-      navigation.navigate('Login');
-      return;
-    }
-    toggleLike();
-  };
-
-  const handleReply = (user: { nickname: string }) => {
-    setIsReplying(true);
-    setReplyToUser(user);
-  };
-
-  const handleReplyPress = () => {
-    setIsReplying(prev => !prev);
-  };
-
-  const handleEditPress = () => {
-    navigation.navigate('WriteReview', {
-      bookId: review.book.id,
-      reviewId: review.id,
+    const { mutate: toggleLike } = useMutation({
+      mutationFn: () => reviewApi.toggleReviewLike(review.id),
+      onMutate: async () => {
+        updateReviewLikeQueryData({
+          reviewId: review.id,
+          bookId: review.book.id,
+          authorId: review.book.authorBooks?.[0]?.author.id,
+          userId: review.user.id,
+          isOptimistic: true,
+        });
+      },
+      onError: () => {
+        updateReviewLikeQueryData({
+          reviewId: review.id,
+          bookId: review.book.id,
+          authorId: review.book.authorBooks?.[0]?.author.id,
+          userId: review.user.id,
+          isOptimistic: false,
+          currentStatus: {
+            isLiked: review.isLiked ?? false,
+            likeCount: review.likeCount,
+          },
+        });
+        Toast.show({
+          type: 'error',
+          text1: '좋아요 처리에 실패했습니다.',
+        });
+      },
     });
-  };
 
-  const handleDeletePress = () => {
-    Alert.alert('리뷰 삭제', '정말로 이 리뷰를 삭제하시겠습니까?', [
-      { text: '취소', style: 'cancel' },
-      { text: '삭제', style: 'destructive', onPress: () => deleteReview() },
-    ]);
-  };
+    const { mutate: deleteReview } = useMutation({
+      mutationFn: () => reviewApi.deleteReview(review.id),
+      onSuccess: () => {
+        deleteReviewDataQueryData({
+          reviewId: review.id,
+          bookId: review.book.id,
+          authorId: review.book.authorBooks?.[0]?.author.id,
+          userId: review.user.id,
+        });
+        Toast.show({
+          type: 'success',
+          text1: '리뷰가 삭제되었습니다.',
+        });
+      },
+      onError: () => {
+        Toast.show({
+          type: 'error',
+          text1: '리뷰 삭제에 실패했습니다.',
+        });
+      },
+    });
 
-  const handleMorePress = () => {
-    if (!currentUser) {
-      navigation.navigate('Login');
-      return;
-    }
+    const handleLikePress = () => {
+      if (!currentUser) {
+        navigation.navigate('Login');
+        return;
+      }
+      toggleLike();
+    };
 
-    setActionSheetVisible(true);
-  };
+    const handleReply = (user: { nickname: string }) => {
+      onCommentPress?.(review.id, user);
+    };
 
-  return (
-    <>
-      <Animated.View
-        entering={FadeIn.duration(300)}
-        exiting={FadeOut.duration(300)}
-        layout={Layout.duration(300)}
-        style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            {!hideUserInfo && (
-              <>
-                <View style={styles.userInfo}>
-                  <UserAvatar user={review.user} showNickname size="sm" />
-                  {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
-                </View>
-                {isMyReview && (
+    const handleReplyPress = () => {
+      setShowComments(prev => !prev);
+    };
+
+    const handleEditPress = () => {
+      navigation.navigate('WriteReview', {
+        bookId: review.book.id,
+        reviewId: review.id,
+      });
+    };
+
+    const handleDeletePress = () => {
+      Alert.alert('리뷰 삭제', '정말로 이 리뷰를 삭제하시겠습니까?', [
+        { text: '취소', style: 'cancel' },
+        { text: '삭제', style: 'destructive', onPress: () => deleteReview() },
+      ]);
+    };
+
+    const handleMorePress = () => {
+      if (!currentUser) {
+        navigation.navigate('Login');
+        return;
+      }
+
+      setActionSheetVisible(true);
+    };
+
+    useImperativeHandle(ref, () => ({
+      showComments: () => setShowComments(true),
+    }));
+
+    return (
+      <>
+        <Animated.View
+          entering={FadeIn.duration(300)}
+          exiting={FadeOut.duration(300)}
+          layout={Layout.duration(300)}
+          style={styles.container}>
+          <View style={styles.header}>
+            <View style={styles.headerTop}>
+              {!hideUserInfo && (
+                <>
+                  <View style={styles.userInfo}>
+                    <UserAvatar user={review.user} showNickname size="sm" />
+                    {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
+                  </View>
+                  {isMyReview && (
+                    <View style={styles.headerActions}>
+                      <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
+                    </View>
+                  )}
+                </>
+              )}
+            </View>
+
+            {showBookInfo && (
+              <View style={styles.bookInfoContainer}>
+                <TouchableOpacity
+                  style={styles.bookCard}
+                  onPress={() =>
+                    navigation.navigate('BookDetail', {
+                      bookId: review.book.id,
+                    })
+                  }>
+                  <BookImage imageUrl={review.book.imageUrl} size="xs" />
+                  <View style={styles.bookInfo}>
+                    <Text style={styles.bookTitle} numberOfLines={1}>
+                      {review.book.title}
+                    </Text>
+                    <Text style={styles.bookAuthor} numberOfLines={1}>
+                      {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                {isMyReview && hideUserInfo && (
                   <View style={styles.headerActions}>
                     <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
                   </View>
                 )}
-              </>
+              </View>
             )}
           </View>
-
-          {showBookInfo && (
-            <View style={styles.bookInfoContainer}>
-              <TouchableOpacity
-                style={styles.bookCard}
-                onPress={() =>
-                  navigation.navigate('BookDetail', {
-                    bookId: review.book.id,
-                  })
-                }>
-                <BookImage imageUrl={review.book.imageUrl} size="xs" />
-                <View style={styles.bookInfo}>
-                  <Text style={styles.bookTitle} numberOfLines={1}>
-                    {review.book.title}
-                  </Text>
-                  <Text style={styles.bookAuthor} numberOfLines={1}>
-                    {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              {isMyReview && (
-                <View style={styles.headerActions}>
-                  <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
-                </View>
+          <Text style={styles.title}>{review.title}</Text>
+          <Pressable
+            onPress={() => isTruncated && setIsExpanded(true)}
+            style={styles.contentContainer}>
+            <Text
+              style={styles.content}
+              numberOfLines={isExpanded ? undefined : 3}
+              ellipsizeMode="tail"
+              onTextLayout={onTextLayout}>
+              <LexicalContent content={review.content} isExpanded={isExpanded} />
+            </Text>
+            {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
+          </Pressable>
+          <View style={styles.footer}>
+            <View style={styles.actions}>
+              <Pressable
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={styles.actionButton}
+                onPress={handleLikePress}>
+                <Icon
+                  name="thumbs-up"
+                  size={18}
+                  color={review.isLiked ? colors.gray[900] : colors.gray[400]}
+                />
+                <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
+                  {review.likeCount}
+                </Text>
+              </Pressable>
+              <Pressable
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={styles.actionButton}
+                disabled={review.commentCount === 0}
+                onPress={handleReplyPress}>
+                <Icon
+                  name="message-circle"
+                  size={18}
+                  color={showComments ? colors.gray[900] : colors.gray[400]}
+                />
+                <Text style={[styles.actionText, showComments && styles.activeActionText]}>
+                  {review.commentCount}
+                </Text>
+              </Pressable>
+              {!hideReplyButton && (
+                <Pressable
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  style={styles.actionButton}
+                  onPress={() => {
+                    onCommentPress?.(review.id);
+                  }}>
+                  <Text style={styles.replyButtonText}>답글 달기</Text>
+                </Pressable>
               )}
             </View>
-          )}
-        </View>
-        <Text style={styles.title}>{review.title}</Text>
-        <Pressable
-          onPress={() => isTruncated && setIsExpanded(true)}
-          style={styles.contentContainer}>
-          <Text
-            style={styles.content}
-            numberOfLines={isExpanded ? undefined : 3}
-            ellipsizeMode="tail"
-            onTextLayout={onTextLayout}>
-            <LexicalContent content={review.content} />
-          </Text>
-          {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
-        </Pressable>
-        <View style={styles.footer}>
-          <View style={styles.actions}>
-            <Pressable style={styles.actionButton} onPress={handleLikePress}>
-              <Icon
-                name="thumbs-up"
-                size={18}
-                color={review.isLiked ? colors.gray[900] : colors.gray[400]}
+          </View>
+          {showComments && (
+            <View style={styles.commentSection}>
+              <CommentList
+                reviewId={review.id}
+                onReply={handleReply}
+                hideReplyButton={hideReplyButton}
               />
-              <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
-                {review.likeCount}
-              </Text>
-            </Pressable>
-            <Pressable style={styles.actionButton} onPress={handleReplyPress}>
-              <Icon name="message-circle" size={18} color={colors.gray[400]} />
-              <Text style={styles.actionText}>{review.commentCount}</Text>
-            </Pressable>
-          </View>
-        </View>
-        {isReplying && (
-          <View style={styles.replySection}>
-            <CommentEditor
-              onSubmit={content => {
-                createComment(content);
-              }}
-              onCancel={() => {
-                setIsReplying(false);
-                setReplyToUser(null);
-              }}
-              replyToUser={replyToUser}
-            />
-            <CommentList reviewId={review.id} onReply={handleReply} />
-          </View>
-        )}
-        {!isMyReview && currentUser && (
-          <TouchableOpacity onPress={handleMorePress} style={styles.moreButton}>
-            <Icon name="more-horizontal" size={20} color={colors.gray[400]} />
-          </TouchableOpacity>
-        )}
-      </Animated.View>
+            </View>
+          )}
+          {!isMyReview && currentUser && (
+            <TouchableOpacity onPress={handleMorePress} style={styles.moreButton}>
+              <Icon name="more-horizontal" size={20} color={colors.gray[500]} />
+            </TouchableOpacity>
+          )}
+        </Animated.View>
 
-      <ReportActions
-        visible={actionSheetVisible}
-        onClose={() => setActionSheetVisible(false)}
-        reviewId={review.id}
-        userId={review.user.id}
-        userNickname={review.user.nickname}
-      />
-    </>
-  );
-}
+        <ReportActions
+          visible={actionSheetVisible}
+          onClose={() => setActionSheetVisible(false)}
+          reviewId={review.id}
+          userId={review.user.id}
+          userNickname={review.user.nickname}
+        />
+      </>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -338,20 +347,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.sm,
-    alignSelf: 'flex-start',
     marginTop: 4,
+    maxWidth: '85%',
     ...Platform.select({
       android: {
         paddingVertical: 6,
       },
     }),
   },
-  bookAuthor: {
-    fontSize: 11,
-    color: colors.gray[500],
-  },
   bookInfo: {
     gap: 2,
+    marginRight: spacing.sm,
+    maxWidth: '85%',
   },
   bookTitle: {
     fontSize: 12,
@@ -362,6 +369,10 @@ const styles = StyleSheet.create({
         marginTop: 6,
       },
     }),
+  },
+  bookAuthor: {
+    fontSize: 11,
+    color: colors.gray[500],
   },
   title: {
     fontSize: 16,
@@ -384,7 +395,9 @@ const styles = StyleSheet.create({
   footer: {},
   actions: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.md,
+    alignItems: 'center',
+    paddingHorizontal: 4,
   },
   actionButton: {
     flexDirection: 'row',
@@ -398,13 +411,18 @@ const styles = StyleSheet.create({
   activeActionText: {
     color: colors.gray[900],
   },
-  replySection: {
+  commentSection: {
     marginTop: spacing.md,
     paddingLeft: spacing.xl,
   },
+  replyButtonText: {
+    fontSize: 14,
+    color: colors.gray[500],
+    marginLeft: spacing.xs,
+  },
   moreButton: {
     position: 'absolute',
-    top: 10,
+    top: 14,
     right: 10,
     zIndex: 2,
   },

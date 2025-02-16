@@ -46,10 +46,11 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
         style = { ...style, fontStyle: 'italic' as const };
       }
 
-      const textWithoutMention = node.text?.replace(/@[\w가-힣ㄱ-ㅎㅏ-ㅣ]+\s?/g, '') || '';
-      return textWithoutMention ? (
-        <Text key={`text-${textWithoutMention}`} style={style}>
-          {textWithoutMention}
+      const text = node.text || '';
+      return text ? (
+        <Text key={`text-${text}`} style={style}>
+          {text.startsWith(' ') ? ' ' : ''}
+          {text.trim()}
         </Text>
       ) : null;
     }
@@ -57,7 +58,7 @@ export function LexicalContent({ content, isExpanded = false, isComment = false 
     if (node.type === 'mention') {
       return (
         <Text key={`mention-${node.text}`} style={[styles.content, styles.mention]}>
-          @{node.text}
+          @{node.text}{' '}
         </Text>
       );
     }

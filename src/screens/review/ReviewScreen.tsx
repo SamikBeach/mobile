@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
@@ -19,15 +20,16 @@ import { format } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigation } from '@react-navigation/native';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
-import { ReviewScreenContent } from './ReviewScreenContent';
+import { ReviewScreenContent, ReviewScreenContentHandle } from './ReviewScreenContent';
 import { CommentEditor } from '@/components/comment/CommentEditor';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
-import { spacing } from '@/styles/theme';
-import { colors } from '@/styles/theme';
+import { spacing, colors } from '@/styles/theme';
 import { ReviewHeaderSkeleton } from './ReviewHeaderSkeleton';
 import { BookImage } from '@/components/book/BookImage';
 import { ReportActions } from '@/components/review/ReportActions';
 import Icon from 'react-native-vector-icons/Feather';
+import { ReviewActions } from '@/components/review/ReviewActions';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Review'>;
 
@@ -35,10 +37,10 @@ export function ReviewScreen({ route }: Props) {
   const { reviewId } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const currentUser = useCurrentUser();
-  const { updateReviewLikeQueryData } = useReviewQueryData();
+  const { updateReviewLikeQueryData, deleteReviewDataQueryData } = useReviewQueryData();
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const { createCommentQueryData } = useCommentQueryData();
-  const contentRef = useRef<{ scrollToComments: () => void }>(null);
+  const contentRef = useRef<ReviewScreenContentHandle>(null);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
 
   const { data: review, isLoading } = useQuery({
@@ -80,13 +82,40 @@ export function ReviewScreen({ route }: Props) {
     onSuccess: response => {
       createCommentQueryData({ reviewId, comment: response.data });
       setReplyToUser(null);
+      contentRef.current?.scrollToLatestComment();
+    },
+  });
+
+  const { mutate: deleteReview } = useMutation({
+    mutationFn: () => {
+      if (!review) return Promise.reject();
+      return reviewApi.deleteReview(review.id);
+    },
+    onSuccess: () => {
+      if (!review) return;
+      deleteReviewDataQueryData({
+        reviewId: review.id,
+        bookId: review.book.id,
+        authorId: review.book.authorBooks?.[0]?.author.id,
+        userId: review.user.id,
+      });
+      Toast.show({
+        type: 'success',
+        text1: '리뷰가 삭제되었습니다.',
+      });
+      navigation.goBack();
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '리뷰 삭제에 실패했습니다.',
+      });
     },
   });
 
   const handleLikePress = () => {
     if (!currentUser) {
       navigation.navigate('Login');
-
       return;
     }
 
@@ -100,6 +129,21 @@ export function ReviewScreen({ route }: Props) {
     }
 
     setActionSheetVisible(true);
+  };
+
+  const handleDeletePress = () => {
+    Alert.alert('리뷰 삭제', '정말로 이 리뷰를 삭제하시겠습니까?', [
+      { text: '취소', style: 'cancel' },
+      { text: '삭제', style: 'destructive', onPress: () => deleteReview() },
+    ]);
+  };
+
+  const handleEditPress = () => {
+    if (!review) return;
+    navigation.navigate('WriteReview', {
+      bookId: review.book.id,
+      reviewId: review.id,
+    });
   };
 
   const renderHeader = () => {
@@ -117,10 +161,14 @@ export function ReviewScreen({ route }: Props) {
           <View style={styles.titleContainer}>
             <View style={styles.titleRow}>
               <Text style={styles.title}>{review.title}</Text>
-              {!isMyReview && (
-                <TouchableOpacity onPress={handleMorePress}>
-                  <Icon name="more-horizontal" size={24} color={colors.gray[400]} />
-                </TouchableOpacity>
+              {isMyReview ? (
+                <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
+              ) : (
+                currentUser && (
+                  <TouchableOpacity onPress={handleMorePress}>
+                    <Icon name="more-horizontal" size={24} color={colors.gray[500]} />
+                  </TouchableOpacity>
+                )
               )}
             </View>
             <TouchableOpacity
@@ -235,7 +283,7 @@ const styles = StyleSheet.create({
   },
   titleRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: spacing.sm,
   },
@@ -243,6 +291,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     color: '#111827',
+    maxWidth: '88%',
   },
   bookCard: {
     flexDirection: 'row',
