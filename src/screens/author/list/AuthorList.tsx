@@ -118,6 +118,8 @@ export function AuthorList() {
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <AuthorListSkeleton /> : null}
+      keyboardShouldPersistTaps="always"
+      keyboardDismissMode="on-drag"
     />
   );
 }

@@ -46,7 +46,9 @@ export function ActionSheet({
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
-            bounces={false}>
+            bounces={false}
+            keyboardShouldPersistTaps="always"
+            keyboardDismissMode="on-drag">
             {actions.length > 0 && (
               <View style={styles.actions}>
                 {actions.map((action, index) => (

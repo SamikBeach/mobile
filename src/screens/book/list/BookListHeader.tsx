@@ -15,7 +15,7 @@ export function BookListHeader() {
     if (!isFocused && isSearchExpanded) {
       closeSearch();
     }
-  }, [isFocused]);
+  }, [isFocused, isSearchExpanded]);
 
   const closeSearch = () => {
     setIsSearchExpanded(false);
