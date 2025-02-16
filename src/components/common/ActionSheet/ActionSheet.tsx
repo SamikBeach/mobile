@@ -1,5 +1,14 @@
 import React from 'react';
-import { Modal, StyleSheet, Pressable, View, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  Modal,
+  StyleSheet,
+  Pressable,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors, spacing } from '@/styles/theme';
@@ -28,56 +37,66 @@ export function ActionSheet({
   onClose,
   actions = [],
   title,
+  headerRight,
   customContent,
 }: ActionSheetProps) {
   const { animatedStyles, handleClose } = useActionSheet({ visible, onClose });
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={handleClose}>
-      <Pressable style={styles.overlay} onPress={handleClose}>
-        <View style={styles.background} />
-        <Animated.View style={[styles.sheet, animatedStyles]}>
-          {title && (
-            <View style={styles.header}>
-              <Text style={styles.title}>{title}</Text>
-            </View>
-          )}
-          {customContent && <View style={styles.customContent}>{customContent}</View>}
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
-            bounces={false}
-            keyboardShouldPersistTaps="always"
-            keyboardDismissMode="on-drag">
-            {actions.length > 0 && (
-              <View style={styles.actions}>
-                {actions.map((action, index) => (
-                  <TouchableOpacity
-                    key={action.text}
-                    style={[styles.action, index < actions.length - 1 && styles.borderBottom]}
-                    onPress={action.onPress}>
-                    {action.icon && (
-                      <Icon
-                        name={action.icon}
-                        size={20}
-                        color={action.destructive ? colors.red[500] : colors.gray[700]}
-                      />
-                    )}
-                    <Text style={[styles.actionText, action.destructive && styles.destructiveText]}>
-                      {action.text}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}>
+        <Pressable style={styles.overlay} onPress={handleClose}>
+          <View style={styles.background} />
+          <Animated.View style={[styles.sheet, animatedStyles]}>
+            {title && (
+              <View style={styles.header}>
+                <Text style={styles.title}>{title}</Text>
+                {headerRight && <View style={styles.headerRight}>{headerRight}</View>}
               </View>
             )}
-          </ScrollView>
-        </Animated.View>
-      </Pressable>
+            {customContent && <View style={styles.customContent}>{customContent}</View>}
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              bounces={false}
+              keyboardShouldPersistTaps="always"
+              keyboardDismissMode="on-drag">
+              {actions.length > 0 && (
+                <View style={styles.actions}>
+                  {actions.map((action, index) => (
+                    <TouchableOpacity
+                      key={action.text}
+                      style={[styles.action, index < actions.length - 1 && styles.borderBottom]}
+                      onPress={action.onPress}>
+                      {action.icon && (
+                        <Icon
+                          name={action.icon}
+                          size={20}
+                          color={action.destructive ? colors.red[500] : colors.gray[700]}
+                        />
+                      )}
+                      <Text
+                        style={[styles.actionText, action.destructive && styles.destructiveText]}>
+                        {action.text}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </ScrollView>
+          </Animated.View>
+        </Pressable>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
