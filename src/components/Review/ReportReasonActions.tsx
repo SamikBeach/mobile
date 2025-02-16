@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { reviewApi } from '@/apis/review';
 import Toast from 'react-native-toast-message';
 import type { ReportReason } from '@/types/review';
+import { AxiosError } from 'axios';
 
 interface Props {
   visible: boolean;
@@ -28,6 +29,22 @@ export function ReportReasonActions({ visible, onClose, reviewId }: Props) {
         text1: '신고가 접수되었습니다.',
         text2: '24시간 이내에 검토 후 조치하겠습니다.',
       });
+      onClose();
+    },
+    onError: error => {
+      if (error instanceof AxiosError && error.response?.status === 409) {
+        Toast.show({
+          type: 'error',
+          text1: '이미 신고한 리뷰입니다.',
+          text2: '동일한 리뷰에 대해 중복 신고는 불가능합니다.',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: '신고 접수에 실패했습니다.',
+          text2: '잠시 후 다시 시도해주세요.',
+        });
+      }
       onClose();
     },
   });
