@@ -215,7 +215,7 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
                     </Text>
                   </View>
                 </TouchableOpacity>
-                {isMyReview && (
+                {isMyReview && hideUserInfo && (
                   <View style={styles.headerActions}>
                     <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
                   </View>
