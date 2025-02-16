@@ -12,6 +12,11 @@ import Icon from 'react-native-vector-icons/Feather';
 import { colors } from '@/styles/theme';
 import { Empty } from '@/components/common/Empty';
 
+export interface ReviewScreenContentHandle {
+  scrollToLatestComment: () => void;
+  scrollToComments: () => void;
+}
+
 interface Props {
   reviewId: number;
   onReply: (user: { nickname: string }) => void;
@@ -19,18 +24,29 @@ interface Props {
   onCommentButtonPress?: () => void;
 }
 
-export const ReviewScreenContent = forwardRef<{ scrollToComments: () => void }, Props>(
+export const ReviewScreenContent = forwardRef<{ scrollToLatestComment: () => void }, Props>(
   ({ reviewId, onReply, ListHeaderComponent }, ref) => {
     const flatListRef = useRef<FlatList>(null);
     const commentHeaderYRef = useRef(0);
 
+    const scrollToLatestComment = () => {
+      // 먼저 댓글 섹션으로 스크롤
+      flatListRef.current?.scrollToOffset({
+        offset: commentHeaderYRef.current,
+        animated: true,
+      });
+    };
+
+    const scrollToComments = () => {
+      flatListRef.current?.scrollToOffset({
+        offset: commentHeaderYRef.current,
+        animated: true,
+      });
+    };
+
     useImperativeHandle(ref, () => ({
-      scrollToComments: () => {
-        flatListRef.current?.scrollToOffset({
-          offset: commentHeaderYRef.current,
-          animated: true,
-        });
-      },
+      scrollToLatestComment,
+      scrollToComments,
     }));
 
     const { data: review } = useQuery({
@@ -106,6 +122,14 @@ export const ReviewScreenContent = forwardRef<{ scrollToComments: () => void }, 
               description="첫 번째 댓글을 작성해보세요"
             />
           }
+          onScrollToIndexFailed={() => {
+            setTimeout(() => {
+              flatListRef.current?.scrollToOffset({
+                offset: commentHeaderYRef.current,
+                animated: true,
+              });
+            }, 100);
+          }}
         />
       </View>
     );

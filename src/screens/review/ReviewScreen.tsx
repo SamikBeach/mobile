@@ -20,7 +20,7 @@ import { format } from 'date-fns';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigation } from '@react-navigation/native';
 import { useReviewQueryData } from '@/hooks/useReviewQueryData';
-import { ReviewScreenContent } from './ReviewScreenContent';
+import { ReviewScreenContent, ReviewScreenContentHandle } from './ReviewScreenContent';
 import { CommentEditor } from '@/components/comment/CommentEditor';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import { spacing, colors } from '@/styles/theme';
@@ -40,7 +40,7 @@ export function ReviewScreen({ route }: Props) {
   const { updateReviewLikeQueryData, deleteReviewDataQueryData } = useReviewQueryData();
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const { createCommentQueryData } = useCommentQueryData();
-  const contentRef = useRef<{ scrollToComments: () => void }>(null);
+  const contentRef = useRef<ReviewScreenContentHandle>(null);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
 
   const { data: review, isLoading } = useQuery({
@@ -82,6 +82,7 @@ export function ReviewScreen({ route }: Props) {
     onSuccess: response => {
       createCommentQueryData({ reviewId, comment: response.data });
       setReplyToUser(null);
+      contentRef.current?.scrollToLatestComment();
     },
   });
 
