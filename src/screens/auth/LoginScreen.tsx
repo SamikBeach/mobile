@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, Image, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Image,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
@@ -113,8 +121,8 @@ export default function LoginScreen() {
     try {
       await GoogleSignin.hasPlayServices();
       await GoogleSignin.signOut();
-      const result = await GoogleSignin.signIn();
 
+      const result = await GoogleSignin.signIn();
       if (result.data?.idToken) {
         googleLogin({
           code: result.data.idToken,
@@ -163,100 +171,102 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>로그인</Text>
-        </View>
-
-        <View style={styles.form}>
-          <Controller
-            control={control}
-            name="email"
-            rules={{
-              required: '이메일을 입력해주세요',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: '올바른 이메일 형식이 아닙니다',
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <Input
-                placeholder="이메일"
-                value={value}
-                onChangeText={onChange}
-                error={errors.email?.message}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="password"
-            rules={{ required: '비밀번호를 입력해주세요' }}
-            render={({ field: { onChange, value } }) => (
-              <Input
-                placeholder="비밀번호"
-                value={value}
-                onChangeText={onChange}
-                error={errors.password?.message}
-                secureTextEntry
-              />
-            )}
-          />
-
-          <Button onPress={handleSubmit(data => login(data))} loading={isPending}>
-            로그인
-          </Button>
-
-          <View style={styles.dividerContainer}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>또는</Text>
-            <View style={styles.dividerLine} />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>로그인</Text>
           </View>
 
-          <Button
-            variant="outline"
-            onPress={handleGoogleLogin}
-            loading={isGoogleLoginPending}
-            style={styles.googleButtonContainer}>
-            <View style={styles.googleButton}>
-              <Image source={require('@/assets/images/google.png')} style={styles.googleIcon} />
-              <Text style={styles.googleText}>구글 계정으로 로그인</Text>
-            </View>
-          </Button>
+          <View style={styles.form}>
+            <Controller
+              control={control}
+              name="email"
+              rules={{
+                required: '이메일을 입력해주세요',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: '올바른 이메일 형식이 아닙니다',
+                },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="이메일"
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors.email?.message}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              )}
+            />
 
-          <Button
-            variant="outline"
-            onPress={handleAppleLogin}
-            loading={isAppleLoginPending}
-            style={styles.appleButtonContainer}>
-            <View style={styles.appleButton}>
-              <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
-              <Text style={styles.appleText}>애플 계정으로 로그인</Text>
-            </View>
-          </Button>
+            <Controller
+              control={control}
+              name="password"
+              rules={{ required: '비밀번호를 입력해주세요' }}
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="비밀번호"
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors.password?.message}
+                  secureTextEntry
+                />
+              )}
+            />
 
-          <View style={styles.links}>
-            <Button
-              variant="text"
-              onPress={() => navigation.navigate('ResetPasswordRequest')}
-              style={styles.linkButton}>
-              <Text style={styles.linkText}>비밀번호를 잊으셨나요?</Text>
+            <Button onPress={handleSubmit(data => login(data))} loading={isPending}>
+              로그인
             </Button>
-            <View style={styles.divider} />
+
+            <View style={styles.dividerContainer}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>또는</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
             <Button
-              variant="text"
-              onPress={() => navigation.navigate('SignUp')}
-              style={styles.linkButton}>
-              <Text style={styles.linkText}>회원가입</Text>
+              variant="outline"
+              onPress={handleGoogleLogin}
+              loading={isGoogleLoginPending}
+              style={styles.googleButtonContainer}>
+              <View style={styles.googleButton}>
+                <Image source={require('@/assets/images/google.png')} style={styles.googleIcon} />
+                <Text style={styles.googleText}>구글 계정으로 로그인</Text>
+              </View>
             </Button>
+
+            <Button
+              variant="outline"
+              onPress={handleAppleLogin}
+              loading={isAppleLoginPending}
+              style={styles.appleButtonContainer}>
+              <View style={styles.appleButton}>
+                <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
+                <Text style={styles.appleText}>애플 계정으로 로그인</Text>
+              </View>
+            </Button>
+
+            <View style={styles.links}>
+              <Button
+                variant="text"
+                onPress={() => navigation.navigate('ResetPasswordRequest')}
+                style={styles.linkButton}>
+                <Text style={styles.linkText}>비밀번호를 잊으셨나요?</Text>
+              </Button>
+              <View style={styles.divider} />
+              <Button
+                variant="text"
+                onPress={() => navigation.navigate('SignUp')}
+                style={styles.linkButton}>
+                <Text style={styles.linkText}>회원가입</Text>
+              </Button>
+            </View>
           </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
