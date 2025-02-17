@@ -84,3 +84,12 @@ yarn-error.log
 /android/gradle.properties
 
 /ios/mobile/AuthKey_B87FH5JM49.p8
+
+*.pem
+*.p8
+*.p12
+*.key
+*.crt
+*.csr
+*.der
+*.jks
