@@ -1,5 +1,21 @@
 # 🚦 CHANGELOG
 
+# [1.19.0](https://github.com/SamikBeach/mobile/compare/1.18.0...1.19.0) (2025-02-18)
+
+
+### Bug Fixes
+
+* .gitignore 수정 ([0e3b34b](https://github.com/SamikBeach/mobile/commit/0e3b34b68e40451d78e1000f42bded10ee3b4bde))
+* keyboardShouldPersistTaps="always" 속성 제거 ([2c3f62b](https://github.com/SamikBeach/mobile/commit/2c3f62b9f4d6786d37fa29a7d986a689b88f4f61))
+* 버전 수정 ([dae4bab](https://github.com/SamikBeach/mobile/commit/dae4bab0d35df706713a706a0f12afb547781aaa))
+* 스타일 수정 ([62c8b78](https://github.com/SamikBeach/mobile/commit/62c8b7807636dedaf4bce0c83a74b81a561d7d2a))
+
+
+### Features
+
+* 로그인/회원가입 화면 키보드 제어 기능 추가 ([f906d2c](https://github.com/SamikBeach/mobile/commit/f906d2c0e98d9c3f767135f49fc479ac65d74184))
+* 안드로이드에서는 애플로그인 버튼 미노출 ([a611934](https://github.com/SamikBeach/mobile/commit/a611934e3173e298f3266e19d039891b670a456f))
+
 # [1.18.0](https://github.com/SamikBeach/mobile/compare/1.17.0...1.18.0) (2025-02-16)
 
 
