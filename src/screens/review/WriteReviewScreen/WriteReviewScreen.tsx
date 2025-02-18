@@ -260,7 +260,7 @@ export function WriteReviewScreen({ route, navigation }: Props) {
           <ScrollView
             style={styles.content}
             contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled">
+            keyboardDismissMode="on-drag">
             <View style={styles.formContainer}>
               <BookInfo bookId={bookId} />
               <TextInput

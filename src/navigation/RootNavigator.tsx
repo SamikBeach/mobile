@@ -148,9 +148,6 @@ function StackNavigator({ initialRouteName }: { initialRouteName: keyof RootStac
           name="Home"
           component={HomeScreen}
           options={{
-            headerStyle: {
-              height: Platform.OS === 'ios' ? 100 : 60,
-            },
             headerLeft: () => (
               <View style={styles.headerLeftContainer}>
                 <Logo size="sm" />

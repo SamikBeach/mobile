@@ -68,7 +68,6 @@ export default function SearchContent({ keyword, onClose }: Props) {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
-      keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag">
       <Suspense fallback={<LoadingSpinner />}>
         {isEmpty ? (

@@ -111,7 +111,6 @@ export function BookList({ scrollRef }: BookListProps) {
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <BookListSkeleton /> : null}
-      keyboardShouldPersistTaps="always"
       keyboardDismissMode="on-drag"
     />
   );

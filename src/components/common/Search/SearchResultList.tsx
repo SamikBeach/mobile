@@ -51,10 +51,7 @@ export default function SearchResultList({ books, authors, onClose, searchValue 
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      keyboardShouldPersistTaps="always"
-      keyboardDismissMode="on-drag">
+    <ScrollView style={styles.container} keyboardDismissMode="on-drag">
       {books.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>도서</Text>

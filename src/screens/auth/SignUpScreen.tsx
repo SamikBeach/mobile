@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable no-catch-shadow */
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, Image, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Image,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/apis/auth';
@@ -142,102 +150,106 @@ export default function SignUpScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>회원가입</Text>
-        </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>회원가입</Text>
+          </View>
 
-        <View style={styles.form}>
-          <Controller
-            control={control}
-            name="email"
-            rules={{
-              required: '이메일을 입력해주세요',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: '올바른 이메일 형식이 아닙니다',
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <Input
-                placeholder="이메일"
-                value={value}
-                onChangeText={onChange}
-                error={errors.email?.message}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+          <View style={styles.form}>
+            <Controller
+              control={control}
+              name="email"
+              rules={{
+                required: '이메일을 입력해주세요',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: '올바른 이메일 형식이 아닙니다',
+                },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="이메일"
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors.email?.message}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              )}
+            />
+
+            {error && (
+              <Text style={styles.errorText}>
+                {(error as AxiosError<{ message: string }>)?.response?.data?.message ||
+                  '이메일 확인에 실패했습니다.'}
+              </Text>
             )}
-          />
 
-          {error && (
-            <Text style={styles.errorText}>
-              {(error as AxiosError<{ message: string }>)?.response?.data?.message ||
-                '이메일 확인에 실패했습니다.'}
-            </Text>
-          )}
+            <Button onPress={handleSubmit(data => mutate(data))} loading={isPending}>
+              이메일로 회원가입
+            </Button>
 
-          <Button onPress={handleSubmit(data => mutate(data))} loading={isPending}>
-            이메일로 회원가입
-          </Button>
-
-          <View style={styles.dividerContainer}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>또는</Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          <Button
-            variant="outline"
-            onPress={handleGoogleLogin}
-            loading={isGoogleLoginPending}
-            style={styles.googleButtonContainer}>
-            <View style={styles.googleButton}>
-              <Image source={require('@/assets/images/google.png')} style={styles.googleIcon} />
-              <Text style={styles.googleText}>구글 계정으로 회원가입</Text>
+            <View style={styles.dividerContainer}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>또는</Text>
+              <View style={styles.dividerLine} />
             </View>
-          </Button>
 
-          <Button
-            variant="outline"
-            onPress={handleAppleLogin}
-            loading={isAppleLoginPending}
-            style={styles.appleButtonContainer}>
-            <View style={styles.appleButton}>
-              <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
-              <Text style={styles.appleText}>애플 계정으로 회원가입</Text>
+            <Button
+              variant="outline"
+              onPress={handleGoogleLogin}
+              loading={isGoogleLoginPending}
+              style={styles.googleButtonContainer}>
+              <View style={styles.googleButton}>
+                <Image source={require('@/assets/images/google.png')} style={styles.googleIcon} />
+                <Text style={styles.googleText}>구글 계정으로 회원가입</Text>
+              </View>
+            </Button>
+
+            {Platform.OS === 'ios' && (
+              <Button
+                variant="outline"
+                onPress={handleAppleLogin}
+                loading={isAppleLoginPending}
+                style={styles.appleButtonContainer}>
+                <View style={styles.appleButton}>
+                  <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
+                  <Text style={styles.appleText}>애플 계정으로 회원가입</Text>
+                </View>
+              </Button>
+            )}
+
+            <View style={styles.links}>
+              <Text style={styles.linkText}>이미 계정이 있으신가요? </Text>
+              <Button
+                variant="text"
+                onPress={() => navigation.navigate('Login')}
+                style={styles.linkButton}>
+                <Text style={styles.linkText}>로그인</Text>
+              </Button>
             </View>
-          </Button>
 
-          <View style={styles.links}>
-            <Text style={styles.linkText}>이미 계정이 있으신가요? </Text>
-            <Button
-              variant="text"
-              onPress={() => navigation.navigate('Login')}
-              style={styles.linkButton}>
-              <Text style={styles.linkText}>로그인</Text>
-            </Button>
-          </View>
-
-          <View style={styles.links}>
-            <Button
-              variant="text"
-              onPress={() => navigation.navigate('Terms', { onAgree: () => {} })}
-              style={styles.linkButton}>
-              <Text style={styles.linkText}>이용약관</Text>
-            </Button>
-            <View style={styles.divider} />
-            <Button
-              variant="text"
-              onPress={() => navigation.navigate('Privacy')}
-              style={styles.linkButton}>
-              <Text style={styles.linkText}>개인정보처리방침</Text>
-            </Button>
+            <View style={styles.links}>
+              <Button
+                variant="text"
+                onPress={() => navigation.navigate('Terms', { onAgree: () => {} })}
+                style={styles.linkButton}>
+                <Text style={styles.linkText}>이용약관</Text>
+              </Button>
+              <View style={styles.divider} />
+              <Button
+                variant="text"
+                onPress={() => navigation.navigate('Privacy')}
+                style={styles.linkButton}>
+                <Text style={styles.linkText}>개인정보처리방침</Text>
+              </Button>
+            </View>
           </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
