@@ -148,7 +148,6 @@ export default function LoginScreen() {
 
   const handleAppleLogin = async () => {
     try {
-      console.warn('appleAuth');
       const appleAuthRequestResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
