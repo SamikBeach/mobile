@@ -268,7 +268,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    paddingTop: 16,
   },
   contentContainer: {
     flex: 1,
@@ -276,6 +275,7 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: 10,
+    marginTop: 16,
     marginBottom: 12,
   },
   titleContainer: {
