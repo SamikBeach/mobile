@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+# [1.20.0](https://github.com/SamikBeach/mobile/compare/1.19.0...1.20.0) (2025-02-18)
+
+
+### Features
+
+* 안드로이드 아이콘 추가 ([d4e109b](https://github.com/SamikBeach/mobile/commit/d4e109b40da85fec6f880b362c87a3331efa9155))
+
 # [1.19.0](https://github.com/SamikBeach/mobile/compare/1.18.0...1.19.0) (2025-02-18)
 
 
