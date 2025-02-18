@@ -109,7 +109,6 @@ export default function LoginScreen() {
       navigation.navigate('Home');
     },
     onError: (error: any) => {
-      console.warn(error);
       Toast.show({
         type: 'error',
         text1: '애플 로그인에 실패했습니다.',
