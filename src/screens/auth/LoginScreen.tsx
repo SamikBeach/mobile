@@ -109,6 +109,7 @@ export default function LoginScreen() {
       navigation.navigate('Home');
     },
     onError: (error: any) => {
+      console.warn(error);
       Toast.show({
         type: 'error',
         text1: '애플 로그인에 실패했습니다.',
@@ -147,6 +148,7 @@ export default function LoginScreen() {
 
   const handleAppleLogin = async () => {
     try {
+      console.warn('appleAuth');
       const appleAuthRequestResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
@@ -237,16 +239,18 @@ export default function LoginScreen() {
               </View>
             </Button>
 
-            <Button
-              variant="outline"
-              onPress={handleAppleLogin}
-              loading={isAppleLoginPending}
-              style={styles.appleButtonContainer}>
-              <View style={styles.appleButton}>
-                <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
-                <Text style={styles.appleText}>애플 계정으로 로그인</Text>
-              </View>
-            </Button>
+            {Platform.OS === 'ios' && (
+              <Button
+                variant="outline"
+                onPress={handleAppleLogin}
+                loading={isAppleLoginPending}
+                style={styles.appleButtonContainer}>
+                <View style={styles.appleButton}>
+                  <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
+                  <Text style={styles.appleText}>애플 계정으로 로그인</Text>
+                </View>
+              </Button>
+            )}
 
             <View style={styles.links}>
               <Button

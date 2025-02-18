@@ -208,16 +208,18 @@ export default function SignUpScreen({ navigation }: Props) {
               </View>
             </Button>
 
-            <Button
-              variant="outline"
-              onPress={handleAppleLogin}
-              loading={isAppleLoginPending}
-              style={styles.appleButtonContainer}>
-              <View style={styles.appleButton}>
-                <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
-                <Text style={styles.appleText}>애플 계정으로 회원가입</Text>
-              </View>
-            </Button>
+            {Platform.OS === 'ios' && (
+              <Button
+                variant="outline"
+                onPress={handleAppleLogin}
+                loading={isAppleLoginPending}
+                style={styles.appleButtonContainer}>
+                <View style={styles.appleButton}>
+                  <Image source={require('@/assets/images/apple.png')} style={styles.appleIcon} />
+                  <Text style={styles.appleText}>애플 계정으로 회원가입</Text>
+                </View>
+              </Button>
+            )}
 
             <View style={styles.links}>
               <Text style={styles.linkText}>이미 계정이 있으신가요? </Text>
