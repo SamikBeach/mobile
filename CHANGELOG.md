@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.20.1](https://github.com/SamikBeach/mobile/compare/1.20.0...1.20.1) (2025-02-20)
+
+
+### Bug Fixes
+
+* 기본 언어 한국어로 변경 ([4c2ce83](https://github.com/SamikBeach/mobile/commit/4c2ce83fd9dc2c49a308235e5b6e6f5eddd667ef))
+
 # [1.20.0](https://github.com/SamikBeach/mobile/compare/1.19.0...1.20.0) (2025-02-18)
 
 
