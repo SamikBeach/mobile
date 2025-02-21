@@ -11,7 +11,7 @@ export type RootStackParamList = {
   Home: undefined;
   BookList: { ref?: React.MutableRefObject<null> };
   AuthorList: { ref?: React.MutableRefObject<null> };
-  User: { userId: string; ref?: React.MutableRefObject<null> };
+  User: { userId: number; ref?: React.MutableRefObject<null> };
   BookDetail: { bookId: number };
   AuthorDetail: { authorId: number };
   Review: { reviewId: number };

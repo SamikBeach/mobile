@@ -26,7 +26,7 @@ export function UserAvatar({
 
   const handlePress = () => {
     if (!disabled) {
-      navigation.push('User', { userId: user.id });
+      navigation.navigate('User', { userId: user.id });
     }
   };
 
