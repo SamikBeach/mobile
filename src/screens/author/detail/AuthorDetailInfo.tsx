@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Image, Pressable, Linking, Animated } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { formatAuthorLifespan } from '@/utils/date';
@@ -21,6 +21,8 @@ interface Props {
 }
 
 export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const { data: author, isLoading } = useQuery({
     queryKey: ['author', authorId],
     queryFn: () => authorApi.getAuthorDetail(authorId),
@@ -115,9 +117,18 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
       </View>
 
       {author.description && (
-        <Text style={styles.description} numberOfLines={3}>
-          {author.description}
-        </Text>
+        <View>
+          <Pressable onPress={() => setIsExpanded(!isExpanded)}>
+            <Text style={styles.description} numberOfLines={isExpanded ? undefined : 3}>
+              {author.description}
+            </Text>
+            {author.description.length > 200 && (
+              <Text style={[styles.expandButtonText, styles.expandButtonMargin]}>
+                {isExpanded ? '접기' : '더보기'}
+              </Text>
+            )}
+          </Pressable>
+        </View>
       )}
     </View>
   );
@@ -192,5 +203,12 @@ const styles = StyleSheet.create({
   statText: {
     fontSize: 14,
     color: colors.gray[600],
+  },
+  expandButtonText: {
+    fontSize: 14,
+    color: colors.blue[600],
+  },
+  expandButtonMargin: {
+    marginTop: spacing.xs,
   },
 });

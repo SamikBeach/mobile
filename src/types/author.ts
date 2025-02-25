@@ -1,13 +1,13 @@
 import { Book } from './book';
 import { BaseEntity, PaginationQuery } from './common';
-import { Genre, GenreEntity } from './genre';
+import { GenreEntity } from './genre';
 import type { Era } from './era';
 
 export interface Author extends BaseEntity {
   name: string;
   nameInKor: string;
   nameInEng: string | null;
-  description: string;
+  description: string | null;
   imageUrl: string | null;
   bornDate: string | null;
   bornDateIsBc: boolean | null;
