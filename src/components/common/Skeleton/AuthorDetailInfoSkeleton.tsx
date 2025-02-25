@@ -22,17 +22,18 @@ export function AuthorDetailInfoSkeleton() {
 
             <View style={styles.stats}>
               <View style={styles.statItem}>
-                <Skeleton style={styles.statIcon} />
-                <Skeleton style={styles.statText} />
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Skeleton style={styles.statIcon} />
-                <Skeleton style={styles.statText} />
+                <Skeleton style={styles.statButton} />
+                <Skeleton style={styles.statButton} />
               </View>
             </View>
           </View>
         </View>
+      </View>
+
+      <View style={styles.descriptionContainer}>
+        <Skeleton style={styles.descriptionLine} />
+        <Skeleton style={styles.descriptionLine} />
+        <Skeleton style={[styles.descriptionLine, styles.lastLine]} />
       </View>
     </View>
   );
@@ -49,13 +50,13 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {},
   image: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     borderRadius: borderRadius.full,
   },
   info: {
     flex: 1,
-    height: 120,
+    paddingVertical: spacing.xs,
   },
   infoContent: {
     flex: 1,
@@ -66,53 +67,47 @@ const styles = StyleSheet.create({
   },
   name: {
     height: 24,
-    width: '80%',
+    width: 120,
     borderRadius: borderRadius.sm,
   },
   originalName: {
-    height: 15,
-    width: '60%',
+    height: 18,
+    width: 150,
     borderRadius: borderRadius.sm,
   },
   lifespan: {
-    height: 14,
-    width: '40%',
+    height: 16,
+    width: 100,
     borderRadius: borderRadius.sm,
   },
   source: {
-    height: 13,
-    width: '30%',
-    borderRadius: borderRadius.sm,
-  },
-  description: {
     height: 15,
-    width: '100%',
+    width: 80,
     borderRadius: borderRadius.sm,
-    marginBottom: spacing.xs,
   },
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.xs,
   },
   statItem: {
     flexDirection: 'row',
-    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  statButton: {
+    width: 60,
+    height: 32,
+    borderRadius: 16,
+  },
+  descriptionContainer: {
     gap: spacing.xs,
   },
-  statIcon: {
-    width: 14,
-    height: 14,
-    borderRadius: borderRadius.full,
-  },
-  statText: {
-    width: 24,
-    height: 14,
+  descriptionLine: {
+    height: 16,
+    width: '100%',
     borderRadius: borderRadius.sm,
   },
-  statDivider: {
-    width: 1,
-    height: 12,
-    backgroundColor: colors.gray[200],
-    marginHorizontal: spacing.sm,
+  lastLine: {
+    width: '80%',
   },
 });
