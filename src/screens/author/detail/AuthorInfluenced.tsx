@@ -24,6 +24,12 @@ function InfluencedAuthorItem({
   author: InfluencedAuthor;
   onPress: () => void;
 }) {
+  const lifespan = formatAuthorLifespan(
+    author.bornDate,
+    author.bornDateIsBc,
+    author.diedDate,
+    author.diedDateIsBc,
+  );
   return (
     <Pressable style={styles.authorItem} onPress={onPress}>
       <Image
@@ -40,14 +46,7 @@ function InfluencedAuthorItem({
             </View>
           )}
         </View>
-        <Text style={styles.authorLifespan}>
-          {formatAuthorLifespan(
-            author.bornDate,
-            author.bornDateIsBc,
-            author.diedDate,
-            author.diedDateIsBc,
-          )}
-        </Text>
+        {lifespan && <Text style={styles.authorLifespan}>{lifespan}</Text>}
       </View>
     </Pressable>
   );
@@ -71,6 +70,8 @@ export function AuthorInfluenced({ authorId, authorName }: Props) {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  const animationConfig = Layout.duration(300).easing(Easing.inOut(Easing.ease));
+
   if (isInfluencedLoading || isInfluencedByLoading) {
     return <AuthorInfluencedSkeleton />;
   }
@@ -88,7 +89,7 @@ export function AuthorInfluenced({ authorId, authorName }: Props) {
   }
 
   const renderAuthorItem: ListRenderItem<InfluencedAuthor> = ({ item }) => (
-    <Animated.View layout={Layout.duration(300).easing(Easing.inOut(Easing.ease))}>
+    <Animated.View layout={animationConfig}>
       <InfluencedAuthorItem author={item} onPress={() => handleAuthorPress(item)} />
     </Animated.View>
   );
@@ -115,10 +116,10 @@ export function AuthorInfluenced({ authorId, authorName }: Props) {
           <Animated.FlatList<InfluencedAuthor>
             data={influenced.slice(0, isInfluencedExpanded ? undefined : 2)}
             renderItem={renderAuthorItem}
-            keyExtractor={(item: InfluencedAuthor) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
             scrollEnabled={false}
             contentContainerStyle={styles.authorList}
-            layout={Layout.duration(300).easing(Easing.inOut(Easing.ease))}
+            layout={animationConfig}
             ListFooterComponent={() =>
               renderFooter(
                 isInfluencedExpanded,
@@ -141,10 +142,10 @@ export function AuthorInfluenced({ authorId, authorName }: Props) {
           <Animated.FlatList<InfluencedAuthor>
             data={influencedBy.slice(0, isInfluencedByExpanded ? undefined : 2)}
             renderItem={renderAuthorItem}
-            keyExtractor={(item: InfluencedAuthor) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
             scrollEnabled={false}
             contentContainerStyle={styles.authorList}
-            layout={Layout.duration(300).easing(Easing.inOut(Easing.ease))}
+            layout={animationConfig}
             ListFooterComponent={() =>
               renderFooter(
                 isInfluencedByExpanded,
