@@ -11,6 +11,7 @@ import { AuthorInfluencedSkeleton } from '@/components/common/Skeleton/AuthorInf
 import { formatAuthorLifespan } from '@/utils/date';
 import { InfluencedAuthor } from '@/types/author';
 import Animated, { Layout, Easing } from 'react-native-reanimated';
+import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   authorId: number;
@@ -30,13 +31,20 @@ function InfluencedAuthorItem({
     author.diedDate,
     author.diedDateIsBc,
   );
+
   return (
     <Pressable style={styles.authorItem} onPress={onPress}>
-      <Image
-        source={{ uri: author.imageUrl ?? undefined }}
-        style={styles.authorImage}
-        resizeMode="cover"
-      />
+      {author.isWikiData ? (
+        <View style={[styles.authorImage, styles.authorImageFallback]}>
+          <Icon name="user" size={24} color={colors.gray[400]} />
+        </View>
+      ) : (
+        <Image
+          source={{ uri: author.imageUrl ?? undefined }}
+          style={styles.authorImage}
+          resizeMode="cover"
+        />
+      )}
       <View style={styles.authorInfo}>
         <View style={styles.authorNameRow}>
           <Text style={styles.authorName}>{author.nameInKor}</Text>
@@ -244,5 +252,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     color: colors.gray[600],
+  },
+  authorImageFallback: {
+    backgroundColor: colors.gray[100],
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
