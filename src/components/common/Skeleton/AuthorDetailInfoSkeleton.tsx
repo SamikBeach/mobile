@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Skeleton } from './Skeleton';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { spacing, borderRadius } from '@/styles/theme';
 
 export function AuthorDetailInfoSkeleton() {
   return (

@@ -48,3 +48,7 @@ export interface AuthorSearchQuery extends PaginationQuery {
   };
   searchBy?: ('name' | 'nameInKor' | 'genre_id')[];
 }
+
+export interface InfluencedAuthor extends Author {
+  isWikiData: boolean;
+}

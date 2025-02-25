@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, Pressable, Linking, Animated } from 'react-native';
+import React, { useState, Suspense } from 'react';
+import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { formatAuthorLifespan } from '@/utils/date';
@@ -14,6 +14,8 @@ import Toast from 'react-native-toast-message';
 import { AuthorDetailInfoSkeleton } from '@/components/common/Skeleton/AuthorDetailInfoSkeleton';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
+import { AuthorInfluenced } from './AuthorInfluenced';
+import { AuthorInfluencedSkeleton } from '@/components/common/Skeleton/AuthorInfluencedSkeleton';
 
 interface Props {
   authorId: number;
@@ -72,7 +74,14 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
   };
 
   if (isLoading) {
-    return <AuthorDetailInfoSkeleton />;
+    return (
+      <>
+        <AuthorDetailInfoSkeleton />
+        <View style={{ paddingHorizontal: spacing.lg }}>
+          <AuthorInfluencedSkeleton />
+        </View>
+      </>
+    );
   }
 
   if (!author) return null;
@@ -130,6 +139,8 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
           </Pressable>
         </View>
       )}
+
+      <AuthorInfluenced authorId={authorId} authorName={author.nameInKor?.trim() ?? ''} />
     </View>
   );
 }
