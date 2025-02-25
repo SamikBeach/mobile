@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Skeleton } from './Skeleton';
-import { spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 
 export function AuthorDetailInfoSkeleton() {
   return (
@@ -22,18 +22,17 @@ export function AuthorDetailInfoSkeleton() {
 
             <View style={styles.stats}>
               <View style={styles.statItem}>
-                <Skeleton style={styles.statButton} />
-                <Skeleton style={styles.statButton} />
+                <Skeleton style={styles.statIcon} />
+                <Skeleton style={styles.statText} />
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Skeleton style={styles.statIcon} />
+                <Skeleton style={styles.statText} />
               </View>
             </View>
           </View>
         </View>
-      </View>
-
-      <View style={styles.descriptionContainer}>
-        <Skeleton style={styles.descriptionLine} />
-        <Skeleton style={styles.descriptionLine} />
-        <Skeleton style={[styles.descriptionLine, styles.lastLine]} />
       </View>
     </View>
   );
@@ -50,13 +49,13 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {},
   image: {
-    width: 140,
-    height: 140,
+    width: 120,
+    height: 120,
     borderRadius: borderRadius.full,
   },
   info: {
     flex: 1,
-    paddingVertical: spacing.xs,
+    height: 120,
   },
   infoContent: {
     flex: 1,
@@ -67,47 +66,53 @@ const styles = StyleSheet.create({
   },
   name: {
     height: 24,
-    width: 120,
+    width: '80%',
     borderRadius: borderRadius.sm,
   },
   originalName: {
-    height: 18,
-    width: 150,
+    height: 15,
+    width: '60%',
     borderRadius: borderRadius.sm,
   },
   lifespan: {
-    height: 16,
-    width: 100,
+    height: 14,
+    width: '40%',
     borderRadius: borderRadius.sm,
   },
   source: {
-    height: 15,
-    width: 80,
+    height: 13,
+    width: '30%',
     borderRadius: borderRadius.sm,
+  },
+  description: {
+    height: 15,
+    width: '100%',
+    borderRadius: borderRadius.sm,
+    marginBottom: spacing.xs,
   },
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
   },
   statItem: {
     flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  statButton: {
-    width: 60,
-    height: 32,
-    borderRadius: 16,
-  },
-  descriptionContainer: {
+    alignItems: 'center',
     gap: spacing.xs,
   },
-  descriptionLine: {
-    height: 16,
-    width: '100%',
+  statIcon: {
+    width: 14,
+    height: 14,
+    borderRadius: borderRadius.full,
+  },
+  statText: {
+    width: 24,
+    height: 14,
     borderRadius: borderRadius.sm,
   },
-  lastLine: {
-    width: '80%',
+  statDivider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.gray[200],
+    marginHorizontal: spacing.sm,
   },
 });

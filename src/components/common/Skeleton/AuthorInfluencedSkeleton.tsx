@@ -1,30 +1,28 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Skeleton } from './Skeleton';
-import { spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 
 export function AuthorInfluencedSkeleton() {
   return (
     <View style={styles.container}>
-      {[0, 1].map(sectionIndex => (
-        <View key={sectionIndex} style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Skeleton style={styles.sectionTitle} />
-            <Skeleton style={styles.countBadge} />
-          </View>
-          <View style={styles.authorList}>
-            {[0, 1].map(itemIndex => (
-              <View key={itemIndex} style={styles.authorItem}>
-                <Skeleton style={styles.authorImage} />
-                <View style={styles.authorInfo}>
-                  <Skeleton style={styles.authorName} />
-                  <Skeleton style={styles.authorLifespan} />
-                </View>
-              </View>
-            ))}
-          </View>
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Skeleton style={styles.sectionTitle} />
+          <Skeleton style={styles.countBadge} />
         </View>
-      ))}
+        <View style={styles.authorList}>
+          {[1, 2].map(i => (
+            <View key={i} style={styles.authorItem}>
+              <Skeleton style={styles.authorImage} />
+              <View style={styles.authorInfo}>
+                <Skeleton style={styles.authorName} />
+                <Skeleton style={styles.authorLifespan} />
+              </View>
+            </View>
+          ))}
+        </View>
+      </View>
     </View>
   );
 }
@@ -42,13 +40,13 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   sectionTitle: {
-    width: 200,
-    height: 24,
+    width: 150,
+    height: 18,
     borderRadius: borderRadius.sm,
   },
   countBadge: {
-    width: 30,
-    height: 20,
+    width: 24,
+    height: 16,
     borderRadius: 12,
   },
   authorList: {
@@ -59,6 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.sm,
     gap: spacing.md,
+    backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
   },
   authorImage: {
@@ -71,13 +70,13 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   authorName: {
-    width: 120,
-    height: 16,
+    width: '60%',
+    height: 15,
     borderRadius: borderRadius.sm,
   },
   authorLifespan: {
-    width: 80,
-    height: 14,
+    width: '40%',
+    height: 13,
     borderRadius: borderRadius.sm,
   },
-}); 
+});

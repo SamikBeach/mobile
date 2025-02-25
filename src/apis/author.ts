@@ -1,10 +1,9 @@
 import axios from '@/lib/axios';
-import type { Author, AuthorDetail, AuthorSearchQuery } from '@/types/author';
+import type { Author, AuthorDetail, AuthorSearchQuery, InfluencedAuthor } from '@/types/author';
 import { Book } from '@/types/book';
 import type { PaginatedResponse, PaginationQuery } from '@/types/common';
 import type { Review } from '@/types/review';
 import { transformFilterParams } from '@/utils/api';
-import type { InfluencedAuthor } from '@/types/author';
 
 export const authorApi = {
   /**
