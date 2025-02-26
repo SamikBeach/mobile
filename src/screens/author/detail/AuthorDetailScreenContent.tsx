@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, StyleSheet, FlatList, Platform, TextInput } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -14,6 +14,13 @@ import { AuthorBooks } from './AuthorBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
 import Animated, { Easing, Layout } from 'react-native-reanimated';
+import { CommentEditor } from '@/components/comment/CommentEditor';
+import { reviewApi } from '@/apis/review';
+import { useCommentQueryData } from '@/hooks/useCommentQueryData';
+import Toast from 'react-native-toast-message';
+import { useMutation } from '@tanstack/react-query';
+import type { ReviewItemHandle } from '@/components/review/ReviewItem';
+import { SlideInDown } from 'react-native-reanimated';
 
 interface Props {
   authorId: number;
@@ -21,6 +28,12 @@ interface Props {
 
 export function AuthorDetailScreenContent({ authorId }: Props) {
   const flatListRef = useRef<FlatList>(null);
+  const [activeReviewId, setActiveReviewId] = useState<number | null>(null);
+  const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
+  const [isReplyAnimating, setIsReplyAnimating] = useState(false);
+  const { createCommentQueryData } = useCommentQueryData();
+  const reviewRefs = useRef<{ [key: number]: React.RefObject<ReviewItemHandle> }>({});
+  const commentEditorRef = useRef<TextInput>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
@@ -93,29 +106,157 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     </View>
   );
 
+  const { mutate: createComment } = useMutation({
+    mutationFn: (params: { reviewId: number; content: string }) =>
+      reviewApi.createComment(params.reviewId, { content: params.content }),
+    onMutate: async ({ reviewId }) => {
+      const reviewRef = getReviewRef(reviewId);
+      if (reviewRef?.current) {
+        reviewRef.current.showComments();
+      }
+    },
+    onSuccess: (response, { reviewId }) => {
+      createCommentQueryData({
+        reviewId,
+        comment: response.data,
+      });
+      Toast.show({
+        type: 'success',
+        text1: '댓글이 등록되었습니다.',
+      });
+      setActiveReviewId(null);
+      setReplyToUser(null);
+      handleCommentSuccess(reviewId);
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '댓글 작성에 실패했습니다.',
+      });
+    },
+  });
+
+  const handleCommentPress = (reviewId: number, user?: { nickname: string }) => {
+    if (!user) {
+      const reviewIndex = reviews.findIndex(review => review.id === reviewId);
+      if (reviewIndex !== -1) {
+        flatListRef.current?.scrollToIndex({
+          index: reviewIndex,
+          animated: true,
+          viewPosition: 0,
+        });
+      }
+      commentEditorRef.current?.clear();
+    }
+
+    setActiveReviewId(reviewId);
+    if (user) {
+      setReplyToUser(user);
+    } else {
+      setReplyToUser(null);
+    }
+
+    setIsReplyAnimating(true);
+    setTimeout(() => {
+      setIsReplyAnimating(false);
+    }, 3000);
+  };
+
+  const getReviewRef = (reviewId: number) => {
+    if (!reviewRefs.current[reviewId]) {
+      reviewRefs.current[reviewId] = React.createRef();
+    }
+    return reviewRefs.current[reviewId];
+  };
+
+  const onScrollToIndexFailed = (info: {
+    index: number;
+    highestMeasuredFrameIndex: number;
+    averageItemLength: number;
+  }) => {
+    const offset = info.averageItemLength * info.index;
+    flatListRef.current?.scrollToOffset({ offset, animated: false });
+    setTimeout(() => {
+      if (flatListRef.current !== null) {
+        flatListRef.current.scrollToIndex({
+          index: info.index,
+          animated: true,
+          viewPosition: 0,
+        });
+      }
+    }, 100);
+  };
+
+  const handleCommentSuccess = (reviewId: number) => {
+    const reviewIndex = reviews.findIndex(review => review.id === reviewId);
+    if (reviewIndex !== -1) {
+      flatListRef.current?.scrollToIndex({
+        index: reviewIndex,
+        animated: true,
+        viewPosition: 0,
+      });
+    }
+  };
+
   return (
-    <Animated.FlatList
-      ref={flatListRef}
-      data={reviews}
-      renderItem={({ item }) => (
-        <View style={styles.reviewItemContainer}>
-          {isLoading ? <ReviewItemSkeleton /> : <ReviewItem review={item} showBookInfo />}
-        </View>
+    <View style={styles.container}>
+      <Animated.FlatList
+        ref={flatListRef}
+        data={reviews}
+        onScrollToIndexFailed={onScrollToIndexFailed}
+        renderItem={({ item }) => (
+          <View style={styles.reviewItemContainer}>
+            {isLoading ? (
+              <ReviewItemSkeleton />
+            ) : (
+              <ReviewItem
+                ref={getReviewRef(item.id)}
+                review={item}
+                showBookInfo
+                onCommentPress={handleCommentPress}
+              />
+            )}
+          </View>
+        )}
+        itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
+        ListHeaderComponent={ListHeaderComponent}
+        ListEmptyComponent={ListEmptyComponent}
+        keyExtractor={item => item.id.toString()}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
+        contentContainerStyle={[
+          styles.reviewList,
+          activeReviewId ? { paddingBottom: Platform.OS === 'ios' ? 90 : 56 } : undefined,
+        ]}
+      />
+      {activeReviewId && (
+        <Animated.View entering={SlideInDown.duration(300)} style={styles.commentEditorContainer}>
+          <CommentEditor
+            textInputRef={commentEditorRef}
+            onSubmit={content => {
+              createComment({ reviewId: activeReviewId, content });
+            }}
+            onCancel={() => {
+              setActiveReviewId(null);
+              setReplyToUser(null);
+            }}
+            replyToUser={replyToUser}
+            autoFocus
+            isReplying={isReplyAnimating}
+          />
+        </Animated.View>
       )}
-      itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
-      ListHeaderComponent={ListHeaderComponent}
-      ListEmptyComponent={ListEmptyComponent}
-      keyExtractor={item => item.id.toString()}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
-      onEndReached={handleLoadMore}
-      onEndReachedThreshold={0.5}
-      ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
-      contentContainerStyle={styles.reviewList}
-    />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
   listHeader: {
     gap: spacing.xl,
   },
@@ -157,5 +298,20 @@ const styles = StyleSheet.create({
   },
   reviewItemContainer: {
     paddingHorizontal: spacing.lg,
+  },
+  commentEditorContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderTopWidth: 1,
+    borderTopColor: colors.gray[200],
+    padding: spacing.lg,
+    backgroundColor: colors.white,
+    ...Platform.select({
+      ios: {
+        paddingBottom: spacing.lg,
+      },
+    }),
   },
 });

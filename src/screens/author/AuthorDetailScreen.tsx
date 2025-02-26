@@ -24,7 +24,7 @@ export function AuthorDetailScreen({ route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
   },
   editorContainer: {
     position: 'absolute',
