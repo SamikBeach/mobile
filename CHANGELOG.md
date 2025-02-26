@@ -1,5 +1,26 @@
 # 🚦 CHANGELOG
 
+# [1.21.0](https://github.com/SamikBeach/mobile/compare/1.20.1...1.21.0) (2025-02-26)
+
+
+### Bug Fixes
+
+* fix lint ([a66760d](https://github.com/SamikBeach/mobile/commit/a66760d54d9403d51135d1e0eec95b608abfd0f1))
+* fix type errors ([8f672ae](https://github.com/SamikBeach/mobile/commit/8f672ae0bb6a5f13ceedae47cf392527683ec870))
+* 문구 수정 ([2102d67](https://github.com/SamikBeach/mobile/commit/2102d675f9e4f0d59edfd4a10e8916fb2f3f35ba))
+* 작가 및 연관 책 그리드 레이아웃의 좌우 여백 추가 ([1e346e9](https://github.com/SamikBeach/mobile/commit/1e346e9dd7094f4e917af2818203c417193e3b4a))
+* 작가 상세 스켈레톤 크기 정확히 조정 ([c25efd5](https://github.com/SamikBeach/mobile/commit/c25efd5a9a08a0abc63a2c2aae6a5ba94724e83a))
+* 작가 영향 관계 데이터 표시 오류 수정 ([5e597ac](https://github.com/SamikBeach/mobile/commit/5e597ac1b68b152911dc698c6af04f92e17ab81c))
+* 작가 영향 관계 섹션 애니메이션 동작 통일 ([31552a8](https://github.com/SamikBeach/mobile/commit/31552a8e22b48937fab34c47575bf758db54c571))
+
+
+### Features
+
+* 위키피디아 작가 기본 아이콘 추가 ([7fea0a1](https://github.com/SamikBeach/mobile/commit/7fea0a1a580f2d3a1969f5e3e7a701a1165a678c))
+* 작가 상세 페이지 설명 영역 스켈레톤 개선 ([d8f8b95](https://github.com/SamikBeach/mobile/commit/d8f8b957f6e546d05e4c1e60b2153164b6bc629d))
+* 작가 상세 페이지 설명 영역 전체 터치 가능하도록 수정 ([770af72](https://github.com/SamikBeach/mobile/commit/770af724a002d69e262a00110ee5b90b2d8eaa77))
+* 작가 상세 화면 댓글 기능 추가 ([b4b52a6](https://github.com/SamikBeach/mobile/commit/b4b52a643e28546ba1aee671f2314b3a3a34132d))
+
 ## [1.20.1](https://github.com/SamikBeach/mobile/compare/1.20.0...1.20.1) (2025-02-20)
 
 
