@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, Pressable, FlatList } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -18,6 +18,7 @@ interface Props {
 
 export function AuthorBooks({ authorId }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ['author-books', authorId],
@@ -39,6 +40,42 @@ export function AuthorBooks({ authorId }: Props) {
     return null;
   }
 
+  const renderBookItem = (book: any) => (
+    <Pressable
+      key={book.id}
+      style={styles.bookItem}
+      onPress={() => navigation.push('BookDetail', { bookId: book.id })}>
+      <View style={styles.imageContainer}>
+        <BookImage imageUrl={book.imageUrl} />
+      </View>
+      <View style={styles.bookInfo}>
+        <Text style={styles.bookTitle} numberOfLines={2}>
+          {book.title}
+        </Text>
+        <Text style={styles.bookPublisher}>
+          {book.publisher}
+          {book.publicationDate && (
+            <>
+              {' · '}
+              {format(new Date(book.publicationDate), 'yyyy.MM')}
+            </>
+          )}
+        </Text>
+        <View style={styles.stats}>
+          <View style={styles.statItem}>
+            <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
+            <Text style={styles.statText}>{book.likeCount}</Text>
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.statItem}>
+            <Icon name="message-square" size={13} color={colors.gray[400]} />
+            <Text style={styles.statText}>{book.reviewCount}</Text>
+          </View>
+        </View>
+      </View>
+    </Pressable>
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -46,48 +83,41 @@ export function AuthorBooks({ authorId }: Props) {
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{books.length}</Text>
         </View>
+        {books.length > 5 && (
+          <Pressable 
+            style={styles.toggleButton} 
+            onPress={() => setIsExpanded(!isExpanded)}
+          >
+            <Text style={styles.toggleButtonText}>
+              {isExpanded ? '접기' : '전체보기'}
+            </Text>
+            <Icon 
+              name={isExpanded ? 'chevron-up' : 'grid'} 
+              size={16} 
+              color={colors.gray[600]} 
+            />
+          </Pressable>
+        )}
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}>
-        {books.map(book => (
-          <Pressable
-            key={book.id}
-            style={styles.bookItem}
-            onPress={() => navigation.push('BookDetail', { bookId: book.id })}>
-            <View style={styles.imageContainer}>
-              <BookImage imageUrl={book.imageUrl} />
-            </View>
-            <View style={styles.bookInfo}>
-              <Text style={styles.bookTitle} numberOfLines={2}>
-                {book.title}
-              </Text>
-              <Text style={styles.bookPublisher}>
-                {book.publisher}
-                {book.publicationDate && (
-                  <>
-                    {' · '}
-                    {format(new Date(book.publicationDate), 'yyyy.MM')}
-                  </>
-                )}
-              </Text>
-              <View style={styles.stats}>
-                <View style={styles.statItem}>
-                  <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
-                  <Text style={styles.statText}>{book.likeCount}</Text>
-                </View>
-                <View style={styles.divider} />
-                <View style={styles.statItem}>
-                  <Icon name="message-square" size={13} color={colors.gray[400]} />
-                  <Text style={styles.statText}>{book.reviewCount}</Text>
-                </View>
-              </View>
-            </View>
-          </Pressable>
-        ))}
-      </ScrollView>
+      {isExpanded ? (
+        <FlatList
+          data={books}
+          renderItem={({ item }) => renderBookItem(item)}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={3}
+          columnWrapperStyle={styles.gridRow}
+          contentContainerStyle={styles.gridContent}
+          style={styles.gridContainer}
+        />
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}>
+          {books.map(book => renderBookItem(book))}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -99,22 +129,35 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
     paddingHorizontal: spacing.lg,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
+    marginRight: spacing.xs,
   },
   badge: {
     backgroundColor: colors.gray[100],
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs / 2,
     borderRadius: borderRadius.full,
+    marginRight: 'auto',
   },
   badgeText: {
     fontSize: 13,
+    fontWeight: '500',
+    color: colors.gray[600],
+  },
+  toggleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+  },
+  toggleButtonText: {
+    fontSize: 14,
     fontWeight: '500',
     color: colors.gray[600],
   },
@@ -122,6 +165,16 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.lg,
+  },
+  gridContainer: {
+    paddingHorizontal: spacing.lg,
+  },
+  gridContent: {
+    paddingVertical: spacing.xs,
+  },
+  gridRow: {
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
   },
   bookItem: {
     width: 120,

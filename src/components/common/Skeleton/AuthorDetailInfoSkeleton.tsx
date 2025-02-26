@@ -34,6 +34,12 @@ export function AuthorDetailInfoSkeleton() {
           </View>
         </View>
       </View>
+      <View style={styles.description}>
+        <Skeleton style={styles.descriptionLine} />
+        <Skeleton style={styles.descriptionLine} />
+        <Skeleton style={styles.descriptionLine} />
+        <Skeleton style={[styles.descriptionLine, { width: '60%' }]} />
+      </View>
     </View>
   );
 }
@@ -45,17 +51,21 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    gap: spacing.lg,
+    gap: spacing.md,
   },
-  imageWrapper: {},
+  imageWrapper: {
+    width: 140,
+    height: 140,
+  },
   image: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     borderRadius: borderRadius.full,
   },
   info: {
     flex: 1,
-    height: 120,
+    height: 140,
+    paddingVertical: spacing.xs,
   },
   infoContent: {
     flex: 1,
@@ -78,21 +88,25 @@ const styles = StyleSheet.create({
     height: 14,
     width: '40%',
     borderRadius: borderRadius.sm,
+    marginTop: 2,
   },
   source: {
     height: 13,
     width: '30%',
     borderRadius: borderRadius.sm,
+    marginTop: 2,
   },
   description: {
+    gap: spacing.xs,
+  },
+  descriptionLine: {
     height: 15,
-    width: '100%',
     borderRadius: borderRadius.sm,
-    marginBottom: spacing.xs,
   },
   stats: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: spacing.sm,
   },
   statItem: {
     flexDirection: 'row',

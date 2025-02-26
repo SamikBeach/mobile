@@ -150,7 +150,29 @@ export function useCommentQueryData() {
       },
     );
 
-    // 2. 단일 리뷰 상세에서도 업데이트
+    // 2. 작가 리뷰 목록에서 업데이트
+    queryClient.setQueriesData<InfiniteData<AxiosResponse<PaginatedResponse<Review>>>>(
+      { queryKey: ['author-reviews'], exact: false },
+      old => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map(page => ({
+            ...page,
+            data: {
+              ...page.data,
+              data: page.data.data.map(review =>
+                review.id === reviewId
+                  ? { ...review, commentCount: (review.commentCount ?? 0) + 1 }
+                  : review,
+              ),
+            },
+          })),
+        };
+      },
+    );
+
+    // 3. 단일 리뷰 상세에서도 업데이트
     queryClient.setQueryData<AxiosResponse<Review>>(['review', reviewId], old => {
       if (!old) return old;
       return {

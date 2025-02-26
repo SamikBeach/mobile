@@ -48,7 +48,7 @@ export function AuthorList({ userId }: Props) {
       <Empty
         icon={<Icon name="alert-circle" size={48} color={colors.gray[400]} />}
         message="오류가 발생했어요"
-        description="좋아한 작가 목록을 불러오는 중에 문제가 발생했어요."
+        description="좋아한 작가 목록을 불러오는 중에 문제가 발생했어요"
       />
     );
   }
