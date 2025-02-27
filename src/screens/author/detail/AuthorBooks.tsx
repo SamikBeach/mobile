@@ -39,7 +39,7 @@ export function AuthorBooks({ authorId }: Props) {
     select: response => response.data,
   });
 
-  if (isAuthorLoading || isBooksLoading) {
+  if (isAuthorLoading && isBooksLoading) {
     return <AuthorBooksSkeleton />;
   }
 

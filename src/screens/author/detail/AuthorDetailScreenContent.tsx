@@ -65,10 +65,11 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     placeholderData: keepPreviousData,
   });
 
-  const { data: author } = useQuery({
+  const { data: author, isLoading: isAuthorLoading } = useQuery({
     queryKey: ['author', authorId],
     queryFn: () => authorApi.getAuthorDetail(authorId),
     select: response => response.data,
+    staleTime: 60 * 1000,
   });
 
   const reviews = data?.pages.flatMap(page => page.data.data) ?? [];
@@ -91,8 +92,8 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     <View style={styles.listHeader}>
       <AuthorDetailInfo authorId={authorId} onReviewPress={handleReviewPress} />
 
-      {isLoading ? (
-        <ChatButtonSkeleton />
+      {isAuthorLoading ? (
+        <Skeleton style={styles.chatButtonSkeleton} />
       ) : (
         author && (
           <View>
@@ -284,19 +285,6 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
   );
 }
 
-function ChatButtonSkeleton() {
-  return (
-    <Skeleton
-      style={{
-        height: 48,
-        borderRadius: borderRadius.md,
-        marginVertical: spacing.md,
-        marginHorizontal: spacing.lg,
-      }}
-    />
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -381,5 +369,11 @@ const styles = StyleSheet.create({
   chatContainer: {
     marginHorizontal: spacing.lg,
     marginBottom: spacing.md,
+  },
+  chatButtonSkeleton: {
+    marginVertical: spacing.md,
+    marginHorizontal: spacing.lg,
+    height: 48,
+    borderRadius: borderRadius.md,
   },
 });

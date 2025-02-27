@@ -11,27 +11,24 @@ export function AuthorYoutubesSkeleton() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.titleSection}>
-          <Skeleton style={{ width: 100, height: 20, borderRadius: 4 }} />
+          <Skeleton style={{ width: 100, height: 24, borderRadius: 4 }} />
           <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
         </View>
         <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
       </View>
-
-      <View style={styles.videoGrid}>
-        {[1, 2, 3, 4].map(i => (
-          <View key={i} style={styles.videoCard}>
-            <View style={styles.thumbnailContainer}>
-              <Skeleton style={{ width: '100%', height: 0, paddingBottom: '56.25%', borderTopLeftRadius: 8, borderTopRightRadius: 8 }} />
-              <View style={styles.playIconContainer}>
-                <Skeleton style={{ width: 36, height: 36, borderRadius: 18 }} />
+      
+      <View style={[styles.videoGrid, { paddingHorizontal: spacing.lg }]}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          {[1, 2, 3, 4].map(i => (
+            <View key={i} style={styles.videoCard}>
+              <Skeleton style={{ width: '100%', aspectRatio: 16 / 9, borderTopLeftRadius: borderRadius.md, borderTopRightRadius: borderRadius.md }} />
+              <View style={styles.videoInfo}>
+                <Skeleton style={{ width: '90%', height: 16, borderRadius: 4 }} />
+                <Skeleton style={{ width: '60%', height: 12, borderRadius: 4, marginTop: 4 }} />
               </View>
             </View>
-            <View style={styles.videoInfo}>
-              <Skeleton style={{ width: '90%', height: 16, borderRadius: 4 }} />
-              <Skeleton style={{ width: '60%', height: 12, borderRadius: 4, marginTop: 4 }} />
-            </View>
-          </View>
-        ))}
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -39,14 +36,13 @@ export function AuthorYoutubesSkeleton() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: spacing.xl,
-    paddingBottom: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.md,
     paddingHorizontal: spacing.lg,
   },
   titleSection: {
@@ -59,30 +55,15 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: spacing.md,
-    paddingHorizontal: spacing.lg,
   },
   videoCard: {
     width: CARD_WIDTH,
-    backgroundColor: colors.white,
     borderRadius: borderRadius.md,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+    marginBottom: spacing.md,
     overflow: 'hidden',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  thumbnailContainer: {
-    position: 'relative',
-  },
-  playIconContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   videoInfo: {
     padding: spacing.sm,

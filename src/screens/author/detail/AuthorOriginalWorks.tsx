@@ -31,7 +31,7 @@ export function AuthorOriginalWorks({ authorId }: Props) {
     select: response => response.data,
   });
 
-  if (isWorksLoading || isBooksLoading) {
+  if (isWorksLoading && isBooksLoading) {
     return <OriginalWorksSkeleton />;
   }
 

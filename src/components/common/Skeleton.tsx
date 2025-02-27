@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ViewStyle, TextStyle, StyleProp } from 'react-native';
+import { View, ViewStyle, TextStyle, StyleProp, ScrollView } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { colors } from '@/styles/theme';
+import { colors, spacing } from '@/styles/theme';
 
 export interface SkeletonProps {
   style?: StyleProp<ViewStyle | TextStyle>;
@@ -55,5 +55,61 @@ export function ReviewItemSkeleton() {
 }
 
 export function RelativeBooksSkeleton() {
-  // 구현 내용
+  return (
+    <View style={{ gap: spacing.md }}>
+      <View style={{ 
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        paddingHorizontal: spacing.lg 
+      }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+          <Skeleton style={{ width: 100, height: 24, borderRadius: 4 }} />
+          <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
+        </View>
+        <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
+      </View>
+      
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ 
+          gap: spacing.sm, 
+          paddingVertical: spacing.xs, 
+          paddingHorizontal: spacing.lg 
+        }}
+      >
+        {[1, 2, 3, 4].map(i => (
+          <View key={i} style={{ width: 120, marginRight: spacing.sm }}>
+            <Skeleton style={{ 
+              width: 120, 
+              height: 180, 
+              borderRadius: 8 
+            }} />
+            <Skeleton style={{ 
+              width: 100, 
+              height: 16, 
+              borderRadius: 4, 
+              marginTop: spacing.xs 
+            }} />
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
+export function ChatButtonSkeleton() {
+  return (
+    <View style={{ 
+      marginVertical: spacing.md,
+      marginHorizontal: spacing.lg,
+    }}>
+      <Skeleton style={{ 
+        width: '100%', 
+        height: 48, 
+        borderRadius: 8 
+      }} />
+    </View>
+  );
 } 
