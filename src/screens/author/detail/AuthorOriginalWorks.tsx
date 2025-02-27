@@ -203,7 +203,8 @@ function OriginalWorkCard({
                   styles.bookItem,
                   isUnclassified ? styles.unclassifiedBookItem : styles.normalBookItem,
                 ]}
-                onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}>
+                onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}
+              >
                 <Image
                   source={{
                     uri: book.imageUrl || 'https://via.placeholder.com/20x30',
@@ -212,7 +213,6 @@ function OriginalWorkCard({
                   resizeMode="cover"
                 />
                 <Text style={styles.bookTitle} numberOfLines={1}>
-                  ㅇㅁㄴㄹ
                   {book.title || '제목 없음'}
                 </Text>
               </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -66,7 +66,9 @@ export function AuthorInfluenced({ authorId }: Props) {
         <View style={styles.section}>
           <View style={styles.header}>
             <View style={styles.titleSection}>
-              <Text style={styles.title}>{author.nameInKor.trim()}에게 영향을 준 작가</Text>
+              <Text style={styles.title} numberOfLines={2}>
+                {author.nameInKor.trim()}에게 영향을 준 작가
+              </Text>
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{influenced.length}</Text>
               </View>
@@ -103,7 +105,9 @@ export function AuthorInfluenced({ authorId }: Props) {
         <View style={styles.section}>
           <View style={styles.header}>
             <View style={styles.titleSection}>
-              <Text style={styles.title}>{author.nameInKor.trim()}에게 영향을 받은 작가</Text>
+              <Text style={styles.title} numberOfLines={2}>
+                {author.nameInKor.trim()}에게 영향을 받은 작가
+              </Text>
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{influencedBy.length}</Text>
               </View>
@@ -219,24 +223,27 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingHorizontal: spacing.lg,
   },
   titleSection: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
+    alignItems: 'flex-start',
+    gap: spacing.xs,
+    flex: 1,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
+    flexShrink: 1,
   },
   badge: {
     backgroundColor: colors.gray[100],
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs / 2,
     borderRadius: borderRadius.full,
+    marginTop: 4,
   },
   badgeText: {
     fontSize: 13,
@@ -250,6 +257,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 6,
+    marginLeft: spacing.sm,
   },
   toggleButtonText: {
     fontSize: 14,

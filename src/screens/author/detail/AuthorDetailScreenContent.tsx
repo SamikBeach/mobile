@@ -90,17 +90,19 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
       <AuthorDetailInfo authorId={authorId} onReviewPress={handleReviewPress} />
-      
+
       {isLoading ? (
         <ChatButtonSkeleton />
       ) : (
         author && (
           <View>
-            <TouchableOpacity style={styles.chatButton} onPress={() => setIsChatOpen(prev => !prev)}>
+            <TouchableOpacity
+              style={styles.chatButton}
+              onPress={() => setIsChatOpen(prev => !prev)}>
               <Icon name="message-circle" size={20} color={colors.gray[700]} />
               <Text style={styles.chatButtonText}>{author.nameInKor}와(과) 대화하기</Text>
             </TouchableOpacity>
-            
+
             {isChatOpen && (
               <View style={styles.chatContainer}>
                 <AuthorChat authorId={authorId} authorName={author.nameInKor} />
@@ -109,12 +111,12 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
           </View>
         )
       )}
-      
+
       <AuthorInfluenced authorId={authorId} />
       <AuthorOriginalWorks authorId={authorId} />
       <AuthorBooks authorId={authorId} />
       <AuthorYoutubes authorId={authorId} />
-      
+
       <View style={styles.header}>
         <View style={styles.titleSection}>
           <Text style={styles.title}>리뷰</Text>
@@ -284,13 +286,13 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
 
 function ChatButtonSkeleton() {
   return (
-    <Skeleton 
-      style={{ 
-        height: 48, 
+    <Skeleton
+      style={{
+        height: 48,
         borderRadius: borderRadius.md,
         marginVertical: spacing.md,
         marginHorizontal: spacing.lg,
-      }} 
+      }}
     />
   );
 }
