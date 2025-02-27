@@ -196,11 +196,11 @@ export function AuthorChat({ authorId, authorName }: Props) {
               styles.typingContainer,
             ]}>
             <View style={styles.typingIndicator}>
-              {[0, 150, 300].map((delay, index) => (
+              {[0, 1, 2].map(index => (
                 <Animated.View
                   key={index}
-                  style={[styles.typingDot]}
-                  entering={FadeIn.delay(delay)}
+                  entering={FadeIn.delay(index * 150)}
+                  style={styles.typingDot}
                 />
               ))}
             </View>
