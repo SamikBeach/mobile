@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, Platform, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, FlatList, Platform, TextInput, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -13,7 +13,7 @@ import { AuthorDetailInfo } from './AuthorDetailInfo';
 import { AuthorBooks } from './AuthorBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
-import Animated, { Easing, Layout } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { CommentEditor } from '@/components/comment/CommentEditor';
 import { reviewApi } from '@/apis/review';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
@@ -34,7 +34,6 @@ interface Props {
 export function AuthorDetailScreenContent({ authorId }: Props) {
   const flatListRef = useRef<FlatList>(null);
   const chatContainerRef = useRef<View>(null);
-  const scrollViewRef = useRef<ScrollView>(null);
   const [activeReviewId, setActiveReviewId] = useState<number | null>(null);
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const [isReplyAnimating, setIsReplyAnimating] = useState(false);
@@ -42,6 +41,12 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
   const reviewRefs = useRef<{ [key: number]: React.RefObject<ReviewItemHandle> }>({});
   const commentEditorRef = useRef<TextInput>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
+
+  // 작가 ID가 변경될 때 스크롤 위치 초기화
+  useEffect(() => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+    setIsChatOpen(false);
+  }, [authorId]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
@@ -103,9 +108,7 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
       ) : (
         author && (
           <View>
-            <TouchableOpacity
-              style={styles.chatButton}
-              onPress={handleChatButtonPress}>
+            <TouchableOpacity style={styles.chatButton} onPress={handleChatButtonPress}>
               <Icon name="message-circle" size={20} color={colors.gray[700]} />
               <Text style={styles.chatButtonText}>{author.nameInKor}와(과) 대화하기</Text>
             </TouchableOpacity>
@@ -208,24 +211,6 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     return reviewRefs.current[reviewId];
   };
 
-  const onScrollToIndexFailed = (info: {
-    index: number;
-    highestMeasuredFrameIndex: number;
-    averageItemLength: number;
-  }) => {
-    const offset = info.averageItemLength * info.index;
-    flatListRef.current?.scrollToOffset({ offset, animated: false });
-    setTimeout(() => {
-      if (flatListRef.current !== null) {
-        flatListRef.current.scrollToIndex({
-          index: info.index,
-          animated: true,
-          viewPosition: 0,
-        });
-      }
-    }, 100);
-  };
-
   const handleCommentSuccess = (reviewId: number) => {
     const reviewIndex = reviews.findIndex(review => review.id === reviewId);
     if (reviewIndex !== -1) {
@@ -242,7 +227,7 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     if (isChatOpen && chatContainerRef.current) {
       // 약간의 지연 후 스크롤 실행 (레이아웃이 완전히 렌더링된 후)
       setTimeout(() => {
-        chatContainerRef.current?.measureInWindow((x, y, width, height) => {
+        chatContainerRef.current?.measureInWindow((_, y) => {
           flatListRef.current?.scrollToOffset({
             offset: y,
             animated: true,

@@ -16,18 +16,12 @@ import { colors, spacing, borderRadius } from '@/styles/theme';
 import { ChatMessage } from '@/types/common';
 import Icon from 'react-native-vector-icons/Feather';
 import axios from 'axios';
-import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '@/navigation/types';
 import Animated, {
   useSharedValue,
-  useAnimatedStyle,
   withRepeat,
   withTiming,
   Easing,
   FadeIn,
-  FadeOut,
 } from 'react-native-reanimated';
 
 interface Props {
@@ -42,8 +36,6 @@ interface Message {
 }
 
 export function AuthorChat({ authorId, authorName }: Props) {
-  const currentUser = useCurrentUser();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -62,10 +54,6 @@ export function AuthorChat({ authorId, authorName }: Props) {
       opacity.value = 0.5;
     }
   }, [isGenerating, opacity]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
 
   // 작가가 바뀌면 대화 내용 초기화
   useEffect(() => {
@@ -96,7 +84,7 @@ export function AuthorChat({ authorId, authorName }: Props) {
   }, []);
 
   // 채팅 생성 뮤테이션
-  const { mutate: generateChat, isPending } = useMutation({
+  const { mutate: generateChat } = useMutation({
     mutationFn: (message: string) => {
       abortControllerRef.current = new AbortController();
       return aiApi.chatWithAuthor(authorId, { message }, abortControllerRef.current.signal);
@@ -208,9 +196,13 @@ export function AuthorChat({ authorId, authorName }: Props) {
               styles.typingContainer,
             ]}>
             <View style={styles.typingIndicator}>
-              <Animated.View style={[styles.typingDot, { animationDelay: 0 }]} />
-              <Animated.View style={[styles.typingDot, { animationDelay: 150 }]} />
-              <Animated.View style={[styles.typingDot, { animationDelay: 300 }]} />
+              {[0, 150, 300].map((delay, index) => (
+                <Animated.View
+                  key={index}
+                  style={[styles.typingDot]}
+                  entering={FadeIn.delay(delay)}
+                />
+              ))}
             </View>
           </Animated.View>
         )}
@@ -246,14 +238,14 @@ export function AuthorChat({ authorId, authorName }: Props) {
               activeOpacity={0.7}>
               <Icon name="send" size={20} color={colors.white} />
             </TouchableOpacity>
-            
+
             {messages.length > 0 && (
               <TouchableOpacity
                 style={styles.retryButton}
                 onPress={() => {
                   if (messages.length >= 2) {
                     const lastUserMessage = [...messages].reverse().find(msg => msg.isUser);
-                    
+
                     if (lastUserMessage) {
                       setMessages(prev => prev.slice(0, prev.length - 1));
                       generateChat(lastUserMessage.text);
