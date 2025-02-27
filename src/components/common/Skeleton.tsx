@@ -52,4 +52,8 @@ export function ReviewItemSkeleton() {
       <Skeleton style={{ width: '80%', height: 16, borderRadius: 4 }} />
     </View>
   );
+}
+
+export function RelativeBooksSkeleton() {
+  // 구현 내용
 } 

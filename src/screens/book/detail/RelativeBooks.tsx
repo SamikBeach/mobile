@@ -15,11 +15,37 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius } from '@/styles/theme';
-import { RelativeBooksSkeleton } from '@/components/common/Skeleton';
+import { Skeleton } from '@/components/common/Skeleton';
 import Icon from 'react-native-vector-icons/Feather';
 
 interface Props {
   bookId: number;
+}
+
+function RelativeBooksSkeleton() {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.titleSection}>
+          <Skeleton style={{ width: 100, height: 24, borderRadius: 4 }} />
+          <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
+        </View>
+        <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
+        {[1, 2, 3, 4].map(i => (
+          <View key={i} style={styles.bookItem}>
+            <Skeleton style={{ width: 120, height: 180, borderRadius: 8 }} />
+            <Skeleton style={{ width: 100, height: 16, borderRadius: 4, marginTop: 8 }} />
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
 }
 
 export function RelativeBooks({ bookId }: Props) {
@@ -84,7 +110,7 @@ export function RelativeBooks({ bookId }: Props) {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
-          {books.map(book => (
+          {books.slice(0, 5).map(book => (
             <TouchableOpacity
               key={book.id}
               style={styles.bookItem}
@@ -111,6 +137,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
   },
@@ -155,18 +182,24 @@ const styles = StyleSheet.create({
   },
   booksList: {
     paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.sm,
   },
   bookItem: {
     width: 120,
+    marginRight: spacing.sm,
   },
   bookCover: {
+    width: 120,
+    height: 180,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.white,
+    backgroundColor: colors.gray[100],
   },
   bookTitle: {
     fontSize: 14,
     fontWeight: '500',
     color: colors.gray[900],
     lineHeight: 20,
+    marginTop: spacing.xs,
   },
 });
