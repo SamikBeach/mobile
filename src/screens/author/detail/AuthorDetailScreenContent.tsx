@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { View, StyleSheet, FlatList, Platform, TextInput, TouchableOpacity } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, StyleSheet, FlatList, Platform, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -33,6 +33,8 @@ interface Props {
 
 export function AuthorDetailScreenContent({ authorId }: Props) {
   const flatListRef = useRef<FlatList>(null);
+  const chatContainerRef = useRef<View>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
   const [activeReviewId, setActiveReviewId] = useState<number | null>(null);
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const [isReplyAnimating, setIsReplyAnimating] = useState(false);
@@ -88,6 +90,10 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     });
   };
 
+  const handleChatButtonPress = () => {
+    setIsChatOpen(prev => !prev);
+  };
+
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
       <AuthorDetailInfo authorId={authorId} onReviewPress={handleReviewPress} />
@@ -99,13 +105,13 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
           <View>
             <TouchableOpacity
               style={styles.chatButton}
-              onPress={() => setIsChatOpen(prev => !prev)}>
+              onPress={handleChatButtonPress}>
               <Icon name="message-circle" size={20} color={colors.gray[700]} />
               <Text style={styles.chatButtonText}>{author.nameInKor}와(과) 대화하기</Text>
             </TouchableOpacity>
 
             {isChatOpen && (
-              <View style={styles.chatContainer}>
+              <View ref={chatContainerRef} style={styles.chatContainer}>
                 <AuthorChat authorId={authorId} authorName={author.nameInKor} />
               </View>
             )}
@@ -231,12 +237,27 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     }
   };
 
+  // 채팅 열릴 때 스크롤 처리
+  useEffect(() => {
+    if (isChatOpen && chatContainerRef.current) {
+      // 약간의 지연 후 스크롤 실행 (레이아웃이 완전히 렌더링된 후)
+      setTimeout(() => {
+        chatContainerRef.current?.measureInWindow((x, y, width, height) => {
+          flatListRef.current?.scrollToOffset({
+            offset: y,
+            animated: true,
+          });
+        });
+      }, 300);
+    }
+  }, [isChatOpen]);
+
   return (
     <View style={styles.container}>
-      <Animated.FlatList
+      <FlatList
         ref={flatListRef}
         data={reviews}
-        onScrollToIndexFailed={onScrollToIndexFailed}
+        keyExtractor={item => `review-${item.id}`}
         renderItem={({ item }) => (
           <View style={styles.reviewItemContainer}>
             {isLoading ? (
@@ -251,18 +272,13 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
             )}
           </View>
         )}
-        itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
         ListHeaderComponent={ListHeaderComponent}
-        ListEmptyComponent={ListEmptyComponent}
-        keyExtractor={item => item.id.toString()}
+        ListEmptyComponent={!isLoading ? ListEmptyComponent : null}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        contentContainerStyle={styles.reviewList}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
-        contentContainerStyle={[
-          styles.reviewList,
-          activeReviewId ? { paddingBottom: Platform.OS === 'ios' ? 90 : 56 } : undefined,
-        ]}
       />
       {activeReviewId && (
         <Animated.View entering={SlideInDown.duration(300)} style={styles.commentEditorContainer}>
@@ -369,6 +385,7 @@ const styles = StyleSheet.create({
   chatContainer: {
     marginHorizontal: spacing.lg,
     marginBottom: spacing.md,
+    height: 400, // 채팅 컨테이너 높이 설정
   },
   chatButtonSkeleton: {
     marginVertical: spacing.md,
