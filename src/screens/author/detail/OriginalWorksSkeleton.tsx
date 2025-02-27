@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.gray[200],
+    borderColor: colors.gray[100],
     backgroundColor: colors.white,
     shadowColor: colors.gray[400],
     shadowOffset: { width: 0, height: 1 },
@@ -87,6 +87,10 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   booksSection: {
+    marginTop: spacing.sm,
+    paddingTop: spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: colors.gray[100],
     gap: spacing.sm,
   },
   booksHeader: {
@@ -108,4 +112,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
     marginBottom: spacing.xs,
   },
-}); 
+});

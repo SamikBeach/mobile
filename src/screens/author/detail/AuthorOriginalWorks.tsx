@@ -203,8 +203,7 @@ function OriginalWorkCard({
                   styles.bookItem,
                   isUnclassified ? styles.unclassifiedBookItem : styles.normalBookItem,
                 ]}
-                onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}
-              >
+                onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}>
                 <Image
                   source={{
                     uri: book.imageUrl || 'https://via.placeholder.com/20x30',
