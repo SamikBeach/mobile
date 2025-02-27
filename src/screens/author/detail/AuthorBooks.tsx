@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, FlatList } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+  Pressable,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
+import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { Book } from '@/types/book';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius } from '@/styles/theme';
-import { format } from 'date-fns';
-import { AuthorBooksSkeleton } from '@/components/common/Skeleton';
-import { BookImage } from '@/components/book/BookImage';
 import Icon from 'react-native-vector-icons/Feather';
+import { Skeleton } from '@/components/common/Skeleton';
 
 interface Props {
   authorId: number;
@@ -20,19 +27,19 @@ export function AuthorBooks({ authorId }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { data: books = [], isLoading } = useQuery({
-    queryKey: ['author-books', authorId],
-    queryFn: () => authorApi.getAllAuthorBooks(authorId),
-    select: response => response.data,
-  });
-
-  const { data: author } = useQuery({
+  const { data: author, isLoading: isAuthorLoading } = useQuery({
     queryKey: ['author', authorId],
     queryFn: () => authorApi.getAuthorDetail(authorId),
     select: response => response.data,
   });
 
-  if (isLoading) {
+  const { data: books = [], isLoading: isBooksLoading } = useQuery({
+    queryKey: ['author-books', authorId],
+    queryFn: () => authorApi.getAllAuthorBooks(authorId),
+    select: response => response.data,
+  });
+
+  if (isAuthorLoading && isBooksLoading) {
     return <AuthorBooksSkeleton />;
   }
 
@@ -40,71 +47,44 @@ export function AuthorBooks({ authorId }: Props) {
     return null;
   }
 
-  const renderBookItem = (book: any) => (
+  const renderBookItem = (book: Book) => (
     <Pressable
       key={book.id}
       style={styles.bookItem}
-      onPress={() => navigation.push('BookDetail', { bookId: book.id })}>
-      <View style={styles.imageContainer}>
-        <BookImage imageUrl={book.imageUrl} />
+      onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}>
+      <View style={styles.coverContainer}>
+        <Image
+          source={{ uri: book.imageUrl || 'https://via.placeholder.com/120' }}
+          style={styles.bookCover}
+          resizeMode="cover"
+        />
       </View>
-      <View style={styles.bookInfo}>
-        <Text style={styles.bookTitle} numberOfLines={2}>
-          {book.title}
-        </Text>
-        <Text style={styles.bookPublisher}>
-          {book.publisher}
-          {book.publicationDate && (
-            <>
-              {' · '}
-              {format(new Date(book.publicationDate), 'yyyy.MM')}
-            </>
-          )}
-        </Text>
-        <View style={styles.stats}>
-          <View style={styles.statItem}>
-            <Icon name="thumbs-up" size={13} color={colors.gray[400]} />
-            <Text style={styles.statText}>{book.likeCount}</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statItem}>
-            <Icon name="message-square" size={13} color={colors.gray[400]} />
-            <Text style={styles.statText}>{book.reviewCount}</Text>
-          </View>
-        </View>
-      </View>
+      <Text style={styles.bookTitle} numberOfLines={2}>
+        {book.title}
+      </Text>
     </Pressable>
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{author?.nameInKor.trim()}의 다른 책</Text>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{books.length}</Text>
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>{author?.nameInKor.trim()}의 다른 책</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{books.length}</Text>
+          </View>
         </View>
-        {books.length > 5 && (
-          <Pressable 
-            style={styles.toggleButton} 
-            onPress={() => setIsExpanded(!isExpanded)}
-          >
-            <Text style={styles.toggleButtonText}>
-              {isExpanded ? '접기' : '전체보기'}
-            </Text>
-            <Icon 
-              name={isExpanded ? 'chevron-up' : 'grid'} 
-              size={16} 
-              color={colors.gray[600]} 
-            />
-          </Pressable>
-        )}
+        <TouchableOpacity style={styles.toggleButton} onPress={() => setIsExpanded(!isExpanded)}>
+          <Text style={styles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
+          <Icon name={isExpanded ? 'chevron-up' : 'grid'} size={16} color={colors.gray[500]} />
+        </TouchableOpacity>
       </View>
 
       {isExpanded ? (
         <FlatList
           data={books}
           renderItem={({ item }) => renderBookItem(item)}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           numColumns={3}
           columnWrapperStyle={styles.gridRow}
           contentContainerStyle={styles.gridContent}
@@ -122,27 +102,59 @@ export function AuthorBooks({ authorId }: Props) {
   );
 }
 
+function AuthorBooksSkeleton() {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.titleSection}>
+          <Skeleton style={{ width: 150, height: 24, borderRadius: 4 }} />
+          <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
+        </View>
+        <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <View key={i} style={styles.bookItem}>
+            <Skeleton style={{ width: 120, height: 180, borderRadius: 8 }} />
+            <Skeleton style={{ width: 100, height: 16, marginTop: 8, borderRadius: 4 }} />
+            <Skeleton style={{ width: 80, height: 12, marginTop: 4, borderRadius: 4 }} />
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     gap: spacing.md,
+    marginBottom: spacing.lg,
   },
   header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
+  },
+  titleSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
-    marginRight: spacing.xs,
   },
   badge: {
     backgroundColor: colors.gray[100],
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs / 2,
     borderRadius: borderRadius.full,
-    marginRight: 'auto',
   },
   badgeText: {
     fontSize: 13,
@@ -153,24 +165,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 6,
   },
   toggleButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.gray[600],
+    color: colors.gray[500],
   },
   scrollContent: {
-    gap: spacing.sm,
-    paddingVertical: spacing.xs,
+    gap: spacing.md,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.lg,
   },
   gridContainer: {
     paddingHorizontal: spacing.lg,
   },
   gridContent: {
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
   },
   gridRow: {
     justifyContent: 'space-between',
@@ -178,43 +191,23 @@ const styles = StyleSheet.create({
   },
   bookItem: {
     width: 120,
-  },
-  imageContainer: {
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.white,
-  },
-  bookInfo: {
-    marginTop: spacing.sm,
     gap: spacing.xs,
+  },
+  coverContainer: {
+    ...shadows.sm,
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
+  },
+  bookCover: {
+    width: 120,
+    height: 180,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.gray[100],
   },
   bookTitle: {
     fontSize: 14,
     fontWeight: '500',
     color: colors.gray[900],
     lineHeight: 20,
-  },
-  bookPublisher: {
-    fontSize: 12,
-    color: colors.gray[500],
-  },
-  stats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: spacing['2xs'],
-  },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  divider: {
-    width: 1,
-    height: 12,
-    backgroundColor: colors.gray[200],
-    marginHorizontal: spacing.sm,
-  },
-  statText: {
-    fontSize: 12,
-    color: colors.gray[500],
   },
 });

@@ -4,6 +4,8 @@ import { Book } from '@/types/book';
 import type { PaginatedResponse, PaginationQuery } from '@/types/common';
 import type { Review } from '@/types/review';
 import { transformFilterParams } from '@/utils/api';
+import type { YouTubeVideo } from '@/types/common';
+import type { OriginalWork } from '@/types/author';
 
 export const authorApi = {
   /**
@@ -70,4 +72,18 @@ export const authorApi = {
    */
   getInfluencedByAuthors: (authorId: number) =>
     axios.get<InfluencedAuthor[]>(`/author/${authorId}/influenced-by`),
+
+  /**
+   * 작가 관련 YouTube 동영상을 가져옵니다.
+   */
+  getAuthorVideos: (authorId: number, maxResults = 5) =>
+    axios.get<YouTubeVideo[]>(`/author/${authorId}/videos`, {
+      params: { maxResults },
+    }),
+
+  /**
+   * 작가의 원전 작품 목록을 가져옵니다.
+   */
+  getAuthorOriginalWorks: (authorId: number) =>
+    axios.get<OriginalWork[]>(`/author/${authorId}/original-works`),
 };

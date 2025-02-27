@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { View, StyleSheet, FlatList, Platform, TextInput } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, StyleSheet, FlatList, Platform, TextInput, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -13,7 +13,7 @@ import { AuthorDetailInfo } from './AuthorDetailInfo';
 import { AuthorBooks } from './AuthorBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
-import Animated, { Easing, Layout } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { CommentEditor } from '@/components/comment/CommentEditor';
 import { reviewApi } from '@/apis/review';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
@@ -21,6 +21,11 @@ import Toast from 'react-native-toast-message';
 import { useMutation } from '@tanstack/react-query';
 import type { ReviewItemHandle } from '@/components/review/ReviewItem';
 import { SlideInDown } from 'react-native-reanimated';
+import { AuthorInfluenced } from './AuthorInfluenced';
+import { AuthorOriginalWorks } from './AuthorOriginalWorks';
+import { AuthorChat } from './AuthorChat';
+import { AuthorYoutubes } from './AuthorYoutubes';
+import { Skeleton } from '@/components/common/Skeleton';
 
 interface Props {
   authorId: number;
@@ -28,12 +33,20 @@ interface Props {
 
 export function AuthorDetailScreenContent({ authorId }: Props) {
   const flatListRef = useRef<FlatList>(null);
+  const chatContainerRef = useRef<View>(null);
   const [activeReviewId, setActiveReviewId] = useState<number | null>(null);
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const [isReplyAnimating, setIsReplyAnimating] = useState(false);
   const { createCommentQueryData } = useCommentQueryData();
   const reviewRefs = useRef<{ [key: number]: React.RefObject<ReviewItemHandle> }>({});
   const commentEditorRef = useRef<TextInput>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  // 작가 ID가 변경될 때 스크롤 위치 초기화
+  useEffect(() => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+    setIsChatOpen(false);
+  }, [authorId]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
@@ -59,10 +72,11 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     placeholderData: keepPreviousData,
   });
 
-  const { data: author } = useQuery({
+  const { data: author, isLoading: isAuthorLoading } = useQuery({
     queryKey: ['author', authorId],
     queryFn: () => authorApi.getAuthorDetail(authorId),
     select: response => response.data,
+    staleTime: 60 * 1000,
   });
 
   const reviews = data?.pages.flatMap(page => page.data.data) ?? [];
@@ -81,10 +95,38 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     });
   };
 
+  const handleChatButtonPress = () => {
+    setIsChatOpen(prev => !prev);
+  };
+
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
       <AuthorDetailInfo authorId={authorId} onReviewPress={handleReviewPress} />
+
+      {isAuthorLoading ? (
+        <Skeleton style={styles.chatButtonSkeleton} />
+      ) : (
+        author && (
+          <View>
+            <TouchableOpacity style={styles.chatButton} onPress={handleChatButtonPress}>
+              <Icon name="message-circle" size={20} color={colors.gray[700]} />
+              <Text style={styles.chatButtonText}>{author.nameInKor}와(과) 대화하기</Text>
+            </TouchableOpacity>
+
+            {isChatOpen && (
+              <View ref={chatContainerRef} style={styles.chatContainer}>
+                <AuthorChat authorId={authorId} authorName={author.nameInKor} />
+              </View>
+            )}
+          </View>
+        )
+      )}
+
+      <AuthorInfluenced authorId={authorId} />
+      <AuthorOriginalWorks authorId={authorId} />
       <AuthorBooks authorId={authorId} />
+      <AuthorYoutubes authorId={authorId} />
+
       <View style={styles.header}>
         <View style={styles.titleSection}>
           <Text style={styles.title}>리뷰</Text>
@@ -169,24 +211,6 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     return reviewRefs.current[reviewId];
   };
 
-  const onScrollToIndexFailed = (info: {
-    index: number;
-    highestMeasuredFrameIndex: number;
-    averageItemLength: number;
-  }) => {
-    const offset = info.averageItemLength * info.index;
-    flatListRef.current?.scrollToOffset({ offset, animated: false });
-    setTimeout(() => {
-      if (flatListRef.current !== null) {
-        flatListRef.current.scrollToIndex({
-          index: info.index,
-          animated: true,
-          viewPosition: 0,
-        });
-      }
-    }, 100);
-  };
-
   const handleCommentSuccess = (reviewId: number) => {
     const reviewIndex = reviews.findIndex(review => review.id === reviewId);
     if (reviewIndex !== -1) {
@@ -198,12 +222,27 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     }
   };
 
+  // 채팅 열릴 때 스크롤 처리
+  useEffect(() => {
+    if (isChatOpen && chatContainerRef.current) {
+      // 약간의 지연 후 스크롤 실행 (레이아웃이 완전히 렌더링된 후)
+      setTimeout(() => {
+        chatContainerRef.current?.measureInWindow((_, y) => {
+          flatListRef.current?.scrollToOffset({
+            offset: y,
+            animated: true,
+          });
+        });
+      }, 300);
+    }
+  }, [isChatOpen]);
+
   return (
     <View style={styles.container}>
-      <Animated.FlatList
+      <FlatList
         ref={flatListRef}
         data={reviews}
-        onScrollToIndexFailed={onScrollToIndexFailed}
+        keyExtractor={item => `review-${item.id}`}
         renderItem={({ item }) => (
           <View style={styles.reviewItemContainer}>
             {isLoading ? (
@@ -218,18 +257,13 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
             )}
           </View>
         )}
-        itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
         ListHeaderComponent={ListHeaderComponent}
-        ListEmptyComponent={ListEmptyComponent}
-        keyExtractor={item => item.id.toString()}
+        ListEmptyComponent={!isLoading ? ListEmptyComponent : null}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        contentContainerStyle={styles.reviewList}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
-        contentContainerStyle={[
-          styles.reviewList,
-          activeReviewId ? { paddingBottom: Platform.OS === 'ios' ? 90 : 56 } : undefined,
-        ]}
       />
       {activeReviewId && (
         <Animated.View entering={SlideInDown.duration(300)} style={styles.commentEditorContainer}>
@@ -313,5 +347,35 @@ const styles = StyleSheet.create({
         paddingBottom: spacing.lg,
       },
     }),
+  },
+  chatButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    marginVertical: spacing.md,
+    marginHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+  },
+  chatButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.gray[700],
+  },
+  chatContainer: {
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+    height: 400, // 채팅 컨테이너 높이 설정
+  },
+  chatButtonSkeleton: {
+    marginVertical: spacing.md,
+    marginHorizontal: spacing.lg,
+    height: 48,
+    borderRadius: borderRadius.md,
   },
 });
