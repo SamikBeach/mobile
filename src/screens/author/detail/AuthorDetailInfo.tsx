@@ -14,8 +14,6 @@ import Toast from 'react-native-toast-message';
 import { AuthorDetailInfoSkeleton } from '@/components/common/Skeleton/AuthorDetailInfoSkeleton';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
-import { AuthorInfluenced } from './AuthorInfluenced';
-import { AuthorInfluencedSkeleton } from '@/components/common/Skeleton/AuthorInfluencedSkeleton';
 
 interface Props {
   authorId: number;
@@ -74,14 +72,7 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
   };
 
   if (isLoading) {
-    return (
-      <>
-        <AuthorDetailInfoSkeleton />
-        <View style={{ paddingHorizontal: spacing.lg }}>
-          <AuthorInfluencedSkeleton />
-        </View>
-      </>
-    );
+    return <AuthorDetailInfoSkeleton />;
   }
 
   if (!author) return null;
@@ -139,8 +130,6 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
           </Pressable>
         </View>
       )}
-
-      <AuthorInfluenced authorId={authorId} authorName={author.nameInKor?.trim() ?? ''} />
     </View>
   );
 }
@@ -221,5 +210,12 @@ const styles = StyleSheet.create({
   },
   expandButtonMargin: {
     marginTop: spacing.xs,
+  },
+  authorInfo: {
+    flex: 1,
+    paddingVertical: spacing.xs,
+  },
+  bioSection: {
+    gap: spacing.xs,
   },
 });

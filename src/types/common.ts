@@ -41,3 +41,29 @@ export interface LikeToggleResponse {
 export interface DeleteResponse {
   message: string;
 }
+
+export interface YouTubeVideo {
+  id: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  publishedAt: string;
+  channelTitle: string;
+}
+
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatWithAuthorRequest {
+  message: string;
+  conversationHistory?: ChatMessage[];
+}
+
+export interface ChatWithAuthorResponse {
+  authorId: number;
+  authorName: string;
+  response: string;
+  timestamp: string;
+}

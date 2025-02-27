@@ -62,6 +62,14 @@ export const colors = {
     900: '#14532D',
   },
   white: '#FFFFFF',
+  black: '#000000',
+  orange: {
+    50: '#FFF7ED',
+    100: '#FFEDD5',
+    500: '#F97316',
+    600: '#EA580C',
+    900: '#7C2D12',
+  },
 };
 
 export const spacing = {

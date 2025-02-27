@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, FlatList, Platform, TextInput } from 'react-native';
+import { View, StyleSheet, FlatList, Platform, TextInput, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -21,6 +21,12 @@ import Toast from 'react-native-toast-message';
 import { useMutation } from '@tanstack/react-query';
 import type { ReviewItemHandle } from '@/components/review/ReviewItem';
 import { SlideInDown } from 'react-native-reanimated';
+import { AuthorInfluenced } from './AuthorInfluenced';
+import { AuthorOriginalWorks } from './AuthorOriginalWorks';
+import { AuthorChat } from './AuthorChat';
+import { AuthorYoutubes } from './AuthorYoutubes';
+import { Skeleton } from '@/components/common/Skeleton';
+import { commonStyles } from '@/styles/commonStyles';
 
 interface Props {
   authorId: number;
@@ -34,6 +40,7 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
   const { createCommentQueryData } = useCommentQueryData();
   const reviewRefs = useRef<{ [key: number]: React.RefObject<ReviewItemHandle> }>({});
   const commentEditorRef = useRef<TextInput>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
@@ -84,12 +91,30 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
       <AuthorDetailInfo authorId={authorId} onReviewPress={handleReviewPress} />
+      
+      {isLoading ? (
+        <ChatButtonSkeleton />
+      ) : (
+        author && (
+          <TouchableOpacity style={styles.chatButton} onPress={() => setIsChatOpen(prev => !prev)}>
+            <Icon name="message-circle" size={20} color={colors.gray[700]} />
+            <Text style={styles.chatButtonText}>{author.nameInKor}와(과) 대화하기</Text>
+          </TouchableOpacity>
+        )
+      )}
+      
+      <AuthorInfluenced authorId={authorId} />
+      <AuthorOriginalWorks authorId={authorId} />
       <AuthorBooks authorId={authorId} />
-      <View style={styles.header}>
-        <View style={styles.titleSection}>
-          <Text style={styles.title}>리뷰</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{author?.reviewCount ?? 0}</Text>
+      <AuthorYoutubes authorId={authorId} />
+
+      {isChatOpen && author && <AuthorChat authorId={authorId} authorName={author.nameInKor} />}
+
+      <View style={[styles.header, commonStyles.sectionHeader]}>
+        <View style={commonStyles.titleSection}>
+          <Text style={commonStyles.sectionTitle}>리뷰</Text>
+          <View style={commonStyles.badge}>
+            <Text style={commonStyles.badgeText}>{author?.reviewCount ?? 0}</Text>
           </View>
         </View>
       </View>
@@ -252,6 +277,19 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
   );
 }
 
+function ChatButtonSkeleton() {
+  return (
+    <Skeleton 
+      style={{ 
+        height: 48, 
+        borderRadius: borderRadius.md,
+        marginVertical: spacing.md,
+        marginHorizontal: spacing.lg,
+      }} 
+    />
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -313,5 +351,24 @@ const styles = StyleSheet.create({
         paddingBottom: spacing.lg,
       },
     }),
+  },
+  chatButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    marginVertical: spacing.md,
+    marginHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+  },
+  chatButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.gray[700],
   },
 });

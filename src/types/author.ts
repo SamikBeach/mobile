@@ -49,6 +49,23 @@ export interface AuthorSearchQuery extends PaginationQuery {
   searchBy?: ('name' | 'nameInKor' | 'genre_id')[];
 }
 
+export interface OriginalWork {
+  id: number;
+  title: string;
+  titleInKor?: string;
+  titleInEng?: string;
+  publishedDate?: string;
+  publishedDateIsBc?: boolean;
+  circa?: boolean;
+  century?: boolean;
+  s?: boolean;
+  posthumous?: boolean;
+  books?: Book[];
+  createdAt: string;
+  updatedAt: string | null;
+  deletedAt: string | null;
+}
+
 export interface InfluencedAuthor extends Author {
   isWikiData: boolean;
 }

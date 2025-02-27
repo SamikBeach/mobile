@@ -31,3 +31,29 @@ export const formatAuthorLifespan = (
   if (!death) return `${birth}년 ~`;
   return `${birth}년 - ${death}년`;
 };
+
+export function formatPublishedDate(date: string, isBc?: boolean, circa?: boolean, century?: boolean, s?: boolean, posthumous?: boolean): string {
+  let dateText = date;
+  
+  if (isBc) {
+    dateText = `BC ${dateText}`;
+  }
+  
+  if (circa) {
+    dateText = `c. ${dateText}`;
+  }
+  
+  if (century) {
+    dateText = `${dateText}세기`;
+  }
+  
+  if (s) {
+    dateText = `${dateText}s`;
+  }
+  
+  if (posthumous) {
+    dateText = `${dateText} (사후 출판)`;
+  }
+  
+  return dateText;
+}
