@@ -96,10 +96,18 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
         <ChatButtonSkeleton />
       ) : (
         author && (
-          <TouchableOpacity style={styles.chatButton} onPress={() => setIsChatOpen(prev => !prev)}>
-            <Icon name="message-circle" size={20} color={colors.gray[700]} />
-            <Text style={styles.chatButtonText}>{author.nameInKor}와(과) 대화하기</Text>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity style={styles.chatButton} onPress={() => setIsChatOpen(prev => !prev)}>
+              <Icon name="message-circle" size={20} color={colors.gray[700]} />
+              <Text style={styles.chatButtonText}>{author.nameInKor}와(과) 대화하기</Text>
+            </TouchableOpacity>
+            
+            {isChatOpen && (
+              <View style={styles.chatContainer}>
+                <AuthorChat authorId={authorId} authorName={author.nameInKor} />
+              </View>
+            )}
+          </View>
         )
       )}
       
@@ -107,17 +115,6 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
       <AuthorOriginalWorks authorId={authorId} />
       <AuthorBooks authorId={authorId} />
       <AuthorYoutubes authorId={authorId} />
-
-      {isChatOpen && author && <AuthorChat authorId={authorId} authorName={author.nameInKor} />}
-
-      <View style={[styles.header, commonStyles.sectionHeader]}>
-        <View style={commonStyles.titleSection}>
-          <Text style={commonStyles.sectionTitle}>리뷰</Text>
-          <View style={commonStyles.badge}>
-            <Text style={commonStyles.badgeText}>{author?.reviewCount ?? 0}</Text>
-          </View>
-        </View>
-      </View>
     </View>
   );
 
@@ -370,5 +367,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: colors.gray[700],
+  },
+  chatContainer: {
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.md,
   },
 });

@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import FastImage from 'react-native-fast-image';
 import { formatAuthorLifespan } from '@/utils/date';
 import { Linking } from 'react-native';
+import { commonStyles } from '@/styles/commonStyles';
 
 interface Props {
   authorId: number;
@@ -64,11 +65,13 @@ export function AuthorInfluenced({ authorId }: Props) {
     <View style={styles.container}>
       {influenced.length > 0 && (
         <View style={styles.section}>
-          <View style={styles.header}>
-            <View style={styles.titleSection}>
-              <Text style={styles.title}>{author.nameInKor.trim()}에게 영향을 준 작가</Text>
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{influenced.length}</Text>
+          <View style={[styles.header, commonStyles.sectionHeader]}>
+            <View style={commonStyles.titleSection}>
+              <Text style={commonStyles.sectionTitle}>
+                {author.nameInKor.trim()}에게 영향을 준 작가
+              </Text>
+              <View style={commonStyles.badge}>
+                <Text style={commonStyles.badgeText}>{influenced.length}</Text>
               </View>
             </View>
             {influenced.length > 3 && (
@@ -87,49 +90,27 @@ export function AuthorInfluenced({ authorId }: Props) {
             )}
           </View>
 
-          <View style={styles.authorGrid}>
-            {displayInfluenced.map(author => (
-              <TouchableOpacity
-                key={author.id}
-                style={styles.authorItem}
-                onPress={() => handleAuthorPress(author)}
-              >
-                <Image
-                  source={{ uri: author.imageUrl || 'https://via.placeholder.com/32' }}
-                  style={styles.authorImage}
-                  resizeMode="cover"
-                />
-                <View style={styles.authorInfo}>
-                  <View style={styles.authorNameRow}>
-                    <Text style={styles.authorName}>{author.nameInKor || author.name}</Text>
-                    {author.isWikiData && (
-                      <View style={styles.wikiTag}>
-                        <Text style={styles.wikiTagText}>Wiki</Text>
-                      </View>
-                    )}
-                  </View>
-                  <Text style={styles.authorLifespan}>
-                    {formatAuthorLifespan(
-                      author.bornDate,
-                      author.bornDateIsBc,
-                      author.diedDate,
-                      author.diedDateIsBc,
-                    )}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+          <View style={[styles.authorGrid, { paddingHorizontal: spacing.lg }]}>
+            <FlatList
+              data={displayInfluenced}
+              keyExtractor={item => `influenced-${item.id}`}
+              renderItem={({ item }) => (
+                <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+              )}
+            />
           </View>
         </View>
       )}
 
       {influencedBy.length > 0 && (
         <View style={styles.section}>
-          <View style={styles.header}>
-            <View style={styles.titleSection}>
-              <Text style={styles.title}>{author.nameInKor.trim()}에게 영향을 받은 작가</Text>
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{influencedBy.length}</Text>
+          <View style={[styles.header, commonStyles.sectionHeader]}>
+            <View style={commonStyles.titleSection}>
+              <Text style={commonStyles.sectionTitle}>
+                {author.nameInKor.trim()}에게 영향을 받은 작가
+              </Text>
+              <View style={commonStyles.badge}>
+                <Text style={commonStyles.badgeText}>{influencedBy.length}</Text>
               </View>
             </View>
             {influencedBy.length > 3 && (
@@ -148,16 +129,17 @@ export function AuthorInfluenced({ authorId }: Props) {
             )}
           </View>
 
-          <FlatList
-            data={displayInfluencedBy}
-            keyExtractor={item => `influenced-by-${item.id}`}
-            numColumns={1}
-            scrollEnabled={false}
-            renderItem={({ item }) => (
-              <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
-            )}
-            contentContainerStyle={styles.authorGrid}
-          />
+          <View style={[styles.influencedByGrid, { paddingHorizontal: spacing.lg }]}>
+            <FlatList
+              data={displayInfluencedBy}
+              keyExtractor={item => `influenced-by-${item.id}`}
+              numColumns={1}
+              scrollEnabled={false}
+              renderItem={({ item }) => (
+                <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+              )}
+            />
+          </View>
         </View>
       )}
     </View>
@@ -233,7 +215,6 @@ function InfluencedAuthorsSkeleton() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     gap: spacing.xl,
   },
@@ -280,6 +261,9 @@ const styles = StyleSheet.create({
     color: colors.gray[500],
   },
   authorGrid: {
+    gap: spacing.md,
+  },
+  influencedByGrid: {
     gap: spacing.md,
   },
   authorItem: {

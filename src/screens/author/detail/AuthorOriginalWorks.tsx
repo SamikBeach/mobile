@@ -68,7 +68,7 @@ export function AuthorOriginalWorks({ authorId }: Props) {
     });
   }
 
-  const displayWorks = isExpanded ? allWorks : allWorks.slice(0, 3);
+  const displayWorks = isExpanded ? allWorks : allWorks.slice(0, 1);
 
   return (
     <View style={styles.container}>
@@ -84,7 +84,7 @@ export function AuthorOriginalWorks({ authorId }: Props) {
             style={commonStyles.toggleButton}
             onPress={() => setIsExpanded(!isExpanded)}>
             <Text style={commonStyles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
-            <Icon name={isExpanded ? 'chevron-up' : 'grid'} size={16} color={colors.gray[600]} />
+            <Icon name={isExpanded ? 'chevron-up' : 'grid'} size={16} color={colors.gray[500]} />
           </TouchableOpacity>
         )}
       </View>
@@ -95,7 +95,7 @@ export function AuthorOriginalWorks({ authorId }: Props) {
         renderItem={({ item }) => <OriginalWorkCard work={item} navigation={navigation} />}
         numColumns={1}
         scrollEnabled={false}
-        contentContainerStyle={styles.workGrid}
+        contentContainerStyle={[styles.workGrid, { paddingHorizontal: spacing.lg }]}
       />
     </View>
   );
@@ -315,6 +315,7 @@ const styles = StyleSheet.create({
   },
   workGrid: {
     gap: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   workCard: {
     padding: spacing.md,

@@ -9,6 +9,7 @@ import { YoutubeDialog } from '@/components/youtube/YoutubeDialog';
 import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/Feather';
 import { Skeleton } from '@/components/common/Skeleton';
+import { commonStyles } from '@/styles/commonStyles';
 
 interface Props {
   authorId: number;
@@ -39,11 +40,11 @@ export function AuthorYoutubes({ authorId }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.titleSection}>
-          <Text style={styles.title}>관련 영상</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{videos.length}</Text>
+      <View style={[styles.header, commonStyles.sectionHeader]}>
+        <View style={commonStyles.titleSection}>
+          <Text style={commonStyles.sectionTitle}>관련 영상</Text>
+          <View style={commonStyles.badge}>
+            <Text style={commonStyles.badgeText}>{videos.length}</Text>
           </View>
         </View>
         {videos.length > 4 && (
@@ -54,7 +55,7 @@ export function AuthorYoutubes({ authorId }: Props) {
         )}
       </View>
 
-      <View style={styles.videoGrid}>
+      <View style={[styles.videoGrid, { paddingHorizontal: spacing.lg }]}>
         {displayVideos.map(video => (
           <VideoCard key={video.id} video={video} onPress={() => setSelectedVideoId(video.id)} />
         ))}
@@ -100,8 +101,8 @@ const VideoCard = ({ video, onPress }: VideoCardProps) => {
 function AuthorYoutubesSkeleton() {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.titleSection}>
+      <View style={[styles.header, commonStyles.sectionHeader]}>
+        <View style={commonStyles.titleSection}>
           <Skeleton style={{ width: 100, height: 20, borderRadius: 4 }} />
           <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
         </View>
@@ -178,6 +179,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   videoCard: {
     width: CARD_WIDTH,

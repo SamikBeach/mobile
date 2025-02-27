@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, ScrollView, Pressable, Image } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+  Pressable,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -67,12 +75,12 @@ export function AuthorBooks({ authorId }: Props) {
             <Text style={commonStyles.badgeText}>{books.length}</Text>
           </View>
         </View>
-        {books.length > 5 && (
-          <Pressable style={commonStyles.toggleButton} onPress={() => setIsExpanded(!isExpanded)}>
-            <Text style={commonStyles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
-            <Icon name={isExpanded ? 'chevron-up' : 'grid'} size={16} color={colors.gray[600]} />
-          </Pressable>
-        )}
+        <TouchableOpacity
+          style={commonStyles.toggleButton}
+          onPress={() => setIsExpanded(!isExpanded)}>
+          <Text style={commonStyles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
+          <Icon name={isExpanded ? 'chevron-up' : 'grid'} size={16} color={colors.gray[500]} />
+        </TouchableOpacity>
       </View>
 
       {isExpanded ? (
@@ -107,7 +115,7 @@ function AuthorBooksSkeleton() {
         </View>
         <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
       </View>
-      
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

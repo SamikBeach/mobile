@@ -6,15 +6,14 @@ export const commonStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[50],
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 6,
   },
   toggleButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.gray[600],
+    color: colors.gray[500],
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -44,4 +43,4 @@ export const commonStyles = StyleSheet.create({
     fontWeight: '500',
     color: colors.gray[600],
   },
-}); 
+});
