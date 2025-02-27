@@ -1,5 +1,25 @@
 # 🚦 CHANGELOG
 
+# [1.22.0](https://github.com/SamikBeach/mobile/compare/1.21.0...1.22.0) (2025-02-27)
+
+
+### Bug Fixes
+
+* Reanimated 워닝 해결 및 타이핑 애니메이션 개선 ([7b39116](https://github.com/SamikBeach/mobile/commit/7b391166a72b6e17b59835da1033f031c4c9df0e))
+* RelativeBooks 컴포넌트 렌더링 오류 수정 ([3ddfbbe](https://github.com/SamikBeach/mobile/commit/3ddfbbe3e46fc9c7d209b8a8c409b3f5e4126353))
+* 대화하기 버튼 스켈레톤 개선 ([5072407](https://github.com/SamikBeach/mobile/commit/50724074215cf02069ec5bb1d3a30f6dca0f66b5))
+* 버전업 ([39bc4d1](https://github.com/SamikBeach/mobile/commit/39bc4d1758b154957ad05f430ddb03bf6e32059e))
+* 작가 상세 페이지 UI 개선 ([4e12368](https://github.com/SamikBeach/mobile/commit/4e123680fa467662464c65d969314d1c747ef425))
+* 작가 영향 섹션 타이틀 잘림 문제 수정 ([9005ae0](https://github.com/SamikBeach/mobile/commit/9005ae0038db934bd5e395c3d7a5d4aaa12bd808))
+* 작가 채팅 UI 웹 버전 스타일로 개선 ([1b17d58](https://github.com/SamikBeach/mobile/commit/1b17d58fe6402a2d4d4fa81efc33bf3605dc49f3))
+* 작가 채팅 버튼 스타일 개선 ([b822234](https://github.com/SamikBeach/mobile/commit/b82223457a2697d5faa285b4af6b255042c0f46a))
+* 작가 페이지 이동 시 최상단으로 스크롤 위치 초기화 ([629eaaf](https://github.com/SamikBeach/mobile/commit/629eaaf8bc29904870068d6e5eb6009941f25877))
+
+
+### Features
+
+* 작가 상세 페이지 원전 컴포넌트 개선 ([2652d6a](https://github.com/SamikBeach/mobile/commit/2652d6ad741241e5b7134e1aabc33c699729aa32))
+
 # [1.21.0](https://github.com/SamikBeach/mobile/compare/1.20.1...1.21.0) (2025-02-26)
 
 
