@@ -26,7 +26,6 @@ import { AuthorOriginalWorks } from './AuthorOriginalWorks';
 import { AuthorChat } from './AuthorChat';
 import { AuthorYoutubes } from './AuthorYoutubes';
 import { Skeleton } from '@/components/common/Skeleton';
-import { commonStyles } from '@/styles/commonStyles';
 
 interface Props {
   authorId: number;

@@ -12,7 +12,6 @@ import type { RootStackParamList } from '@/navigation/types';
 import { Skeleton } from '@/components/common/Skeleton';
 import Icon from 'react-native-vector-icons/Feather';
 import FastImage from 'react-native-fast-image';
-import { commonStyles } from '@/styles/commonStyles';
 
 interface Props {
   authorId: number;
@@ -72,18 +71,16 @@ export function AuthorOriginalWorks({ authorId }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, commonStyles.sectionHeader]}>
-        <View style={commonStyles.titleSection}>
-          <Text style={commonStyles.sectionTitle}>원전</Text>
-          <View style={commonStyles.badge}>
-            <Text style={commonStyles.badgeText}>{allWorks.length}</Text>
+      <View style={styles.header}>
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>원전</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{allWorks.length}</Text>
           </View>
         </View>
         {allWorks.length > 3 && (
-          <TouchableOpacity
-            style={commonStyles.toggleButton}
-            onPress={() => setIsExpanded(!isExpanded)}>
-            <Text style={commonStyles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
+          <TouchableOpacity style={styles.toggleButton} onPress={() => setIsExpanded(!isExpanded)}>
+            <Text style={styles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
             <Icon name={isExpanded ? 'chevron-up' : 'grid'} size={16} color={colors.gray[500]} />
           </TouchableOpacity>
         )}
@@ -285,18 +282,18 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
   },
   badge: {
     backgroundColor: colors.gray[100],
-    paddingVertical: 2,
-    paddingHorizontal: 8,
-    borderRadius: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    borderRadius: borderRadius.full,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.gray[600],
   },

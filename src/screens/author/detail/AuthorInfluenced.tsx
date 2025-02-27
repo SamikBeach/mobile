@@ -13,7 +13,6 @@ import Icon from 'react-native-vector-icons/Feather';
 import FastImage from 'react-native-fast-image';
 import { formatAuthorLifespan } from '@/utils/date';
 import { Linking } from 'react-native';
-import { commonStyles } from '@/styles/commonStyles';
 
 interface Props {
   authorId: number;
@@ -65,13 +64,11 @@ export function AuthorInfluenced({ authorId }: Props) {
     <View style={styles.container}>
       {influenced.length > 0 && (
         <View style={styles.section}>
-          <View style={[styles.header, commonStyles.sectionHeader]}>
-            <View style={commonStyles.titleSection}>
-              <Text style={commonStyles.sectionTitle}>
-                {author.nameInKor.trim()}에게 영향을 준 작가
-              </Text>
-              <View style={commonStyles.badge}>
-                <Text style={commonStyles.badgeText}>{influenced.length}</Text>
+          <View style={styles.header}>
+            <View style={styles.titleSection}>
+              <Text style={styles.title}>{author.nameInKor.trim()}에게 영향을 준 작가</Text>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{influenced.length}</Text>
               </View>
             </View>
             {influenced.length > 3 && (
@@ -104,13 +101,11 @@ export function AuthorInfluenced({ authorId }: Props) {
 
       {influencedBy.length > 0 && (
         <View style={styles.section}>
-          <View style={[styles.header, commonStyles.sectionHeader]}>
-            <View style={commonStyles.titleSection}>
-              <Text style={commonStyles.sectionTitle}>
-                {author.nameInKor.trim()}에게 영향을 받은 작가
-              </Text>
-              <View style={commonStyles.badge}>
-                <Text style={commonStyles.badgeText}>{influencedBy.length}</Text>
+          <View style={styles.header}>
+            <View style={styles.titleSection}>
+              <Text style={styles.title}>{author.nameInKor.trim()}에게 영향을 받은 작가</Text>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{influencedBy.length}</Text>
               </View>
             </View>
             {influencedBy.length > 3 && (
@@ -225,6 +220,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: spacing.lg,
   },
   titleSection: {
     flexDirection: 'row',
@@ -232,18 +228,18 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
   },
   badge: {
     backgroundColor: colors.gray[100],
-    paddingVertical: 2,
-    paddingHorizontal: 8,
-    borderRadius: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    borderRadius: borderRadius.full,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.gray[600],
   },

@@ -18,7 +18,6 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import Icon from 'react-native-vector-icons/Feather';
 import { Skeleton } from '@/components/common/Skeleton';
-import { commonStyles } from '@/styles/commonStyles';
 
 interface Props {
   authorId: number;
@@ -68,17 +67,15 @@ export function AuthorBooks({ authorId }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, commonStyles.sectionHeader]}>
-        <View style={commonStyles.titleSection}>
-          <Text style={commonStyles.sectionTitle}>{author?.nameInKor.trim()}의 다른 책</Text>
-          <View style={commonStyles.badge}>
-            <Text style={commonStyles.badgeText}>{books.length}</Text>
+      <View style={styles.header}>
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>{author?.nameInKor.trim()}의 다른 책</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{books.length}</Text>
           </View>
         </View>
-        <TouchableOpacity
-          style={commonStyles.toggleButton}
-          onPress={() => setIsExpanded(!isExpanded)}>
-          <Text style={commonStyles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
+        <TouchableOpacity style={styles.toggleButton} onPress={() => setIsExpanded(!isExpanded)}>
+          <Text style={styles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
           <Icon name={isExpanded ? 'chevron-up' : 'grid'} size={16} color={colors.gray[500]} />
         </TouchableOpacity>
       </View>
@@ -108,8 +105,8 @@ export function AuthorBooks({ authorId }: Props) {
 function AuthorBooksSkeleton() {
   return (
     <View style={styles.container}>
-      <View style={[styles.header, commonStyles.sectionHeader]}>
-        <View style={commonStyles.titleSection}>
+      <View style={styles.header}>
+        <View style={styles.titleSection}>
           <Skeleton style={{ width: 150, height: 24, borderRadius: 4 }} />
           <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
         </View>
@@ -139,19 +136,19 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: spacing.lg,
   },
-  titleContainer: {
+  titleSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.sm,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
-    marginRight: spacing.xs,
   },
   badge: {
     backgroundColor: colors.gray[100],
@@ -168,15 +165,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[50],
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 6,
   },
   toggleButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.gray[600],
+    color: colors.gray[500],
   },
   scrollContent: {
     gap: spacing.md,

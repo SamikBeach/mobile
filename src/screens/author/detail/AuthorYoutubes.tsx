@@ -9,7 +9,6 @@ import { YoutubeDialog } from '@/components/youtube/YoutubeDialog';
 import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/Feather';
 import { Skeleton } from '@/components/common/Skeleton';
-import { commonStyles } from '@/styles/commonStyles';
 
 interface Props {
   authorId: number;
@@ -40,11 +39,11 @@ export function AuthorYoutubes({ authorId }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, commonStyles.sectionHeader]}>
-        <View style={commonStyles.titleSection}>
-          <Text style={commonStyles.sectionTitle}>관련 영상</Text>
-          <View style={commonStyles.badge}>
-            <Text style={commonStyles.badgeText}>{videos.length}</Text>
+      <View style={styles.header}>
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>관련 영상</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{videos.length}</Text>
           </View>
         </View>
         {videos.length > 4 && (
@@ -101,8 +100,8 @@ const VideoCard = ({ video, onPress }: VideoCardProps) => {
 function AuthorYoutubesSkeleton() {
   return (
     <View style={styles.container}>
-      <View style={[styles.header, commonStyles.sectionHeader]}>
-        <View style={commonStyles.titleSection}>
+      <View style={styles.header}>
+        <View style={styles.titleSection}>
           <Skeleton style={{ width: 100, height: 20, borderRadius: 4 }} />
           <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
         </View>
@@ -138,6 +137,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: spacing.lg,
     marginBottom: spacing.md,
   },
   titleSection: {
@@ -146,18 +146,18 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
   },
   badge: {
     backgroundColor: colors.gray[100],
-    paddingVertical: 2,
-    paddingHorizontal: 8,
-    borderRadius: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    borderRadius: borderRadius.full,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '500',
     color: colors.gray[600],
   },
