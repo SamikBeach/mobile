@@ -226,6 +226,7 @@ export function AuthorChat({ authorId, authorName }: Props) {
           onChangeText={setInputText}
           multiline
           maxLength={500}
+          onSubmitEditing={handleSendMessage}
           editable={!isGenerating}
         />
 
@@ -237,7 +238,7 @@ export function AuthorChat({ authorId, authorName }: Props) {
             <Icon name="square" size={20} color={colors.white} />
           </TouchableOpacity>
         ) : (
-          <View style={styles.buttonContainer}>
+          <View style={styles.buttonsRow}>
             <TouchableOpacity
               style={[styles.sendButton, !inputText.trim() && styles.disabledButton]}
               onPress={handleSendMessage}
@@ -245,14 +246,14 @@ export function AuthorChat({ authorId, authorName }: Props) {
               activeOpacity={0.7}>
               <Icon name="send" size={20} color={colors.white} />
             </TouchableOpacity>
-
+            
             {messages.length > 0 && (
               <TouchableOpacity
                 style={styles.retryButton}
                 onPress={() => {
                   if (messages.length >= 2) {
                     const lastUserMessage = [...messages].reverse().find(msg => msg.isUser);
-
+                    
                     if (lastUserMessage) {
                       setMessages(prev => prev.slice(0, prev.length - 1));
                       generateChat(lastUserMessage.text);
@@ -364,7 +365,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray[200],
   },
-  buttonContainer: {
+  buttonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.sm,
   },
   sendButton: {
