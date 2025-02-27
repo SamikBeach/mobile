@@ -5,13 +5,11 @@ import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { OriginalWork } from '@/types/author';
-import { Book } from '@/types/book';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { Skeleton } from '@/components/common/Skeleton';
 import Icon from 'react-native-vector-icons/Feather';
-import FastImage from 'react-native-fast-image';
 
 interface Props {
   authorId: number;
@@ -138,6 +136,7 @@ function OriginalWorkCard({
   const publicationDate = formatPublicationDate();
   const filteredBooks = work.books?.filter(book => book && book.id) || [];
   const hasBooks = filteredBooks.length > 0;
+  const hasMoreBooks = filteredBooks.length > 3;
   const displayBooks = showAllBooks ? filteredBooks : filteredBooks.slice(0, 3);
 
   return (
@@ -173,7 +172,7 @@ function OriginalWorkCard({
             <Text style={styles.booksTitle}>
               {isUnclassified ? '책' : '연관된 책'} ({filteredBooks.length})
             </Text>
-            {filteredBooks.length > 3 && (
+            {hasMoreBooks && (
               <TouchableOpacity
                 style={[
                   styles.booksToggle,
@@ -213,6 +212,7 @@ function OriginalWorkCard({
                   resizeMode="cover"
                 />
                 <Text style={styles.bookTitle} numberOfLines={1}>
+                  ㅇㅁㄴㄹ
                   {book.title || '제목 없음'}
                 </Text>
               </TouchableOpacity>
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   booksList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
   bookItem: {
     flexDirection: 'row',
@@ -403,7 +403,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.md,
-    maxWidth: '48%',
     marginBottom: spacing.xs,
   },
   normalBookItem: {
@@ -420,7 +419,7 @@ const styles = StyleSheet.create({
   bookTitle: {
     fontSize: 12,
     color: colors.gray[700],
-    flex: 1,
+    maxWidth: '90%',
   },
   workDivider: {
     height: 1,

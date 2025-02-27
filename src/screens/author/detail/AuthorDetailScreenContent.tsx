@@ -114,6 +114,15 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
       <AuthorOriginalWorks authorId={authorId} />
       <AuthorBooks authorId={authorId} />
       <AuthorYoutubes authorId={authorId} />
+      
+      <View style={styles.header}>
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>리뷰</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{author?.reviewCount ?? 0}</Text>
+          </View>
+        </View>
+      </View>
     </View>
   );
 
