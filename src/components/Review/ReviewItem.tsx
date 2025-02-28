@@ -6,12 +6,11 @@ import {
   NativeSyntheticEvent,
   TextLayoutEventData,
   Alert,
-  Platform,
   TouchableOpacity,
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing } from '@/styles/theme';
 import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
 import { formatDate } from '@/utils/date';
@@ -84,7 +83,6 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
           reviewId: review.id,
           bookId: review.book.id,
           authorId: review.book.authorBooks?.[0]?.author.id,
-          userId: review.user.id,
           isOptimistic: true,
         });
       },
@@ -93,7 +91,6 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
           reviewId: review.id,
           bookId: review.book.id,
           authorId: review.book.authorBooks?.[0]?.author.id,
-          userId: review.user.id,
           isOptimistic: false,
           currentStatus: {
             isLiked: review.isLiked ?? false,
@@ -184,99 +181,104 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
       <>
         <Animated.View
           style={styles.container}
-          layout={Layout.duration(300)}
-          entering={FadeIn.duration(300)}>
+          entering={FadeIn.duration(300)}
+          exiting={FadeOut.duration(300)}
+          layout={Layout.duration(300)}>
           <View style={styles.header}>
-            <View style={styles.headerTop}>
+            <View style={styles.headerContent}>
+              <Text style={styles.title} numberOfLines={2}>
+                {review.title}
+              </Text>
+
               {!hideUserInfo && (
                 <View style={styles.userInfo}>
                   <UserAvatar user={review.user} size="sm" />
-                  <Text style={styles.userName}>{review.user.nickname}</Text>
-                  {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
+                  <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
                 </View>
-              )}
-              {isMyReview && (
-                <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
               )}
             </View>
 
-            {showBookInfo && (
-              <View style={styles.bookInfoContainer}>
-                <Pressable style={styles.bookCard} onPress={handleBookPress}>
-                  <BookImage imageUrl={review.book.imageUrl} size="xs" style={styles.bookImage} />
-                  <View style={styles.bookInfo}>
-                    <Text style={styles.bookTitle} numberOfLines={1} ellipsizeMode="tail">
-                      {review.book.title}
-                    </Text>
-                    <Text style={styles.bookAuthor} numberOfLines={1}>
-                      {review.book.authorBooks
-                        .map(authorBook => authorBook.author.nameInKor)
-                        .join(', ')}
-                    </Text>
-                  </View>
-                </Pressable>
-              </View>
-            )}
-
-            <Text style={styles.title}>{review.title}</Text>
+            {isMyReview ? (
+              <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
+            ) : currentUser ? (
+              <TouchableOpacity onPress={handleMorePress} style={styles.moreButton}>
+                <Icon name="more-vertical" size={20} color={colors.gray[500]} />
+              </TouchableOpacity>
+            ) : null}
           </View>
+
+          {showBookInfo && (
+            <View style={styles.bookInfoContainer}>
+              <Pressable style={styles.bookCard} onPress={handleBookPress}>
+                <BookImage imageUrl={review.book.imageUrl} size="xs" style={styles.bookImage} />
+                <View style={styles.bookInfo}>
+                  <Text style={styles.bookTitle} numberOfLines={1} ellipsizeMode="tail">
+                    {review.book.title}
+                  </Text>
+                  <Text style={styles.bookAuthor} numberOfLines={1} ellipsizeMode="tail">
+                    {review.book.authorBooks
+                      .map(authorBook => authorBook.author.nameInKor)
+                      .join(', ')}
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
+          )}
 
           <Pressable style={styles.contentContainer} onPress={() => setIsExpanded(!isExpanded)}>
             <Text
               style={styles.content}
               numberOfLines={isExpanded ? undefined : 3}
-              ellipsizeMode="tail"
               onTextLayout={onTextLayout}>
-              <LexicalContent content={review.content} isExpanded={isExpanded} />
+              <LexicalContent content={review.content} />
             </Text>
-            {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
+            {isTruncated && !isExpanded && (
+              <Text style={styles.more} onPress={() => setIsExpanded(true)}>
+                더보기
+              </Text>
+            )}
           </Pressable>
 
           <View style={styles.footer}>
             <View style={styles.actions}>
-              <TouchableOpacity
+              <Pressable
                 style={[styles.actionButton, review.isLiked && styles.activeActionButton]}
                 onPress={handleLikePress}>
                 <Icon
                   name="thumbs-up"
-                  size={16}
+                  size={14}
                   color={review.isLiked ? colors.primary[500] : colors.gray[600]}
                 />
                 <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
                   {review.likeCount > 0 ? review.likeCount : '좋아요'}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
 
               {!hideReplyButton && (
-                <TouchableOpacity
+                <Pressable
                   style={[styles.actionButton, showComments && styles.activeActionButton]}
                   onPress={handleReplyPress}>
                   <Icon
                     name="message-square"
-                    size={16}
+                    size={14}
                     color={showComments ? colors.primary[500] : colors.gray[600]}
                   />
                   <Text style={[styles.actionText, showComments && styles.activeActionText]}>
                     {review.commentCount > 0 ? review.commentCount : '댓글'}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
           </View>
 
           {showComments && (
             <Animated.View
-              style={styles.commentsContainer}
               entering={FadeIn.duration(300)}
               exiting={FadeOut.duration(300)}
-              layout={Layout.duration(300)}>
+              layout={Layout.duration(300)}
+              style={styles.commentsContainer}>
               <CommentList reviewId={review.id} onReply={handleReply} />
             </Animated.View>
-          )}
-          {!isMyReview && currentUser && (
-            <TouchableOpacity onPress={handleMorePress} style={styles.moreButton}>
-              <Icon name="more-horizontal" size={20} color={colors.gray[500]} />
-            </TouchableOpacity>
           )}
         </Animated.View>
 
@@ -299,30 +301,26 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   header: {
-    gap: spacing.sm,
-  },
-  headerTop: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+  },
+  headerContent: {
+    flex: 1,
+    gap: spacing.xs,
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
   },
-  userName: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.gray[700],
-  },
   date: {
-    fontSize: 13,
+    fontSize: 12,
     color: colors.gray[500],
-    marginLeft: spacing.sm,
   },
   bookInfoContainer: {
-    marginTop: spacing.xs,
+    marginTop: -spacing.xs,
   },
   bookCard: {
     flexDirection: 'row',
@@ -353,7 +351,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: colors.gray[900],
-    marginBottom: spacing.xs,
   },
   contentContainer: {
     borderWidth: 1,
@@ -375,7 +372,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   footer: {
-    marginTop: spacing.xs,
+    marginTop: -spacing.xs,
   },
   actions: {
     flexDirection: 'row',
@@ -395,7 +392,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.blue[50],
   },
   actionText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
     color: colors.gray[700],
   },
@@ -403,10 +400,7 @@ const styles = StyleSheet.create({
     color: colors.primary[500],
   },
   moreButton: {
-    position: 'absolute',
-    top: spacing.md,
-    right: spacing.md,
-    zIndex: 2,
+    padding: spacing.xs,
   },
   commentsContainer: {
     marginTop: spacing.xs,
