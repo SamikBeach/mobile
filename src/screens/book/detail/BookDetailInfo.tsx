@@ -11,7 +11,7 @@ import {
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import { useBookQueryData } from '@/hooks/useBookQueryData';
@@ -43,13 +43,7 @@ function AuthorImage({ imageUrl, style }: { imageUrl?: string; name: string; sty
   const defaultImage = 'https://via.placeholder.com/40';
   const source = { uri: imageUrl || defaultImage };
 
-  return (
-    <Image
-      source={source}
-      style={[{ width: 40, height: 40, borderRadius: 20 }, style]}
-      defaultSource={{ uri: defaultImage }}
-    />
-  );
+  return <Image source={source} style={[{ width: 40, height: 40, borderRadius: 20 }, style]} />;
 }
 
 export function BookDetailInfo({ bookId, onReviewPress, onChatToggle, isChatOpen }: Props) {
@@ -275,7 +269,6 @@ const styles = StyleSheet.create({
   },
   bookCover: {
     borderRadius: borderRadius.md,
-    ...shadows.md,
     width: 140,
     height: 200,
   },
@@ -300,7 +293,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray[300],
     backgroundColor: colors.white,
-    ...shadows.sm,
   },
   activeButton: {
     backgroundColor: colors.gray[50],
@@ -341,7 +333,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
     borderWidth: 1,
     borderColor: colors.gray[200],
-    ...shadows.sm,
   },
   authorImage: {
     borderRadius: 20,
@@ -383,7 +374,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray[200],
     backgroundColor: colors.white,
-    ...shadows.sm,
     gap: spacing.sm,
   },
   bookIcon: {
@@ -413,7 +403,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[50],
     borderWidth: 1,
     borderColor: colors.gray[200],
-    ...shadows.sm,
     maxHeight: 200,
   },
   descriptionScroll: {

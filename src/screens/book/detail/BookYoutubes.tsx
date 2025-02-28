@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
@@ -62,11 +62,7 @@ export function BookYoutubes({ bookId }: Props) {
             style={styles.videoCard}
             onPress={() => setSelectedVideoId(video.id)}>
             <View style={styles.thumbnailContainer}>
-              <FastImage
-                source={{ uri: video.thumbnailUrl }}
-                style={styles.thumbnail}
-                resizeMode={FastImage.resizeMode.cover}
-              />
+              <Image source={{ uri: video.thumbnailUrl }} style={styles.thumbnail} />
               <View style={styles.playIconContainer}>
                 <View style={styles.playIcon}>
                   <Icon name="play" size={16} color={colors.red[500]} />

@@ -6,7 +6,7 @@ import { bookApi } from '@/apis/book';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
 import { BookImage } from '@/components/book/BookImage';
 import { Book } from '@/types/book';
@@ -165,7 +165,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   coverContainer: {
-    ...shadows.sm,
     borderRadius: borderRadius.md,
     overflow: 'hidden',
   },

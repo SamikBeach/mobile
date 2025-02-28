@@ -11,7 +11,7 @@ import {
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { Book } from '@/types/book';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   coverContainer: {
-    ...shadows.sm,
     borderRadius: borderRadius.md,
     overflow: 'hidden',
   },

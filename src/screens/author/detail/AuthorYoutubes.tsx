@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -103,7 +103,7 @@ const VideoCard = ({ video, onPress }: VideoCardProps) => {
   return (
     <TouchableOpacity style={styles.videoCard} onPress={onPress}>
       <View style={styles.thumbnailContainer}>
-        <FastImage
+        <Image
           source={{ uri: video.thumbnailUrl }}
           style={styles.thumbnail}
           resizeMode={FastImage.resizeMode.cover}
