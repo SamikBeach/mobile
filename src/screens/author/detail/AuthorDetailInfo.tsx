@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
+import React, { useState, useRef } from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+  Linking,
+  LayoutChangeEvent,
+} from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { formatAuthorLifespan } from '@/utils/date';
@@ -14,6 +21,9 @@ import Toast from 'react-native-toast-message';
 import { AuthorDetailInfoSkeleton } from '@/components/common/Skeleton/AuthorDetailInfoSkeleton';
 import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
+import { AuthorAvatar } from '@/components/author/AuthorAvatar';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
   authorId: number;
@@ -22,6 +32,10 @@ interface Props {
 
 export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const descriptionHeight = useSharedValue(140); // 초기 높이 값
+  const fadeOpacity = useSharedValue(1);
+  const fullContentHeight = useRef(0);
+  const [shouldShowButton, setShouldShowButton] = useState(false);
 
   const { data: author, isLoading } = useQuery({
     queryKey: ['author', authorId],
@@ -36,23 +50,22 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
   const { mutate: toggleLike } = useMutation({
     mutationFn: () => authorApi.toggleAuthorLike(authorId),
     onMutate: async () => {
-      updateAuthorLikeQueryData({
-        authorId: authorId,
-        isOptimistic: true,
-      });
+      updateAuthorLikeQueryData({ authorId, isOptimistic: true });
     },
     onError: () => {
-      updateAuthorLikeQueryData({
-        authorId: authorId,
-        isOptimistic: false,
-        currentStatus: {
-          isLiked: author?.isLiked ?? false,
-          likeCount: author?.likeCount ?? 0,
-        },
-      });
+      if (author) {
+        updateAuthorLikeQueryData({
+          authorId,
+          isOptimistic: false,
+          currentStatus: {
+            isLiked: author.isLiked,
+            likeCount: author.likeCount,
+          },
+        });
+      }
       Toast.show({
         type: 'error',
-        text1: '좋아요 처리에 실패했습니다.',
+        text1: '좋아요 처리 중 오류가 발생했습니다.',
       });
     },
   });
@@ -65,46 +78,64 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
     toggleLike();
   };
 
-  const handleWikipediaPress = () => {
-    if (author?.name) {
+  const onDescriptionLayout = (event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout;
+    if (height > 0) {
+      fullContentHeight.current = height;
+
+      // 컨텐츠 높이가 초기 높이보다 크면 더보기 버튼 표시
+      if (height > 140) {
+        setShouldShowButton(true);
+      }
+    }
+  };
+
+  const toggleDescription = () => {
+    setIsExpanded(!isExpanded);
+    descriptionHeight.value = withTiming(isExpanded ? 140 : fullContentHeight.current, {
+      duration: 300,
+    });
+    fadeOpacity.value = withTiming(isExpanded ? 1 : 0, { duration: 200 });
+  };
+
+  const animatedDescriptionStyle = useAnimatedStyle(() => {
+    return {
+      height: descriptionHeight.value,
+      overflow: 'hidden',
+    };
+  });
+
+  const fadeGradientStyle = useAnimatedStyle(() => {
+    return {
+      opacity: fadeOpacity.value,
+    };
+  });
+
+  const handleAvatarPress = () => {
+    if (author && author.name) {
       Linking.openURL(`https://en.wikipedia.org/wiki/${author.name}`);
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !author) {
     return <AuthorDetailInfoSkeleton />;
   }
 
-  if (!author) return null;
-
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={handleWikipediaPress} style={styles.imageWrapper}>
-          <Image
-            source={{ uri: author.imageUrl ?? undefined }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-        </Pressable>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <View style={styles.avatarContainer}>
+            <Pressable onPress={handleAvatarPress}>
+              <AuthorAvatar
+                imageUrl={author.imageUrl}
+                name={author.nameInKor}
+                size={140}
+                style={styles.avatar}
+              />
+            </Pressable>
 
-        <View style={styles.info}>
-          <View style={styles.infoContent}>
-            <View style={styles.titleSection}>
-              <Text style={styles.name}>{author.nameInKor?.trim()}</Text>
-              <Text style={styles.originalName}>{author.name?.trim()}</Text>
-              <Text style={styles.lifespan}>
-                {formatAuthorLifespan(
-                  author.bornDate,
-                  author.bornDateIsBc,
-                  author.diedDate,
-                  author.diedDateIsBc,
-                )}
-              </Text>
-              <Text style={styles.source}>정보제공: 위키피디아</Text>
-            </View>
-
-            <View style={styles.stats}>
+            <View style={styles.actionsContainer}>
               <LikeButton
                 isLiked={author.isLiked}
                 likeCount={author.likeCount}
@@ -113,109 +144,237 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
               <CommentButton commentCount={author.reviewCount} onPress={onReviewPress} />
             </View>
           </View>
-        </View>
-      </View>
 
-      {author.description && (
-        <View>
-          <Pressable onPress={() => setIsExpanded(!isExpanded)}>
-            <Text style={styles.description} numberOfLines={isExpanded ? undefined : 3}>
-              {author.description}
-            </Text>
-            {author.description.length > 200 && (
-              <Text style={[styles.expandButtonText, styles.expandButtonMargin]}>
-                {isExpanded ? '접기' : '더보기'}
-              </Text>
-            )}
-          </Pressable>
+          <View style={styles.infoContainer}>
+            <View style={styles.nameSection}>
+              <View style={styles.nameHeader}>
+                <Text style={styles.koreanName}>{author.nameInKor}</Text>
+              </View>
+              <View style={styles.nameRow}>
+                <Text style={styles.englishName}>{author.name}</Text>
+                <View style={styles.lifespanBadge}>
+                  <Text style={styles.lifespanText}>
+                    {formatAuthorLifespan(
+                      author.bornDate,
+                      author.bornDateIsBc,
+                      author.diedDate,
+                      author.diedDateIsBc,
+                    )}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.badgeContainer}>
+              {author.genre && (
+                <View style={styles.genreBadge}>
+                  <Text style={styles.genreText}>
+                    {author.genre.genreInKor || author.genre.genreInKor}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
         </View>
-      )}
+
+        {author.description && (
+          <View style={styles.descriptionContainer}>
+            <Animated.View style={[styles.descriptionContent, animatedDescriptionStyle]}>
+              <View style={styles.fullTextContainer}>
+                <Text style={styles.description}>{author.description}</Text>
+              </View>
+
+              {/* 측정용 숨겨진 텍스트 */}
+              <View
+                style={styles.measureContainer}
+                onLayout={onDescriptionLayout}
+                pointerEvents="none">
+                <Text style={styles.description}>{author.description}</Text>
+              </View>
+
+              {!isExpanded && shouldShowButton && (
+                <Animated.View style={[styles.fadeGradient, fadeGradientStyle]}>
+                  <LinearGradient
+                    colors={['rgba(249, 250, 251, 0)', 'rgba(249, 250, 251, 0.95)']}
+                    style={styles.gradient}
+                  />
+                </Animated.View>
+              )}
+            </Animated.View>
+
+            {shouldShowButton && (
+              <TouchableOpacity
+                style={styles.expandButton}
+                onPress={toggleDescription}
+                activeOpacity={0.7}>
+                <Text style={styles.expandButtonText}>{isExpanded ? '접기' : '더보기'}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.lg,
+    backgroundColor: colors.white,
+  },
+  content: {
     padding: spacing.lg,
+    gap: spacing.lg,
   },
   header: {
     flexDirection: 'row',
     gap: spacing.lg,
+    alignItems: 'flex-start',
   },
-  imageWrapper: {},
-  image: {
-    width: 140,
-    height: 140,
-    borderRadius: borderRadius.full,
+  avatarContainer: {
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  avatar: {
+    borderRadius: 70,
     backgroundColor: colors.gray[100],
   },
-  info: {
-    flex: 1,
-    paddingVertical: spacing.xs,
+  actionsContainer: {
+    flexDirection: 'row',
+    gap: spacing.sm,
   },
-  infoContent: {
-    flex: 1,
-    justifyContent: 'space-between',
+  chatButtonActive: {
+    backgroundColor: colors.gray[50],
   },
-  titleSection: {
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  buttonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.gray[700],
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: spacing.sm,
+    padding: spacing.sm,
+  },
+  nameSection: {
     gap: spacing.xs,
   },
-  name: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.gray[900],
-    lineHeight: 24,
+  nameHeader: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
   },
-  originalName: {
-    fontSize: 15,
+  nameRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  koreanName: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.gray[900],
+  },
+  englishName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.gray[700],
+  },
+  lifespanBadge: {
+    backgroundColor: colors.gray[100],
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+  },
+  lifespanText: {
+    fontSize: 13,
     color: colors.gray[600],
   },
-  lifespan: {
-    fontSize: 14,
-    color: colors.gray[500],
+  badgeContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
   },
-  source: {
-    fontSize: 13,
-    color: colors.gray[400],
+  genreBadge: {
+    backgroundColor: colors.blue[50],
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+  },
+  genreText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.blue[600],
+  },
+  descriptionContainer: {
+    backgroundColor: colors.gray[50],
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  descriptionContent: {
+    position: 'relative',
   },
   description: {
-    fontSize: 15,
-    color: colors.gray[700],
-    lineHeight: 22,
-  },
-  stats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  statDivider: {
-    width: 1,
-    height: 12,
-    backgroundColor: colors.gray[200],
-    marginHorizontal: spacing.sm,
-  },
-  statText: {
     fontSize: 14,
-    color: colors.gray[600],
+    lineHeight: 22,
+    color: colors.gray[700],
+  },
+  fadeGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 40,
+  },
+  gradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 40,
+  },
+  expandButton: {
+    alignSelf: 'stretch',
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing.sm,
+    alignItems: 'center',
+    marginTop: spacing.xs,
   },
   expandButtonText: {
     fontSize: 14,
+    fontWeight: '500',
     color: colors.blue[600],
   },
-  expandButtonMargin: {
-    marginTop: spacing.xs,
+  mobileButtonContainer: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
   },
-  authorInfo: {
-    flex: 1,
-    paddingVertical: spacing.xs,
+  mobileChatButton: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    width: '100%',
   },
-  bioSection: {
-    gap: spacing.xs,
+  measureContainer: {
+    position: 'absolute',
+    width: '100%',
+    opacity: 0, // 보이지 않게 설정
+  },
+  fullTextContainer: {
+    width: '100%',
   },
 });

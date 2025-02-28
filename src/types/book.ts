@@ -10,6 +10,7 @@ export interface Book extends BaseEntity {
   isbn: number | null;
   isbn13: number | null;
   likeCount: number;
+  isLiked: boolean;
   reviewCount: number;
   authorBooks: {
     id: number;
@@ -42,9 +43,7 @@ export interface Book extends BaseEntity {
     id: number;
     name: string;
   } | null;
-  isLiked: boolean;
 }
-
 export interface BookDetail extends Book {
   isLiked: boolean;
 }

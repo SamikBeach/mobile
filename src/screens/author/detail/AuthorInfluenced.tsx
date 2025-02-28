@@ -8,11 +8,12 @@ import { InfluencedAuthor } from '@/types/author';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { Skeleton } from '@/components/common/Skeleton';
 import Icon from 'react-native-vector-icons/Feather';
 import FastImage from 'react-native-fast-image';
 import { formatAuthorLifespan } from '@/utils/date';
 import { Linking } from 'react-native';
+import { InfluencedAuthorsSkeleton } from './InfluencedAuthorsSkeleton';
+import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 
 interface Props {
   authorId: number;
@@ -48,9 +49,6 @@ export function AuthorInfluenced({ authorId }: Props) {
   if (influenced.length === 0 && influencedBy.length === 0) {
     return null;
   }
-
-  const displayInfluenced = isInfluencedExpanded ? influenced : influenced.slice(0, 3);
-  const displayInfluencedBy = isInfluencedByExpanded ? influencedBy : influencedBy.slice(0, 3);
 
   const handleAuthorPress = (_author: InfluencedAuthor) => {
     if (_author.isWikiData) {
@@ -90,13 +88,27 @@ export function AuthorInfluenced({ authorId }: Props) {
           </View>
 
           <View style={[styles.authorGrid, { paddingHorizontal: spacing.lg }]}>
-            <FlatList
-              data={displayInfluenced}
-              keyExtractor={item => `influenced-${item.id}`}
-              renderItem={({ item }) => (
-                <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
-              )}
-            />
+            {isInfluencedExpanded ? (
+              <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
+                <FlatList
+                  data={influenced}
+                  keyExtractor={item => `influenced-${item.id}`}
+                  renderItem={({ item }) => (
+                    <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+                  )}
+                />
+              </Animated.View>
+            ) : (
+              <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
+                <FlatList
+                  data={influenced.slice(0, 3)}
+                  keyExtractor={item => `influenced-${item.id}`}
+                  renderItem={({ item }) => (
+                    <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+                  )}
+                />
+              </Animated.View>
+            )}
           </View>
         </View>
       )}
@@ -129,15 +141,31 @@ export function AuthorInfluenced({ authorId }: Props) {
           </View>
 
           <View style={[styles.influencedByGrid, { paddingHorizontal: spacing.lg }]}>
-            <FlatList
-              data={displayInfluencedBy}
-              keyExtractor={item => `influenced-by-${item.id}`}
-              numColumns={1}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
-              )}
-            />
+            {isInfluencedByExpanded ? (
+              <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
+                <FlatList
+                  data={influencedBy}
+                  keyExtractor={item => `influenced-by-${item.id}`}
+                  numColumns={1}
+                  scrollEnabled={false}
+                  renderItem={({ item }) => (
+                    <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+                  )}
+                />
+              </Animated.View>
+            ) : (
+              <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
+                <FlatList
+                  data={influencedBy.slice(0, 3)}
+                  keyExtractor={item => `influenced-by-${item.id}`}
+                  numColumns={1}
+                  scrollEnabled={false}
+                  renderItem={({ item }) => (
+                    <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+                  )}
+                />
+              </Animated.View>
+            )}
           </View>
         </View>
       )}
@@ -182,33 +210,6 @@ function InfluencedAuthorItem({
         {lifespan && <Text style={styles.authorLifespan}>{lifespan}</Text>}
       </View>
     </TouchableOpacity>
-  );
-}
-
-function InfluencedAuthorsSkeleton() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.section}>
-        <View style={styles.header}>
-          <View style={styles.titleSection}>
-            <Skeleton style={{ width: 180, height: 20, borderRadius: 4 }} />
-            <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
-          </View>
-          <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
-        </View>
-        <View style={styles.authorGrid}>
-          {[1, 2, 3].map(i => (
-            <View key={i} style={styles.authorItem}>
-              <Skeleton style={{ width: 32, height: 32, borderRadius: 16 }} />
-              <View style={{ flex: 1, gap: 4 }}>
-                <Skeleton style={{ width: '60%', height: 16, borderRadius: 4 }} />
-                <Skeleton style={{ width: '40%', height: 12, borderRadius: 4 }} />
-              </View>
-            </View>
-          ))}
-        </View>
-      </View>
-    </View>
   );
 }
 

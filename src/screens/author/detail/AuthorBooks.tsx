@@ -18,6 +18,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import Icon from 'react-native-vector-icons/Feather';
 import { Skeleton } from '@/components/common/Skeleton';
+import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 
 interface Props {
   authorId: number;
@@ -81,22 +82,28 @@ export function AuthorBooks({ authorId }: Props) {
       </View>
 
       {isExpanded ? (
-        <FlatList
-          data={books}
-          renderItem={({ item }) => renderBookItem(item)}
-          keyExtractor={item => item.id.toString()}
-          numColumns={3}
-          columnWrapperStyle={styles.gridRow}
-          contentContainerStyle={styles.gridContent}
+        <Animated.View
           style={styles.gridContainer}
-        />
+          layout={Layout.duration(300)}
+          entering={FadeIn.duration(300)}>
+          <FlatList
+            data={books}
+            renderItem={({ item }) => renderBookItem(item)}
+            keyExtractor={item => item.id.toString()}
+            numColumns={3}
+            contentContainerStyle={styles.gridContent}
+            columnWrapperStyle={styles.gridRow}
+          />
+        </Animated.View>
       ) : (
-        <ScrollView
+        <Animated.ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}>
-          {books.map(book => renderBookItem(book))}
-        </ScrollView>
+          contentContainerStyle={styles.scrollContent}
+          layout={Layout.duration(300)}
+          entering={FadeIn.duration(300)}>
+          {books.slice(0, 6).map(book => renderBookItem(book))}
+        </Animated.ScrollView>
       )}
     </View>
   );

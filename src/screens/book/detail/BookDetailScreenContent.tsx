@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Pressable, Switch, Platform, TextInput } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, StyleSheet, FlatList, Platform, TextInput } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
@@ -13,32 +13,43 @@ import { BookDetailInfo } from './BookDetailInfo';
 import { RelativeBooks } from './RelativeBooks';
 import { Empty } from '@/components/common/Empty';
 import Icon from 'react-native-vector-icons/Feather';
-import Animated, { Easing, Layout, SlideInDown } from 'react-native-reanimated';
-import { useAtom } from 'jotai';
-import { includeOtherTranslationsAtom } from '@/atoms/book';
+import Animated from 'react-native-reanimated';
 import { CommentEditor } from '@/components/comment/CommentEditor';
 import { reviewApi } from '@/apis/review';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import Toast from 'react-native-toast-message';
 import { useMutation } from '@tanstack/react-query';
 import type { ReviewItemHandle } from '@/components/review/ReviewItem';
+import { SlideInDown } from 'react-native-reanimated';
+import { BookYoutubes } from './BookYoutubes';
+import { BookChat } from './BookChat';
+import { useAtom } from 'jotai';
+import { includeOtherTranslationsAtom } from '@/atoms/book';
+import { Switch } from 'react-native';
 
 interface Props {
   bookId: number;
 }
 
 export function BookDetailScreenContent({ bookId }: Props) {
-  const [includeOtherTranslations, setIncludeOtherTranslations] = useAtom(
-    includeOtherTranslationsAtom,
-  );
   const flatListRef = useRef<FlatList>(null);
+  const chatContainerRef = useRef<View>(null);
   const [activeReviewId, setActiveReviewId] = useState<number | null>(null);
   const [replyToUser, setReplyToUser] = useState<{ nickname: string } | null>(null);
   const [isReplyAnimating, setIsReplyAnimating] = useState(false);
   const { createCommentQueryData } = useCommentQueryData();
   const reviewRefs = useRef<{ [key: number]: React.RefObject<ReviewItemHandle> }>({});
-
   const commentEditorRef = useRef<TextInput>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [includeOtherTranslations, setIncludeOtherTranslations] = useAtom(
+    includeOtherTranslationsAtom,
+  );
+
+  // 책 ID가 변경될 때 스크롤 위치 초기화
+  useEffect(() => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+    setIsChatOpen(false);
+  }, [bookId]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<
     AxiosResponse<PaginatedResponse<Review>>,
@@ -69,9 +80,10 @@ export function BookDetailScreenContent({ bookId }: Props) {
   });
 
   const { data: book } = useQuery({
-    queryKey: ['book', bookId, includeOtherTranslations],
-    queryFn: () => bookApi.getBookDetail(bookId, includeOtherTranslations),
+    queryKey: ['book', bookId],
+    queryFn: () => bookApi.getBookDetail(bookId),
     select: response => response.data,
+    staleTime: 60 * 1000,
   });
 
   const reviews = data?.pages.flatMap(page => page.data.data) ?? [];
@@ -83,6 +95,8 @@ export function BookDetailScreenContent({ bookId }: Props) {
   };
 
   const handleReviewPress = () => {
+    if (reviews.length === 0) return;
+
     flatListRef.current?.scrollToIndex({
       index: 0,
       animated: true,
@@ -90,138 +104,61 @@ export function BookDetailScreenContent({ bookId }: Props) {
     });
   };
 
-  useEffect(() => {
-    if (!isLoading && flatListRef.current) {
-      flatListRef.current.scrollToOffset({ offset: 0, animated: false });
-    }
-  }, [isLoading]);
+  const handleChatButtonPress = () => {
+    setIsChatOpen(prev => !prev);
+  };
 
   const getReviewRef = (reviewId: number) => {
     if (!reviewRefs.current[reviewId]) {
-      reviewRefs.current[reviewId] = React.createRef();
+      reviewRefs.current[reviewId] = React.createRef<ReviewItemHandle>();
     }
     return reviewRefs.current[reviewId];
   };
 
-  const { mutate: createComment } = useMutation({
-    mutationFn: (params: { reviewId: number; content: string }) =>
-      reviewApi.createComment(params.reviewId, { content: params.content }),
-    onMutate: async ({ reviewId }) => {
-      const reviewRef = getReviewRef(reviewId);
-
-      if (reviewRef?.current) {
-        reviewRef.current.showComments();
-      }
-    },
-    onSuccess: (response, { reviewId }) => {
-      createCommentQueryData({
-        reviewId,
-        comment: response.data,
-      });
-      Toast.show({
-        type: 'success',
-        text1: '댓글이 등록되었습니다.',
-      });
-      setActiveReviewId(null);
-      setReplyToUser(null);
-      handleCommentSuccess(reviewId);
-    },
-    onError: (error: Error) => {
-      console.error(error);
-      Toast.show({
-        type: 'error',
-        text1: '댓글 작성에 실패했습니다.',
-      });
-    },
-  });
-
   const handleCommentPress = (reviewId: number, user?: { nickname: string }) => {
-    if (!user) {
-      const reviewIndex = reviews.findIndex(review => review.id === reviewId);
-      if (reviewIndex !== -1) {
-        flatListRef.current?.scrollToIndex({
-          index: reviewIndex,
-          animated: true,
-          viewPosition: 0,
-        });
-      }
-
-      commentEditorRef.current?.clear();
-    }
-
     setActiveReviewId(reviewId);
-    if (user) {
-      setReplyToUser(user);
-    } else {
-      setReplyToUser(null);
-    }
-
+    setReplyToUser(user || null);
     setIsReplyAnimating(true);
+
     setTimeout(() => {
       setIsReplyAnimating(false);
-    }, 3000);
-  };
-
-  const onScrollToIndexFailed = (info: {
-    index: number;
-    highestMeasuredFrameIndex: number;
-    averageItemLength: number;
-  }) => {
-    const offset = info.averageItemLength * info.index;
-    flatListRef.current?.scrollToOffset({ offset, animated: false });
-    setTimeout(() => {
-      if (flatListRef.current !== null) {
-        flatListRef.current.scrollToIndex({
-          index: info.index,
-          animated: true,
-          viewPosition: 0,
-        });
-      }
-    }, 100);
-  };
-
-  const handleCommentSuccess = (reviewId: number) => {
-    const reviewIndex = reviews.findIndex(review => review.id === reviewId);
-    if (reviewIndex !== -1) {
-      flatListRef.current?.scrollToIndex({
-        index: reviewIndex,
-        animated: true,
-        viewPosition: 0,
-      });
-    }
+      commentEditorRef.current?.focus();
+    }, 300);
   };
 
   const ListHeaderComponent = (
     <View style={styles.listHeader}>
-      <BookDetailInfo bookId={bookId} onReviewPress={handleReviewPress} />
+      <BookDetailInfo
+        bookId={bookId}
+        onReviewPress={handleReviewPress}
+        onChatToggle={handleChatButtonPress}
+        isChatOpen={isChatOpen}
+      />
+
+      {isChatOpen && book && (
+        <View ref={chatContainerRef} style={styles.chatContainer}>
+          <BookChat bookId={bookId} bookTitle={book.title} />
+        </View>
+      )}
+
       <RelativeBooks bookId={bookId} />
+      <BookYoutubes bookId={bookId} />
+
       <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <View style={styles.titleSection}>
-            <Text style={styles.title}>리뷰</Text>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{book?.reviewCount ?? 0}</Text>
-            </View>
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>리뷰</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{book?.reviewCount ?? 0}</Text>
           </View>
-          <View style={styles.toggleContainer}>
-            <Pressable
-              style={styles.toggleContainer}
-              onPress={() => setIncludeOtherTranslations(prev => !prev)}>
-              <Text style={styles.toggleLabel}>다른 번역본 리뷰 포함</Text>
-              <Switch
-                value={includeOtherTranslations}
-                onValueChange={setIncludeOtherTranslations}
-                trackColor={{ false: colors.gray[200], true: colors.gray[900] }}
-                thumbColor={colors.white}
-                ios_backgroundColor={colors.gray[200]}
-                style={Platform.select({
-                  ios: {
-                    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
-                  },
-                })}
-              />
-            </Pressable>
-          </View>
+        </View>
+        <View style={styles.toggleContainer}>
+          <Text style={styles.toggleLabel}>다른 번역본 포함</Text>
+          <Switch
+            value={includeOtherTranslations}
+            onValueChange={setIncludeOtherTranslations}
+            trackColor={{ false: colors.gray[200], true: colors.blue[500] }}
+            thumbColor={colors.white}
+          />
         </View>
       </View>
     </View>
@@ -230,19 +167,68 @@ export function BookDetailScreenContent({ bookId }: Props) {
   const ListEmptyComponent = (
     <View style={styles.emptyContainer}>
       <Empty
-        icon={<Icon name="message-square" size={48} color={colors.gray[400]} />}
+        icon={<Icon name="book-open" size={48} color={colors.gray[400]} />}
         message="아직 리뷰가 없어요"
         description="첫 번째 리뷰를 작성해보세요"
       />
     </View>
   );
 
+  const { mutate: createComment } = useMutation({
+    mutationFn: (params: { reviewId: number; content: string }) =>
+      reviewApi.createComment(params.reviewId, { content: params.content }),
+    onMutate: async ({ reviewId }) => {
+      const reviewRef = getReviewRef(reviewId);
+      if (reviewRef?.current) {
+        reviewRef.current.expandComments?.();
+      }
+    },
+    onSuccess: (response, { reviewId }) => {
+      const newComment = response.data;
+      createCommentQueryData({
+        reviewId: reviewId,
+        comment: newComment,
+      });
+      setActiveReviewId(null);
+      setReplyToUser(null);
+
+      Toast.show({
+        type: 'success',
+        text1: '댓글이 작성되었습니다.',
+        position: 'bottom',
+      });
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: '댓글 작성 실패',
+        text2: '잠시 후 다시 시도해주세요.',
+        position: 'bottom',
+      });
+    },
+  });
+
+  // 채팅 열릴 때 스크롤 처리
+  useEffect(() => {
+    if (isChatOpen && chatContainerRef.current) {
+      // 약간의 지연 후 스크롤 실행 (레이아웃이 완전히 렌더링된 후)
+      setTimeout(() => {
+        chatContainerRef.current?.measureInWindow((_, y) => {
+          flatListRef.current?.scrollToOffset({
+            offset: y,
+            animated: true,
+          });
+        });
+      }, 300);
+    }
+  }, [isChatOpen]);
+
   return (
     <View style={styles.container}>
-      <Animated.FlatList
+      <FlatList
         ref={flatListRef}
         data={reviews}
-        onScrollToIndexFailed={onScrollToIndexFailed}
+        keyExtractor={item => `review-${item.id}`}
         renderItem={({ item }) => (
           <View style={styles.reviewItemContainer}>
             {isLoading ? (
@@ -251,24 +237,18 @@ export function BookDetailScreenContent({ bookId }: Props) {
               <ReviewItem
                 ref={getReviewRef(item.id)}
                 review={item}
-                showBookInfo={includeOtherTranslations && item.book.id !== bookId}
                 onCommentPress={handleCommentPress}
               />
             )}
           </View>
         )}
-        itemLayoutAnimation={Layout.duration(200).easing(Easing.bezierFn(0.4, 0, 0.2, 1))}
         ListHeaderComponent={ListHeaderComponent}
-        ListEmptyComponent={ListEmptyComponent}
-        keyExtractor={item => item.id.toString()}
+        ListEmptyComponent={!isLoading ? ListEmptyComponent : null}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        contentContainerStyle={styles.reviewList}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
-        contentContainerStyle={[
-          styles.reviewList,
-          activeReviewId ? { paddingBottom: Platform.OS === 'ios' ? 90 : 56 } : undefined,
-        ]}
       />
       {activeReviewId && (
         <Animated.View entering={SlideInDown.duration(300)} style={styles.commentEditorContainer}>
@@ -295,16 +275,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    gap: spacing.lg,
+  },
+  listHeader: {
+    gap: spacing.sm,
   },
   header: {
-    gap: spacing.md,
-    padding: spacing.lg,
-  },
-  titleRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: spacing.lg,
   },
   titleSection: {
     flexDirection: 'row',
@@ -327,17 +306,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.gray[600],
   },
-  toggleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    paddingVertical: spacing.sm,
-    cursor: 'pointer',
-  },
-  toggleLabel: {
-    fontSize: 14,
-    color: colors.gray[600],
-  },
   emptyContainer: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
@@ -348,11 +316,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   separator: {
-    height: 1,
-    backgroundColor: colors.gray[100],
-  },
-  listHeader: {
-    gap: spacing.xl,
+    height: spacing.md,
   },
   reviewItemContainer: {
     paddingHorizontal: spacing.lg,
@@ -371,5 +335,19 @@ const styles = StyleSheet.create({
         paddingBottom: spacing.lg,
       },
     }),
+  },
+  chatContainer: {
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+    height: 400, // 채팅 컨테이너 높이 설정
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  toggleLabel: {
+    fontSize: 14,
+    color: colors.gray[600],
   },
 });

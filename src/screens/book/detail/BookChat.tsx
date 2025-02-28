@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useMutation } from '@tanstack/react-query';
-import { authorApi } from '@/apis/author';
+import { bookApi } from '@/apis/book';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { ChatMessage } from '@/types/common';
 import Icon from 'react-native-vector-icons/Feather';
@@ -25,8 +25,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 interface Props {
-  authorId: number;
-  authorName: string;
+  bookId: number;
+  bookTitle: string;
 }
 
 interface Message {
@@ -35,7 +35,7 @@ interface Message {
   isUser: boolean;
 }
 
-export function AuthorChat({ authorId, authorName }: Props) {
+export function BookChat({ bookId, bookTitle }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -55,7 +55,7 @@ export function AuthorChat({ authorId, authorName }: Props) {
     }
   }, [isGenerating, opacity]);
 
-  // 작가가 바뀌면 대화 내용 초기화
+  // 책이 바뀌면 대화 내용 초기화
   useEffect(() => {
     setMessages([]);
     setIsGenerating(false);
@@ -63,7 +63,7 @@ export function AuthorChat({ authorId, authorName }: Props) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-  }, [authorId]);
+  }, [bookId]);
 
   // 메시지가 추가될 때마다 스크롤 아래로 이동
   useEffect(() => {
@@ -86,12 +86,9 @@ export function AuthorChat({ authorId, authorName }: Props) {
   // 채팅 생성 뮤테이션
   const { mutate: sendMessage } = useMutation({
     mutationFn: async (userMessage: string) => {
-      // 새 AbortController 생성
-      abortControllerRef.current = new AbortController();
-
-      // API 요청
-      const response = await authorApi.chatWithAuthor(
-        authorId,
+      // API 요청 변경
+      const response = await bookApi.chatWithBook(
+        bookId,
         {
           message: userMessage,
           conversationHistory: messages.map(msg => ({
@@ -179,36 +176,41 @@ export function AuthorChat({ authorId, authorName }: Props) {
         showsVerticalScrollIndicator={true}>
         {messages.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{authorName}에게 질문을 남겨보세요.</Text>
-            <Text style={styles.emptySubText}>작품, 철학, 사상 등에 대해 물어볼 수 있습니다.</Text>
+            <Text style={styles.emptyText}>{bookTitle}에 대해 질문을 남겨보세요.</Text>
+            <Text style={styles.emptySubText}>작품, 내용, 주제 등에 대해 물어볼 수 있습니다.</Text>
           </View>
         ) : (
           messages.map(message => (
             <Animated.View
               key={message.id}
+              entering={FadeIn.duration(300)}
               style={[
                 styles.messageContainer,
-                message.isUser ? styles.userMessageContainer : styles.authorMessageContainer,
-              ]}
-              entering={FadeIn.duration(300)}>
+                message.isUser ? styles.userMessageContainer : styles.bookMessageContainer,
+              ]}>
               <Text
                 style={[
                   styles.messageText,
-                  message.isUser ? styles.userMessageText : styles.authorMessageText,
+                  message.isUser ? styles.userMessageText : styles.bookMessageText,
                 ]}>
                 {message.text}
               </Text>
             </Animated.View>
           ))
         )}
+
         {isGenerating && (
           <Animated.View
-            style={[styles.messageContainer, styles.authorMessageContainer, styles.typingContainer]}
-            entering={FadeIn.duration(300)}>
+            entering={FadeIn.duration(300)}
+            style={[styles.messageContainer, styles.bookMessageContainer, styles.typingContainer]}>
             <View style={styles.typingIndicator}>
-              <Animated.View style={[styles.typingDot, { opacity }]} />
-              <Animated.View style={[styles.typingDot, { opacity }]} />
-              <Animated.View style={[styles.typingDot, { opacity }]} />
+              {[0, 1, 2].map(index => (
+                <Animated.View
+                  key={index}
+                  entering={FadeIn.delay(index * 150)}
+                  style={styles.typingDot}
+                />
+              ))}
             </View>
           </Animated.View>
         )}
@@ -218,24 +220,25 @@ export function AuthorChat({ authorId, authorName }: Props) {
         <TextInput
           ref={inputRef}
           style={styles.input}
+          placeholder={`${bookTitle}에 대해 질문하기...`}
+          placeholderTextColor={colors.gray[400]}
           value={inputText}
           onChangeText={setInputText}
-          placeholder={`${authorName}에게 질문하기...`}
-          placeholderTextColor={colors.gray[400]}
           multiline
           maxLength={500}
           onSubmitEditing={handleSendMessage}
           editable={!isGenerating}
         />
-        <View style={styles.buttonsRow}>
-          {isGenerating ? (
-            <TouchableOpacity
-              style={styles.stopButton}
-              onPress={handleStopGeneration}
-              activeOpacity={0.7}>
-              <Icon name="square" size={20} color={colors.white} />
-            </TouchableOpacity>
-          ) : (
+
+        {isGenerating ? (
+          <TouchableOpacity
+            style={styles.stopButton}
+            onPress={handleStopGeneration}
+            activeOpacity={0.7}>
+            <Icon name="square" size={20} color={colors.white} />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.buttonsRow}>
             <TouchableOpacity
               style={[styles.sendButton, !inputText.trim() && styles.disabledButton]}
               onPress={handleSendMessage}
@@ -243,26 +246,25 @@ export function AuthorChat({ authorId, authorName }: Props) {
               activeOpacity={0.7}>
               <Icon name="send" size={20} color={colors.white} />
             </TouchableOpacity>
-          )}
 
-          {!isGenerating && messages.length > 0 && (
-            <TouchableOpacity
-              style={styles.retryButton}
-              onPress={() => {
-                // 마지막 사용자 메시지 다시 보내기
-                if (messages.length >= 2) {
-                  const lastUserMessage = [...messages].reverse().find(msg => msg.isUser);
+            {messages.length > 0 && (
+              <TouchableOpacity
+                style={styles.retryButton}
+                onPress={() => {
+                  if (messages.length >= 2) {
+                    const lastUserMessage = [...messages].reverse().find(msg => msg.isUser);
 
-                  if (lastUserMessage) {
-                    setMessages(prev => prev.slice(0, prev.length - 1));
-                    sendMessage(lastUserMessage.text);
+                    if (lastUserMessage) {
+                      setMessages(prev => prev.slice(0, prev.length - 1));
+                      sendMessage(lastUserMessage.text);
+                    }
                   }
-                }
-              }}>
-              <Icon name="refresh-cw" size={16} color={colors.gray[700]} />
-            </TouchableOpacity>
-          )}
-        </View>
+                }}>
+                <Icon name="refresh-cw" size={16} color={colors.gray[700]} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
@@ -311,7 +313,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     backgroundColor: colors.blue[100],
   },
-  authorMessageContainer: {
+  bookMessageContainer: {
     alignSelf: 'flex-start',
     backgroundColor: colors.white,
     borderWidth: 1,
@@ -324,7 +326,7 @@ const styles = StyleSheet.create({
   userMessageText: {
     color: colors.gray[900],
   },
-  authorMessageText: {
+  bookMessageText: {
     color: colors.gray[900],
   },
   typingContainer: {

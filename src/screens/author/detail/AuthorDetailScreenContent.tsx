@@ -26,6 +26,7 @@ import { AuthorOriginalWorks } from './AuthorOriginalWorks';
 import { AuthorChat } from './AuthorChat';
 import { AuthorYoutubes } from './AuthorYoutubes';
 import { Skeleton } from '@/components/common/Skeleton';
+import { getJosa } from '@/utils/text';
 
 interface Props {
   authorId: number;
@@ -110,7 +111,11 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
           <View>
             <TouchableOpacity style={styles.chatButton} onPress={handleChatButtonPress}>
               <Icon name="message-circle" size={20} color={colors.gray[700]} />
-              <Text style={styles.chatButtonText}>{author.nameInKor}와(과) 대화하기</Text>
+              <Text style={styles.chatButtonText}>
+                {isChatOpen
+                  ? '채팅 닫기'
+                  : `${author.nameInKor}${getJosa(author.nameInKor)} 대화하기`}
+              </Text>
             </TouchableOpacity>
 
             {isChatOpen && (
@@ -154,7 +159,7 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     onMutate: async ({ reviewId }) => {
       const reviewRef = getReviewRef(reviewId);
       if (reviewRef?.current) {
-        reviewRef.current.showComments();
+        reviewRef.current.expandComments?.();
       }
     },
     onSuccess: (response, { reviewId }) => {
@@ -292,7 +297,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   listHeader: {
-    gap: spacing.xl,
+    gap: spacing.sm,
   },
   header: {
     padding: spacing.lg,

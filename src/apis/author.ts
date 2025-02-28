@@ -6,6 +6,7 @@ import type { Review } from '@/types/review';
 import { transformFilterParams } from '@/utils/api';
 import type { YouTubeVideo } from '@/types/common';
 import type { OriginalWork } from '@/types/author';
+import type { ChatMessage } from '@/types/common';
 
 export const authorApi = {
   /**
@@ -86,4 +87,13 @@ export const authorApi = {
    */
   getAuthorOriginalWorks: (authorId: number) =>
     axios.get<OriginalWork[]>(`/author/${authorId}/original-works`),
+
+  // 작가와 채팅하는 함수 추가
+  chatWithAuthor: (
+    authorId: number,
+    data: { message: string; conversationHistory: ChatMessage[] },
+    signal?: AbortSignal,
+  ) => {
+    return axios.post<{ response: string }>(`/author/${authorId}/chat`, data, { signal });
+  },
 };

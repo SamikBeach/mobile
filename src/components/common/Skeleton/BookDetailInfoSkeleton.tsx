@@ -1,44 +1,50 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Skeleton } from './Skeleton';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { Skeleton } from '@/components/common/Skeleton';
 
 export function BookDetailInfoSkeleton() {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.imageWrapper}>
-          <Skeleton style={styles.image} />
-        </View>
+      {/* 모바일 레이아웃 (세로 배치) */}
+      <View style={styles.mobileContainer}>
+        {/* 책 이미지 섹션 - 상단 중앙에 배치 */}
+        <View style={styles.bookImageContainer}>
+          <Skeleton style={styles.bookCover} />
 
-        <View style={styles.info}>
-          <View style={styles.infoContent}>
-            <View style={styles.titleSection}>
-              <Skeleton style={styles.title} />
-              <Skeleton style={styles.author} />
-              <Skeleton style={styles.meta} />
-              <Skeleton style={styles.aladin} />
-            </View>
-
-            <View style={styles.stats}>
-              <View style={styles.statItem}>
-                <Skeleton style={styles.statIcon} />
-                <Skeleton style={styles.statText} />
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Skeleton style={styles.statIcon} />
-                <Skeleton style={styles.statText} />
-              </View>
-            </View>
+          {/* 좋아요/댓글 버튼 */}
+          <View style={styles.interactionButtons}>
+            <Skeleton style={styles.actionButton} />
+            <Skeleton style={styles.actionButton} />
           </View>
         </View>
-      </View>
 
-      <View style={styles.writeButton}>
-        <View style={styles.writeButtonContent}>
-          <Skeleton style={styles.writeButtonIcon} />
-          <Skeleton style={styles.writeButtonText} />
+        {/* 책 정보 섹션 */}
+        <View style={styles.infoSection}>
+          {/* 제목 */}
+          <Skeleton style={styles.title} />
+
+          {/* 작가 정보 */}
+          <View style={styles.authorsContainer}>
+            <Skeleton style={styles.authorCard} />
+          </View>
+
+          {/* 출판사 정보 */}
+          <View style={styles.publishInfoContainer}>
+            <Skeleton style={styles.publisherBadge} />
+          </View>
+
+          {/* 원전 정보 */}
+          <Skeleton style={styles.originalWorkCard} />
+
+          {/* 책 설명 */}
+          <Skeleton style={styles.descriptionContainer} />
+
+          {/* 모바일 버튼 */}
+          <View style={styles.mobileButtons}>
+            <Skeleton style={styles.button} />
+            <Skeleton style={styles.button} />
+          </View>
         </View>
       </View>
     </View>
@@ -47,102 +53,82 @@ export function BookDetailInfoSkeleton() {
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.lg,
-    padding: spacing.lg,
+    backgroundColor: colors.white,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md,
   },
-  header: {
-    flexDirection: 'row',
-    gap: spacing.lg,
+  mobileContainer: {
+    flexDirection: 'column',
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
-  imageWrapper: {
-    width: 120,
-    height: 180,
+  bookImageContainer: {
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  bookCover: {
+    width: 140,
+    height: 200,
     borderRadius: borderRadius.md,
-    overflow: 'hidden',
+    ...shadows.md,
   },
-  image: {
-    width: '100%',
-    height: '100%',
+  interactionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.md,
+    marginTop: spacing.sm,
   },
-  info: {
-    flex: 1,
-    height: 180,
+  actionButton: {
+    width: 80,
+    height: 36,
+    borderRadius: 18,
   },
-  infoContent: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  titleSection: {
-    gap: spacing.sm,
+  infoSection: {
+    gap: spacing.md,
   },
   title: {
-    height: 24,
-    width: '100%',
+    height: 28,
+    width: '80%',
     borderRadius: borderRadius.sm,
   },
-  author: {
-    height: 15,
-    width: '60%',
-    borderRadius: borderRadius.sm,
-  },
-  meta: {
-    height: 13,
-    width: '50%',
-    borderRadius: borderRadius.sm,
-  },
-  aladin: {
-    height: 13,
-    width: '30%',
-    borderRadius: borderRadius.sm,
-  },
-  stats: {
+  authorsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.xs,
-  },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  statIcon: {
-    width: 14,
-    height: 14,
-    borderRadius: borderRadius.full,
-  },
-  statText: {
-    width: 24,
-    height: 14,
-    borderRadius: borderRadius.sm,
-  },
-  statDivider: {
-    width: 1,
-    height: 12,
-    backgroundColor: colors.gray[200],
-    marginHorizontal: spacing.sm,
-  },
-  writeButton: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: colors.gray[200],
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.white,
-    paddingVertical: spacing.md,
-  },
-  writeButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexWrap: 'wrap',
     gap: spacing.sm,
   },
-  writeButtonIcon: {
-    width: 16,
-    height: 16,
-    borderRadius: borderRadius.sm,
+  authorCard: {
+    height: 56,
+    width: 180,
+    borderRadius: borderRadius.md,
   },
-  writeButtonText: {
+  publishInfoContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  publisherBadge: {
+    height: 32,
     width: 120,
-    height: 15,
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.full,
+  },
+  originalWorkCard: {
+    height: 80,
+    width: '100%',
+    borderRadius: borderRadius.md,
+  },
+  descriptionContainer: {
+    height: 150,
+    width: '100%',
+    borderRadius: borderRadius.md,
+  },
+  mobileButtons: {
+    flexDirection: 'column',
+    gap: spacing.sm,
+    marginTop: spacing.lg,
+  },
+  button: {
+    height: 40,
+    width: '100%',
+    borderRadius: borderRadius.md,
   },
 });
