@@ -24,7 +24,6 @@ import { CommentButton } from '@/components/common/CommentButton';
 import { LikeButton } from '@/components/common/LikeButton';
 import { BookImage } from '@/components/book/BookImage';
 import { formatAuthorLifespan } from '@/utils/date';
-import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 import { getJosa } from '@/utils/text';
 
 // 색상 정의 추가
@@ -40,7 +39,7 @@ interface Props {
 }
 
 // AuthorImage 컴포넌트 직접 구현
-function AuthorImage({ imageUrl, name, style }: { imageUrl?: string; name: string; style?: any }) {
+function AuthorImage({ imageUrl, style }: { imageUrl?: string; name: string; style?: any }) {
   const defaultImage = 'https://via.placeholder.com/40';
   const source = { uri: imageUrl || defaultImage };
 

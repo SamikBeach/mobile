@@ -62,7 +62,11 @@ export function AuthorYoutubes({ authorId }: Props) {
           entering={FadeIn.duration(300)}>
           <View style={[styles.videoGrid, { paddingHorizontal: spacing.lg }]}>
             {displayVideos.map(video => (
-              <VideoCard key={video.id} video={video} onPress={() => setSelectedVideoId(video.id)} />
+              <VideoCard
+                key={video.id}
+                video={video}
+                onPress={() => setSelectedVideoId(video.id)}
+              />
             ))}
           </View>
         </Animated.View>
@@ -75,7 +79,11 @@ export function AuthorYoutubes({ authorId }: Props) {
           entering={FadeIn.duration(300)}>
           <View style={[styles.videoGrid, { paddingHorizontal: spacing.lg }]}>
             {displayVideos.map(video => (
-              <VideoCard key={video.id} video={video} onPress={() => setSelectedVideoId(video.id)} />
+              <VideoCard
+                key={video.id}
+                video={video}
+                onPress={() => setSelectedVideoId(video.id)}
+              />
             ))}
           </View>
         </Animated.ScrollView>
@@ -133,7 +141,15 @@ function AuthorYoutubesSkeleton() {
         {[1, 2, 3, 4].map(i => (
           <View key={i} style={styles.videoCard}>
             <View style={styles.thumbnailContainer}>
-              <Skeleton style={{ width: '100%', height: 0, paddingBottom: '56.25%', borderTopLeftRadius: 8, borderTopRightRadius: 8 }} />
+              <Skeleton
+                style={{
+                  width: '100%',
+                  height: 0,
+                  paddingBottom: '56.25%',
+                  borderTopLeftRadius: 8,
+                  borderTopRightRadius: 8,
+                }}
+              />
               <View style={styles.playIconContainer}>
                 <Skeleton style={{ width: 36, height: 36, borderRadius: 18 }} />
               </View>
