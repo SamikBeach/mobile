@@ -4,14 +4,13 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Platform,
   Keyboard,
   ScrollView,
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useMutation } from '@tanstack/react-query';
-import { authorApi } from '@/apis/author';
+import { bookApi } from '@/apis/book';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { ChatMessage } from '@/types/common';
 import Icon from 'react-native-vector-icons/Feather';
@@ -25,19 +24,19 @@ import Animated, {
 } from 'react-native-reanimated';
 
 interface Props {
-  authorId: number;
-  authorName: string;
+  bookId: number;
+  bookTitle: string;
 }
 
 interface Message {
   id: string;
-  text: string;
-  isUser: boolean;
+  role: 'user' | 'assistant';
+  content: string;
 }
 
-export function AuthorChat({ authorId, authorName }: Props) {
+export function BookChat({ bookId, bookTitle }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputText, setInputText] = useState('');
+  const [message, setMessage] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const inputRef = useRef<TextInput>(null);
@@ -55,7 +54,7 @@ export function AuthorChat({ authorId, authorName }: Props) {
     }
   }, [isGenerating, opacity]);
 
-  // 작가가 바뀌면 대화 내용 초기화
+  // 책이 바뀌면 대화 내용 초기화
   useEffect(() => {
     setMessages([]);
     setIsGenerating(false);
@@ -63,108 +62,112 @@ export function AuthorChat({ authorId, authorName }: Props) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-  }, [authorId]);
+  }, [bookId]);
 
-  // 메시지가 추가될 때마다 스크롤 아래로 이동
+  // 키보드가 나타날 때 스크롤 조정
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollToBottom();
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
+  // 메시지가 추가될 때마다 스크롤 조정
   useEffect(() => {
     if (messages.length > 0) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+      scrollToBottom();
     }
   }, [messages]);
 
-  // 컴포넌트가 마운트되면 입력창에 포커스
-  useEffect(() => {
+  const scrollToBottom = () => {
     setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
+      scrollViewRef.current?.scrollToEnd({ animated: true });
     }, 100);
-  }, []);
+  };
 
-  // 채팅 생성 뮤테이션
   const { mutate: sendMessage } = useMutation({
     mutationFn: async (userMessage: string) => {
-      // API 요청 변경
-      const response = await authorApi.chatWithAuthor(authorId, {
-        message: userMessage,
-        conversationHistory: messages.map(msg => ({
-          role: msg.isUser ? 'user' : 'assistant',
-          content: msg.text,
-        })),
-      });
+      setIsGenerating(true);
+
+      // 사용자 메시지 추가
+      const userMsg: Message = {
+        id: Date.now().toString(),
+        role: 'user',
+        content: userMessage,
+      };
+      setMessages(prev => [...prev, userMsg]);
+      setMessage('');
+
+      // 이전 요청 취소
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // 새 요청 생성
+      abortControllerRef.current = new AbortController();
+
+      // 대화 기록 생성
+      const conversationHistory: ChatMessage[] = messages.map(msg => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+      // API 요청
+      const response = await bookApi.chatWithBook(
+        bookId,
+        {
+          message: userMessage,
+          conversationHistory,
+        },
+        abortControllerRef.current.signal,
+      );
 
       return response.data;
     },
-    onSuccess: response => {
-      const aiMessage: ChatMessage = {
+    onSuccess: data => {
+      // AI 응답 추가
+      const assistantMsg: Message = {
+        id: Date.now().toString(),
         role: 'assistant',
-        content: response.data.response,
+        content: data.response,
       };
-      setMessages(prev => [
-        ...prev,
-        { id: Date.now().toString(), text: aiMessage.content, isUser: false },
-      ]);
+      setMessages(prev => [...prev, assistantMsg]);
       setIsGenerating(false);
+      abortControllerRef.current = null;
     },
     onError: error => {
-      // axios의 취소 에러는 무시
       if (!axios.isCancel(error)) {
-        setIsGenerating(false);
+        // 취소된 요청이 아닌 경우에만 에러 처리
+        const errorMsg: Message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: '죄송합니다. 응답을 생성하는 중에 오류가 발생했습니다. 다시 시도해주세요.',
+        };
+        setMessages(prev => [...prev, errorMsg]);
       }
-    },
-  });
-
-  // 채팅 중단 뮤테이션
-  const { mutate: stopGeneration } = useMutation({
-    mutationFn: () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-        return Promise.resolve();
-      }
-      return Promise.resolve();
-    },
-    onSuccess: () => {
       setIsGenerating(false);
+      abortControllerRef.current = null;
     },
   });
 
   const handleSendMessage = () => {
-    if (!inputText.trim()) return;
-
-    // 사용자 메시지 추가
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputText,
-      isUser: true,
-    };
-    setMessages(prev => [...prev, userMessage]);
-
-    // 입력창 초기화
-    setInputText('');
-    setIsGenerating(true);
-
-    // 키보드 닫기
-    Keyboard.dismiss();
-
-    // 스크롤 아래로 이동
-    setTimeout(() => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-
-    // 채팅 생성 요청
-    sendMessage(inputText);
+    if (!message.trim() || isGenerating) return;
+    sendMessage(message.trim());
   };
 
   const handleStopGeneration = () => {
-    stopGeneration();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsGenerating(false);
+    }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}>
+    <View style={styles.container}>
       <ScrollView
         ref={scrollViewRef}
         style={styles.messagesContainer}
@@ -172,24 +175,28 @@ export function AuthorChat({ authorId, authorName }: Props) {
         showsVerticalScrollIndicator={true}>
         {messages.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{authorName}에게 질문을 남겨보세요.</Text>
-            <Text style={styles.emptySubText}>작품, 철학, 사상 등에 대해 물어볼 수 있습니다.</Text>
+            <Text style={styles.emptyText}>
+              "{bookTitle}"에 대해 질문해보세요.{'\n'}
+              책의 내용, 주제, 등장인물 등에 대해 물어볼 수 있습니다.
+            </Text>
           </View>
         ) : (
-          messages.map(message => (
+          messages.map(msg => (
             <Animated.View
-              key={message.id}
+              key={msg.id}
               entering={FadeIn.duration(300)}
               style={[
                 styles.messageContainer,
-                message.isUser ? styles.userMessageContainer : styles.authorMessageContainer,
+                msg.role === 'user'
+                  ? styles.userMessageContainer
+                  : styles.assistantMessageContainer,
               ]}>
               <Text
                 style={[
                   styles.messageText,
-                  message.isUser ? styles.userMessageText : styles.authorMessageText,
+                  msg.role === 'user' ? styles.userMessageText : styles.assistantMessageText,
                 ]}>
-                {message.text}
+                {msg.content}
               </Text>
             </Animated.View>
           ))
@@ -200,16 +207,12 @@ export function AuthorChat({ authorId, authorName }: Props) {
             entering={FadeIn.duration(300)}
             style={[
               styles.messageContainer,
-              styles.authorMessageContainer,
+              styles.assistantMessageContainer,
               styles.typingContainer,
             ]}>
             <View style={styles.typingIndicator}>
               {[0, 1, 2].map(index => (
-                <Animated.View
-                  key={index}
-                  entering={FadeIn.delay(index * 150)}
-                  style={styles.typingDot}
-                />
+                <Animated.View key={index} style={styles.typingDot} />
               ))}
             </View>
           </Animated.View>
@@ -220,120 +223,94 @@ export function AuthorChat({ authorId, authorName }: Props) {
         <TextInput
           ref={inputRef}
           style={styles.input}
-          placeholder={`${authorName}에게 질문하기...`}
+          placeholder={`${bookTitle}에 대해 질문하기...`}
           placeholderTextColor={colors.gray[400]}
-          value={inputText}
-          onChangeText={setInputText}
+          value={message}
+          onChangeText={setMessage}
           multiline
           maxLength={500}
           onSubmitEditing={handleSendMessage}
           editable={!isGenerating}
         />
-
         {isGenerating ? (
           <TouchableOpacity
             style={styles.stopButton}
             onPress={handleStopGeneration}
-            activeOpacity={0.7}>
-            <Icon name="square" size={20} color={colors.white} />
+            activeOpacity={0.8}>
+            <Icon name="x" size={20} color={colors.white} />
           </TouchableOpacity>
         ) : (
-          <View style={styles.buttonsRow}>
-            <TouchableOpacity
-              style={[styles.sendButton, !inputText.trim() && styles.disabledButton]}
-              onPress={handleSendMessage}
-              disabled={!inputText.trim()}
-              activeOpacity={0.7}>
-              <Icon name="send" size={20} color={colors.white} />
-            </TouchableOpacity>
-
-            {messages.length > 0 && (
-              <TouchableOpacity
-                style={styles.retryButton}
-                onPress={() => {
-                  if (messages.length >= 2) {
-                    const lastUserMessage = [...messages].reverse().find(msg => msg.isUser);
-
-                    if (lastUserMessage) {
-                      setMessages(prev => prev.slice(0, prev.length - 1));
-                      sendMessage(lastUserMessage.text);
-                    }
-                  }
-                }}>
-                <Icon name="refresh-cw" size={16} color={colors.gray[700]} />
-              </TouchableOpacity>
-            )}
-          </View>
+          <TouchableOpacity
+            style={[styles.sendButton, !message.trim() && styles.disabledButton]}
+            onPress={handleSendMessage}
+            disabled={!message.trim()}
+            activeOpacity={0.8}>
+            <Icon name="send" size={20} color={colors.white} />
+          </TouchableOpacity>
         )}
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.gray[50],
+    backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.gray[200],
+    overflow: 'hidden',
   },
   messagesContainer: {
     flex: 1,
-    backgroundColor: colors.gray[50],
   },
   messagesContent: {
     padding: spacing.md,
     gap: spacing.md,
   },
   emptyContainer: {
-    padding: spacing.md,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
+    padding: spacing.lg,
   },
   emptyText: {
-    fontSize: 14,
+    textAlign: 'center',
     color: colors.gray[500],
-    textAlign: 'center',
-  },
-  emptySubText: {
-    fontSize: 12,
-    color: colors.gray[400],
-    textAlign: 'center',
-    marginTop: spacing.xs,
+    lineHeight: 22,
   },
   messageContainer: {
-    maxWidth: '85%',
     padding: spacing.md,
     borderRadius: borderRadius.md,
+    maxWidth: '85%',
   },
   userMessageContainer: {
     alignSelf: 'flex-end',
-    backgroundColor: colors.blue[100],
+    backgroundColor: colors.blue[500],
   },
-  authorMessageContainer: {
+  assistantMessageContainer: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray[200],
+    backgroundColor: colors.gray[100],
   },
   messageText: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 15,
+    lineHeight: 22,
   },
   userMessageText: {
-    color: colors.gray[900],
+    color: colors.white,
   },
-  authorMessageText: {
-    color: colors.gray[900],
+  assistantMessageText: {
+    color: colors.gray[800],
   },
   typingContainer: {
     padding: spacing.sm,
+    minHeight: 40,
+    justifyContent: 'center',
   },
   typingIndicator: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   typingDot: {
@@ -341,13 +318,12 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: colors.gray[400],
-    opacity: 0.7,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.sm,
     padding: spacing.md,
-    backgroundColor: colors.white,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
   },
@@ -355,33 +331,25 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 40,
     maxHeight: 100,
-    backgroundColor: colors.white,
+    backgroundColor: colors.gray[100],
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    marginRight: spacing.sm,
-    fontSize: 14,
     color: colors.gray[900],
-    borderWidth: 1,
-    borderColor: colors.gray[200],
-  },
-  buttonsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
+    fontSize: 15,
   },
   sendButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: colors.blue[500],
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     ...Platform.select({
       ios: {
         shadowColor: colors.blue[700],
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.2,
         shadowRadius: 3,
       },
       android: {
@@ -389,28 +357,18 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  retryButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.gray[200],
-  },
   stopButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: colors.red[500],
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     ...Platform.select({
       ios: {
         shadowColor: colors.red[700],
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.2,
         shadowRadius: 3,
       },
       android: {

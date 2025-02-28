@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Pressable, Linking, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common/Text';
-import { Button } from '@/components/common/Button';
 import Icon from 'react-native-vector-icons/Feather';
-import { format } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 import { colors, spacing } from '@/styles/theme';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
@@ -16,13 +15,16 @@ import { BookDetailInfoSkeleton } from '@/components/common/Skeleton/BookDetailI
 import { CommentButton } from '@/components/common/CommentButton';
 import { LikeButton } from '@/components/common/LikeButton';
 import { BookImage } from '@/components/book/BookImage';
+import { josa } from 'josa';
 
 interface Props {
   bookId: number;
   onReviewPress: () => void;
+  onChatToggle: () => void;
+  isChatOpen: boolean;
 }
 
-export function BookDetailInfo({ bookId, onReviewPress }: Props) {
+export function BookDetailInfo({ bookId, onReviewPress, onChatToggle, isChatOpen }: Props) {
   const { data: book, isLoading } = useQuery({
     queryKey: ['book', bookId],
     queryFn: () => bookApi.getBookDetail(bookId),
@@ -61,120 +63,118 @@ export function BookDetailInfo({ bookId, onReviewPress }: Props) {
     toggleLike();
   };
 
-  const formattedPublicationDate = book?.publicationDate
-    ? format(new Date(book.publicationDate), 'yyyy년 M월 d일')
-    : '';
-
-  const handleBookClick = () => {
-    if (book?.isbn) {
-      Linking.openURL(`https://www.aladin.co.kr/shop/wproduct.aspx?isbn=${book.isbn}`);
-    }
-  };
-
-  const handleWriteReviewPress = () => {
-    if (!currentUser) {
-      navigation.navigate('Login');
-      return;
-    }
-
-    navigation.navigate('WriteReview', { bookId });
-  };
-
-  const handleAuthorPress = () => {
-    if (!book?.authorBooks[0].author.id) return;
-
-    navigation.navigate('AuthorDetail', { authorId: book?.authorBooks[0].author.id });
+  const handleAuthorPress = (authorId: number) => {
+    navigation.navigate('AuthorDetail', { authorId });
   };
 
   if (isLoading || !book) {
     return <BookDetailInfoSkeleton />;
   }
 
+  console.warn('book');
+  console.log({ book });
+
+  const authorName = book.authorBooks?.[0]?.author?.nameInKor || '작가 미상';
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={handleBookClick} style={styles.imageWrapper}>
-          <BookImage imageUrl={book.imageUrl} />
-        </Pressable>
-
+        <BookImage imageUrl={book.imageUrl} size="xl" />
         <View style={styles.info}>
-          <View style={styles.infoContent}>
-            <View style={styles.titleSection}>
-              <Text style={styles.title} numberOfLines={3}>
-                {book.title}
-              </Text>
-              <TouchableOpacity
-                onPress={handleAuthorPress}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-                <Text style={styles.author} numberOfLines={1}>
-                  {book.authorBooks
-                    .map(ab => ab.author.nameInKor)
-                    .join(', ')
-                    .trim()}
-                </Text>
-              </TouchableOpacity>
-              <Text style={styles.meta} numberOfLines={2}>
-                {book.publisher}
-                {book.publisher && formattedPublicationDate && ' · '}
-                {formattedPublicationDate}
-              </Text>
-              <Text style={styles.aladin}>정보제공: 알라딘</Text>
-            </View>
-
-            <View style={styles.stats}>
-              <LikeButton
-                isLiked={book.isLiked}
-                likeCount={book.likeCount}
-                onPress={handleLikePress}
-              />
-              <CommentButton commentCount={book.reviewCount} onPress={onReviewPress} />
-            </View>
+          <View style={styles.titleSection}>
+            <Text style={styles.title}>{book.title}</Text>
+            <Pressable onPress={() => handleAuthorPress(book.authorBooks[0].author.id)}>
+              <Text style={styles.author}>{authorName}</Text>
+            </Pressable>
+          </View>
+          <View style={styles.stats}>
+            <LikeButton
+              isLiked={book.isLiked}
+              likeCount={book.likeCount}
+              onPress={handleLikePress}
+            />
+            <View style={styles.statDivider} />
+            <CommentButton commentCount={book.reviewCount} onPress={onReviewPress} />
           </View>
         </View>
       </View>
 
-      <Button variant="outline" style={styles.writeButton} onPress={handleWriteReviewPress}>
-        <View style={styles.writeButtonContent}>
-          <Icon name="edit-2" size={16} color={colors.gray[700]} />
-          <Text style={styles.writeButtonText}>
-            {currentUser ? '리뷰 작성하기' : '로그인하고 리뷰 작성하기'}
+      <View style={styles.metaSection}>
+        <Text style={styles.meta}>
+          {book.publisher}
+          {book.publicationDate &&
+            isValid(parseISO(book.publicationDate)) &&
+            ` · ${format(parseISO(book.publicationDate), 'yyyy.MM.dd')}`}
+        </Text>
+      </View>
+
+      {book.description && (
+        <View style={styles.descriptionSection}>
+          <Text style={styles.description}>{book.description}</Text>
+        </View>
+      )}
+
+      <TouchableOpacity
+        style={[styles.chatButton, isChatOpen && styles.chatButtonActive]}
+        onPress={onChatToggle}>
+        <View style={styles.buttonContent}>
+          <Icon
+            name="message-circle"
+            size={16}
+            color={isChatOpen ? colors.blue[700] : colors.gray[700]}
+          />
+          <Text style={[styles.buttonText, isChatOpen && styles.chatButtonTextActive]}>
+            {josa(`${authorName}과 대화하기`)}
           </Text>
         </View>
-      </Button>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.lg,
     padding: spacing.lg,
+    backgroundColor: colors.white,
+    gap: spacing.lg,
   },
   header: {
     flexDirection: 'row',
     gap: spacing.lg,
   },
-  imageWrapper: {},
   info: {
-    flex: 1,
-    height: 180,
-  },
-  infoContent: {
     flex: 1,
     justifyContent: 'space-between',
   },
   titleSection: {
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     color: colors.gray[900],
     lineHeight: 24,
   },
+  originalTitle: {
+    fontSize: 15,
+    color: colors.gray[600],
+  },
   author: {
     fontSize: 15,
     color: colors.gray[700],
+    textDecorationLine: 'underline',
+  },
+  metaSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  descriptionSection: {
+    gap: spacing.xs,
+  },
+  description: {
+    fontSize: 15,
+    color: colors.gray[700],
+    lineHeight: 22,
   },
   stats: {
     flexDirection: 'row',
@@ -204,20 +204,38 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.gray[400],
   },
-  writeButton: {
-    paddingVertical: spacing.md,
+  chatButton: {
     backgroundColor: colors.white,
-    borderColor: colors.gray[200],
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
-  writeButtonContent: {
+  chatButtonActive: {
+    backgroundColor: colors.blue[50],
+    borderColor: colors.blue[300],
+  },
+  chatButtonTextActive: {
+    color: colors.blue[700],
+  },
+  buttonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
+    gap: 6,
   },
-  writeButtonText: {
-    fontSize: 15,
+  buttonText: {
+    fontSize: 14,
+    fontWeight: '500',
     color: colors.gray[700],
-    fontWeight: '600',
+  },
+  reviewButton: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray[300],
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
 });

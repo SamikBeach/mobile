@@ -154,7 +154,7 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
     onMutate: async ({ reviewId }) => {
       const reviewRef = getReviewRef(reviewId);
       if (reviewRef?.current) {
-        reviewRef.current.showComments();
+        reviewRef.current.expandComments?.();
       }
     },
     onSuccess: (response, { reviewId }) => {

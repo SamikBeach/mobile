@@ -42,9 +42,7 @@ export interface Book extends BaseEntity {
     id: number;
     name: string;
   } | null;
-  isLiked: boolean;
 }
-
 export interface BookDetail extends Book {
   isLiked: boolean;
 }

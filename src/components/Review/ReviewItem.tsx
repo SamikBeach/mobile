@@ -31,7 +31,7 @@ import { ReportActions } from './ReportActions';
 import Toast from 'react-native-toast-message';
 
 export interface ReviewItemHandle {
-  showComments: () => void;
+  expandComments?: () => void;
 }
 
 interface Props {
@@ -169,7 +169,7 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
     };
 
     useImperativeHandle(ref, () => ({
-      showComments: () => setShowComments(true),
+      expandComments: () => setShowComments(true),
     }));
 
     return (

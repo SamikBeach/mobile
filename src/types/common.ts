@@ -67,3 +67,15 @@ export interface ChatWithAuthorResponse {
   response: string;
   timestamp: string;
 }
+
+export interface ChatWithBookRequest {
+  message: string;
+  conversationHistory?: ChatMessage[];
+}
+
+export interface ChatWithBookResponse {
+  bookId: number;
+  bookTitle: string;
+  response: string;
+  timestamp: string;
+}

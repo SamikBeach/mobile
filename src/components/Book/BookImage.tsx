@@ -1,13 +1,16 @@
 import React from 'react';
-import { Image, StyleSheet, View, Pressable } from 'react-native';
+import { Image, StyleSheet, View, TouchableOpacity, ImageStyle, StyleProp } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { colors } from '@/styles/theme';
-import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
-  imageUrl?: string | null;
+  imageUrl: string | null;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  width?: number;
+  height?: number;
+  style?: StyleProp<ImageStyle>;
   onPress?: () => void;
+  title?: string;
 }
 
 const getSizeStyle = (size: Props['size']) => {
@@ -26,32 +29,43 @@ const getSizeStyle = (size: Props['size']) => {
   }
 };
 
-export function BookImage({ imageUrl, size = 'xl', onPress }: Props) {
+export function BookImage({ imageUrl, size = 'xl', width, height, style, onPress }: Props) {
   const sizeStyle = getSizeStyle(size);
-  const Container = onPress ? Pressable : View;
+
+  // width와 height가 명시적으로 제공된 경우 이를 우선 사용
+  const finalWidth = width || sizeStyle.width;
+  const finalHeight = height || sizeStyle.height;
+
+  const imageStyle = [
+    styles.image,
+    {
+      width: finalWidth,
+      height: finalHeight,
+      borderRadius: sizeStyle.borderRadius,
+    },
+    style,
+  ];
+
+  const Container = onPress ? TouchableOpacity : View;
 
   if (imageUrl) {
     return (
-      <Container style={[styles.container, sizeStyle]} onPress={onPress}>
-        <Image source={{ uri: imageUrl }} style={[styles.image, sizeStyle]} resizeMode="cover" />
+      <Container style={styles.container} onPress={onPress} activeOpacity={0.8}>
+        <Image source={{ uri: imageUrl }} style={imageStyle} resizeMode="cover" />
       </Container>
     );
   }
 
   return (
-    <Container style={[styles.container, sizeStyle]} onPress={onPress}>
-      <LinearGradient
-        colors={[colors.gray[50], colors.gray[100], colors.gray[50]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.fallbackContainer, sizeStyle]}>
+    <Container style={styles.container} onPress={onPress} activeOpacity={0.8}>
+      <View style={[imageStyle, styles.fallbackContainer]}>
         <Icon
           name="book"
-          size={sizeStyle.width * 0.5}
+          size={finalWidth * 0.3}
           color={colors.gray[400]}
           style={styles.fallbackIcon}
         />
-      </LinearGradient>
+      </View>
     </Container>
   );
 }
@@ -61,12 +75,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   image: {
-    width: '100%',
-    height: '100%',
+    backgroundColor: colors.gray[100],
   },
   fallbackContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.gray[100],
   },
   fallbackIcon: {
     opacity: 0.8,
