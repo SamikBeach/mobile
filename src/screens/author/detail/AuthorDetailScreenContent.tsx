@@ -270,23 +270,23 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
         onEndReachedThreshold={0.5}
         ListFooterComponent={isFetchingNextPage ? <ReviewItemSkeleton /> : null}
       />
-      {activeReviewId && (
-        <Animated.View entering={SlideInDown.duration(300)} style={styles.commentEditorContainer}>
-          <CommentEditor
-            textInputRef={commentEditorRef}
-            onSubmit={content => {
-              createComment({ reviewId: activeReviewId, content });
-            }}
-            onCancel={() => {
-              setActiveReviewId(null);
-              setReplyToUser(null);
-            }}
-            replyToUser={replyToUser}
-            autoFocus
-            isReplying={isReplyAnimating}
-          />
-        </Animated.View>
-      )}
+      <Animated.View
+        entering={SlideInDown.duration(300)}
+        style={[styles.commentEditorContainer, { display: activeReviewId ? 'flex' : 'none' }]}>
+        <CommentEditor
+          textInputRef={commentEditorRef}
+          onSubmit={content => {
+            createComment({ reviewId: activeReviewId!, content });
+          }}
+          onCancel={() => {
+            setActiveReviewId(null);
+            setReplyToUser(null);
+          }}
+          replyToUser={replyToUser}
+          autoFocus
+          isReplying={isReplyAnimating}
+        />
+      </Animated.View>
     </View>
   );
 }
