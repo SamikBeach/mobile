@@ -15,7 +15,7 @@ export function AuthorDetailInfoSkeleton() {
               <Skeleton style={styles.actionButton} />
             </View>
           </View>
-          
+
           <View style={styles.infoContainer}>
             <View style={styles.nameSection}>
               <Skeleton style={styles.koreanName} />
@@ -27,7 +27,7 @@ export function AuthorDetailInfoSkeleton() {
             <Skeleton style={styles.genreBadge} />
           </View>
         </View>
-        
+
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionContent}>
             <Skeleton style={styles.descriptionLine} />
@@ -75,8 +75,9 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: spacing.sm,
+    padding: spacing.sm,
   },
   nameSection: {
     gap: spacing.xs,
