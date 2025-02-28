@@ -6,7 +6,7 @@ import { bookApi } from '@/apis/book';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import Icon from 'react-native-vector-icons/Feather';
 import { BookImage } from '@/components/book/BookImage';
 import { Book } from '@/types/book';
@@ -39,7 +39,8 @@ export function RelativeBooks({ bookId }: Props) {
     navigation.navigate('BookDetail', { bookId: id });
   };
 
-  const renderBookItem = (book: Book) => (
+  // 스크롤 모드용 렌더 함수
+  const renderScrollBookItem = (book: Book) => (
     <Pressable key={book.id} style={styles.bookItem} onPress={() => handleBookPress(book.id)}>
       <View style={styles.coverContainer}>
         <BookImage imageUrl={book.imageUrl} size="xl" />
@@ -50,6 +51,23 @@ export function RelativeBooks({ bookId }: Props) {
         </Text>
         {book.authorBooks?.[0]?.author && (
           <Text style={styles.authorName}>{book.authorBooks[0].author.nameInKor}</Text>
+        )}
+      </View>
+    </Pressable>
+  );
+
+  // 그리드 모드용 렌더 함수
+  const renderGridBookItem = ({ item }: { item: Book }) => (
+    <Pressable style={styles.bookItem} onPress={() => handleBookPress(item.id)}>
+      <View style={styles.coverContainer}>
+        <BookImage imageUrl={item.imageUrl} style={{ width: 110, height: 165 }} />
+      </View>
+      <View style={styles.bookInfo}>
+        <Text style={styles.bookTitle} numberOfLines={2}>
+          {item.title}
+        </Text>
+        {item.authorBooks?.[0]?.author && (
+          <Text style={styles.authorName}>{item.authorBooks[0].author.nameInKor}</Text>
         )}
       </View>
     </Pressable>
@@ -79,7 +97,7 @@ export function RelativeBooks({ bookId }: Props) {
           entering={FadeIn.duration(300)}>
           <FlatList
             data={books}
-            renderItem={({ item }) => renderBookItem(item)}
+            renderItem={renderGridBookItem}
             keyExtractor={item => item.id.toString()}
             numColumns={3}
             contentContainerStyle={styles.gridContent}
@@ -93,7 +111,7 @@ export function RelativeBooks({ bookId }: Props) {
           contentContainerStyle={styles.scrollContent}
           layout={Layout.duration(300)}
           entering={FadeIn.duration(300)}>
-          {books.slice(0, 6).map(book => renderBookItem(book))}
+          {books.slice(0, 6).map(renderScrollBookItem)}
         </Animated.ScrollView>
       )}
     </View>
@@ -165,7 +183,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   coverContainer: {
-    ...shadows.sm,
     borderRadius: borderRadius.md,
     overflow: 'hidden',
   },

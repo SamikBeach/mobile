@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
@@ -9,7 +9,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import Icon from 'react-native-vector-icons/Feather';
-import FastImage from 'react-native-fast-image';
 import { formatAuthorLifespan } from '@/utils/date';
 import { Linking } from 'react-native';
 import { InfluencedAuthorsSkeleton } from './InfluencedAuthorsSkeleton';
@@ -189,10 +188,9 @@ function InfluencedAuthorItem({
 
   return (
     <TouchableOpacity style={styles.authorItem} onPress={() => onPress(author)} activeOpacity={0.7}>
-      <FastImage
+      <Image
         source={{
           uri: author.imageUrl || 'https://via.placeholder.com/32',
-          priority: FastImage.priority.normal,
         }}
         style={styles.authorImage}
       />
