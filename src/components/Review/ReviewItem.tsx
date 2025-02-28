@@ -205,7 +205,7 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
                 <Pressable style={styles.bookCard} onPress={handleBookPress}>
                   <BookImage imageUrl={review.book.imageUrl} size="xs" style={styles.bookImage} />
                   <View style={styles.bookInfo}>
-                    <Text style={styles.bookTitle} numberOfLines={1}>
+                    <Text style={styles.bookTitle} numberOfLines={1} ellipsizeMode="tail">
                       {review.book.title}
                     </Text>
                     <Text style={styles.bookAuthor} numberOfLines={1}>
@@ -338,6 +338,7 @@ const styles = StyleSheet.create({
   },
   bookInfo: {
     gap: 2,
+    flex: 1,
   },
   bookTitle: {
     fontSize: 13,
@@ -378,7 +379,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: spacing.xs,
     alignItems: 'center',
   },
   actionButton: {
