@@ -15,7 +15,6 @@ import { BookDetailInfoSkeleton } from '@/components/common/Skeleton/BookDetailI
 import { CommentButton } from '@/components/common/CommentButton';
 import { LikeButton } from '@/components/common/LikeButton';
 import { BookImage } from '@/components/book/BookImage';
-import { josa } from 'josa';
 
 interface Props {
   bookId: number;
@@ -24,7 +23,7 @@ interface Props {
   isChatOpen: boolean;
 }
 
-export function BookDetailInfo({ bookId, onReviewPress, onChatToggle, isChatOpen }: Props) {
+export function BookDetailInfo({ bookId, onReviewPress, onChatToggle }: Props) {
   const { data: book, isLoading } = useQuery({
     queryKey: ['book', bookId],
     queryFn: () => bookApi.getBookDetail(bookId),
@@ -114,18 +113,10 @@ export function BookDetailInfo({ bookId, onReviewPress, onChatToggle, isChatOpen
         </View>
       )}
 
-      <TouchableOpacity
-        style={[styles.chatButton, isChatOpen && styles.chatButtonActive]}
-        onPress={onChatToggle}>
+      <TouchableOpacity style={styles.chatButton} onPress={onChatToggle} activeOpacity={0.7}>
         <View style={styles.buttonContent}>
-          <Icon
-            name="message-circle"
-            size={16}
-            color={isChatOpen ? colors.blue[700] : colors.gray[700]}
-          />
-          <Text style={[styles.buttonText, isChatOpen && styles.chatButtonTextActive]}>
-            {josa(`${authorName}과 대화하기`)}
-          </Text>
+          <Icon name="message-circle" size={20} color={colors.gray[700]} />
+          <Text style={styles.buttonText}>{`${authorName}와(과) 대화하기`}</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -211,13 +202,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
-  },
-  chatButtonActive: {
-    backgroundColor: colors.blue[50],
-    borderColor: colors.blue[300],
-  },
-  chatButtonTextActive: {
-    color: colors.blue[700],
   },
   buttonContent: {
     flexDirection: 'row',

@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  FlatList,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, FlatList, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import { Skeleton } from '@/components/common/Skeleton';
 import Icon from 'react-native-vector-icons/Feather';
+import { BookImage } from '@/components/book/BookImage';
+import { Book } from '@/types/book';
 
 interface Props {
   bookId: number;
@@ -53,7 +47,7 @@ export function RelativeBooks({ bookId }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: books = [], isLoading } = useQuery({
-    queryKey: ['relative-books', bookId],
+    queryKey: ['book-related', bookId],
     queryFn: () => bookApi.getAllRelatedBooks(bookId),
     select: response => response.data,
   });
@@ -66,65 +60,64 @@ export function RelativeBooks({ bookId }: Props) {
     return null;
   }
 
+  const handleBookPress = (id: number) => {
+    navigation.navigate('BookDetail', { bookId: id });
+  };
+
+  const renderBookItem = (book: Book) => (
+    <Pressable key={book.id} style={styles.bookItem} onPress={() => handleBookPress(book.id)}>
+      <View style={styles.coverContainer}>
+        <BookImage imageUrl={book.imageUrl} size="xl" />
+      </View>
+      <View style={styles.bookInfo}>
+        <Text style={styles.bookTitle} numberOfLines={2}>
+          {book.title}
+        </Text>
+        {book.authorBooks?.[0]?.author && (
+          <Text style={styles.authorName}>{book.authorBooks[0].author.nameInKor}</Text>
+        )}
+      </View>
+    </Pressable>
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.titleSection}>
-          <Text style={styles.title}>다른 번역본</Text>
+          <Text style={styles.title}>연관된 책</Text>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{books.length}</Text>
           </View>
         </View>
-        {books.length > 5 && (
-          <Pressable style={styles.toggleButton} onPress={() => setIsExpanded(!isExpanded)}>
+        {books.length > 4 && (
+          <TouchableOpacity style={styles.toggleButton} onPress={() => setIsExpanded(!isExpanded)}>
             <Text style={styles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
-            <Icon name={isExpanded ? 'chevron-up' : 'grid'} size={16} color={colors.gray[600]} />
-          </Pressable>
+            <Icon
+              name={isExpanded ? 'chevron-up' : 'chevron-right'}
+              size={16}
+              color={colors.gray[500]}
+            />
+          </TouchableOpacity>
         )}
       </View>
 
       {isExpanded ? (
-        <FlatList
-          data={books}
-          keyExtractor={item => `book-${item.id}`}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.bookItem}
-              onPress={() => navigation.navigate('BookDetail', { bookId: item.id })}>
-              <Image
-                source={{ uri: item.imageUrl || 'https://via.placeholder.com/120' }}
-                style={styles.bookCover}
-                resizeMode="cover"
-              />
-              <Text style={styles.bookTitle} numberOfLines={2}>
-                {item.title}
-              </Text>
-            </TouchableOpacity>
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.booksList}
-        />
+        <View style={styles.gridContainer}>
+          <FlatList
+            data={books}
+            renderItem={({ item }) => renderBookItem(item)}
+            keyExtractor={item => item.id.toString()}
+            numColumns={3}
+            contentContainerStyle={styles.gridContent}
+            columnWrapperStyle={styles.gridRow}
+          />
+        </View>
       ) : (
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
-          {books.slice(0, 5).map(book => (
-            <TouchableOpacity
-              key={book.id}
-              style={styles.bookItem}
-              onPress={() => navigation.navigate('BookDetail', { bookId: book.id })}>
-              <Image
-                source={{ uri: book.imageUrl || 'https://via.placeholder.com/120' }}
-                style={styles.bookCover}
-                resizeMode="cover"
-              />
-              <Text style={styles.bookTitle} numberOfLines={2}>
-                {book.title}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {books.slice(0, 6).map(book => renderBookItem(book))}
         </ScrollView>
       )}
     </View>
@@ -133,30 +126,30 @@ export function RelativeBooks({ bookId }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.md,
+    paddingVertical: spacing.md,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
   },
   titleSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.sm,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.gray[900],
-    marginRight: spacing.xs,
   },
   badge: {
     backgroundColor: colors.gray[100],
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs / 2,
     borderRadius: borderRadius.full,
-    marginRight: 'auto',
   },
   badgeText: {
     fontSize: 13,
@@ -167,39 +160,50 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 6,
   },
   toggleButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.gray[600],
+    color: colors.gray[500],
   },
   scrollContent: {
-    gap: spacing.sm,
-    paddingVertical: spacing.xs,
+    gap: spacing.md,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.lg,
   },
-  booksList: {
-    paddingVertical: spacing.xs,
+  gridContainer: {
     paddingHorizontal: spacing.lg,
-    gap: spacing.sm,
+  },
+  gridContent: {
+    paddingVertical: spacing.sm,
+  },
+  gridRow: {
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
   },
   bookItem: {
     width: 120,
-    marginRight: spacing.sm,
+    gap: spacing.xs,
   },
-  bookCover: {
-    width: 120,
-    height: 180,
+  coverContainer: {
+    ...shadows.sm,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[100],
+    overflow: 'hidden',
+  },
+  bookInfo: {
+    gap: 2,
   },
   bookTitle: {
     fontSize: 14,
     fontWeight: '500',
     color: colors.gray[900],
     lineHeight: 20,
-    marginTop: spacing.xs,
+  },
+  authorName: {
+    fontSize: 12,
+    color: colors.gray[500],
   },
 });
