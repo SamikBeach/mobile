@@ -50,9 +50,6 @@ export function AuthorInfluenced({ authorId }: Props) {
     return null;
   }
 
-  const displayInfluenced = isInfluencedExpanded ? influenced : influenced.slice(0, 3);
-  const displayInfluencedBy = isInfluencedByExpanded ? influencedBy : influencedBy.slice(0, 3);
-
   const handleAuthorPress = (_author: InfluencedAuthor) => {
     if (_author.isWikiData) {
       Linking.openURL(`https://en.wikipedia.org/wiki/${_author.name}`);
@@ -92,9 +89,7 @@ export function AuthorInfluenced({ authorId }: Props) {
 
           <View style={[styles.authorGrid, { paddingHorizontal: spacing.lg }]}>
             {isInfluencedExpanded ? (
-              <Animated.View
-                layout={Layout.duration(300)}
-                entering={FadeIn.duration(300)}>
+              <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
                 <FlatList
                   data={influenced}
                   keyExtractor={item => `influenced-${item.id}`}
@@ -104,9 +99,7 @@ export function AuthorInfluenced({ authorId }: Props) {
                 />
               </Animated.View>
             ) : (
-              <Animated.View
-                layout={Layout.duration(300)}
-                entering={FadeIn.duration(300)}>
+              <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
                 <FlatList
                   data={influenced.slice(0, 3)}
                   keyExtractor={item => `influenced-${item.id}`}
@@ -149,9 +142,7 @@ export function AuthorInfluenced({ authorId }: Props) {
 
           <View style={[styles.influencedByGrid, { paddingHorizontal: spacing.lg }]}>
             {isInfluencedByExpanded ? (
-              <Animated.View
-                layout={Layout.duration(300)}
-                entering={FadeIn.duration(300)}>
+              <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
                 <FlatList
                   data={influencedBy}
                   keyExtractor={item => `influenced-by-${item.id}`}
@@ -163,9 +154,7 @@ export function AuthorInfluenced({ authorId }: Props) {
                 />
               </Animated.View>
             ) : (
-              <Animated.View
-                layout={Layout.duration(300)}
-                entering={FadeIn.duration(300)}>
+              <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
                 <FlatList
                   data={influencedBy.slice(0, 3)}
                   keyExtractor={item => `influenced-by-${item.id}`}

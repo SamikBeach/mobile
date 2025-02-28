@@ -17,4 +17,4 @@ export function getJosa(name: string): string {
   }
 
   return '와'; // 기본값
-} 
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Pressable, FlatList, TouchableOpacity } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
