@@ -13,7 +13,7 @@ export function OriginalWorksSkeleton() {
         </View>
         <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
       </View>
-      
+
       <View style={styles.workGrid}>
         {[1, 2].map(i => (
           <View key={i} style={styles.workCard}>
@@ -26,13 +26,13 @@ export function OriginalWorksSkeleton() {
                 <Skeleton style={{ width: '40%', height: 14, borderRadius: 4 }} />
               </View>
             </View>
-            
+
             <View style={styles.booksSection}>
               <View style={styles.booksHeader}>
                 <Skeleton style={{ width: 100, height: 16, borderRadius: 4 }} />
                 <Skeleton style={{ width: 60, height: 20, borderRadius: 4 }} />
               </View>
-              
+
               <View style={styles.booksList}>
                 {[1, 2, 3].map(j => (
                   <View key={j} style={styles.bookItem}>

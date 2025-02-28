@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
   Platform,
   Keyboard,
   ScrollView,
@@ -30,13 +31,13 @@ interface Props {
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
-  content: string;
+  text: string;
+  isUser: boolean;
 }
 
 export function BookChat({ bookId, bookTitle }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [message, setMessage] = useState('');
+  const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const inputRef = useRef<TextInput>(null);
@@ -64,110 +65,110 @@ export function BookChat({ bookId, bookTitle }: Props) {
     }
   }, [bookId]);
 
-  // 키보드가 나타날 때 스크롤 조정
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      scrollToBottom();
-    });
-
-    return () => {
-      keyboardDidShowListener.remove();
-    };
-  }, []);
-
-  // 메시지가 추가될 때마다 스크롤 조정
+  // 메시지가 추가될 때마다 스크롤 아래로 이동
   useEffect(() => {
     if (messages.length > 0) {
-      scrollToBottom();
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
     }
   }, [messages]);
 
-  const scrollToBottom = () => {
+  // 컴포넌트가 마운트되면 입력창에 포커스
+  useEffect(() => {
     setTimeout(() => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
     }, 100);
-  };
+  }, []);
 
+  // 채팅 생성 뮤테이션
   const { mutate: sendMessage } = useMutation({
     mutationFn: async (userMessage: string) => {
-      setIsGenerating(true);
-
-      // 사용자 메시지 추가
-      const userMsg: Message = {
-        id: Date.now().toString(),
-        role: 'user',
-        content: userMessage,
-      };
-      setMessages(prev => [...prev, userMsg]);
-      setMessage('');
-
-      // 이전 요청 취소
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      // 새 요청 생성
-      abortControllerRef.current = new AbortController();
-
-      // 대화 기록 생성
-      const conversationHistory: ChatMessage[] = messages.map(msg => ({
-        role: msg.role,
-        content: msg.content,
-      }));
-
-      // API 요청
+      // API 요청 변경
       const response = await bookApi.chatWithBook(
         bookId,
         {
           message: userMessage,
-          conversationHistory,
+          conversationHistory: messages.map(msg => ({
+            role: msg.isUser ? 'user' : 'assistant',
+            content: msg.text,
+          })),
         },
-        abortControllerRef.current.signal,
+        abortControllerRef.current?.signal
       );
 
       return response.data;
     },
-    onSuccess: data => {
-      // AI 응답 추가
-      const assistantMsg: Message = {
-        id: Date.now().toString(),
+    onSuccess: response => {
+      const aiMessage: ChatMessage = {
         role: 'assistant',
-        content: data.response,
+        content: response.response,
       };
-      setMessages(prev => [...prev, assistantMsg]);
+      setMessages(prev => [
+        ...prev,
+        { id: Date.now().toString(), text: aiMessage.content, isUser: false },
+      ]);
       setIsGenerating(false);
-      abortControllerRef.current = null;
     },
     onError: error => {
+      // axios의 취소 에러는 무시
       if (!axios.isCancel(error)) {
-        // 취소된 요청이 아닌 경우에만 에러 처리
-        const errorMsg: Message = {
-          id: Date.now().toString(),
-          role: 'assistant',
-          content: '죄송합니다. 응답을 생성하는 중에 오류가 발생했습니다. 다시 시도해주세요.',
-        };
-        setMessages(prev => [...prev, errorMsg]);
+        setIsGenerating(false);
       }
+    },
+  });
+
+  // 채팅 중단 뮤테이션
+  const { mutate: stopGeneration } = useMutation({
+    mutationFn: () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        return Promise.resolve();
+      }
+      return Promise.resolve();
+    },
+    onSuccess: () => {
       setIsGenerating(false);
-      abortControllerRef.current = null;
     },
   });
 
   const handleSendMessage = () => {
-    if (!message.trim() || isGenerating) return;
-    sendMessage(message.trim());
+    if (!inputText.trim()) return;
+
+    // 사용자 메시지 추가
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: inputText,
+      isUser: true,
+    };
+    setMessages(prev => [...prev, userMessage]);
+
+    // 입력창 초기화
+    setInputText('');
+    setIsGenerating(true);
+
+    // 키보드 닫기
+    Keyboard.dismiss();
+
+    // 스크롤 아래로 이동
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+
+    // 채팅 생성 요청
+    sendMessage(inputText);
   };
 
   const handleStopGeneration = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-      setIsGenerating(false);
-    }
+    stopGeneration();
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={styles.container}>
       <ScrollView
         ref={scrollViewRef}
         style={styles.messagesContainer}
@@ -175,28 +176,24 @@ export function BookChat({ bookId, bookTitle }: Props) {
         showsVerticalScrollIndicator={true}>
         {messages.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              "{bookTitle}"에 대해 질문해보세요.{'\n'}
-              책의 내용, 주제, 등장인물 등에 대해 물어볼 수 있습니다.
-            </Text>
+            <Text style={styles.emptyText}>{bookTitle}에 대해 질문을 남겨보세요.</Text>
+            <Text style={styles.emptySubText}>작품, 내용, 주제 등에 대해 물어볼 수 있습니다.</Text>
           </View>
         ) : (
-          messages.map(msg => (
+          messages.map(message => (
             <Animated.View
-              key={msg.id}
+              key={message.id}
               entering={FadeIn.duration(300)}
               style={[
                 styles.messageContainer,
-                msg.role === 'user'
-                  ? styles.userMessageContainer
-                  : styles.assistantMessageContainer,
+                message.isUser ? styles.userMessageContainer : styles.bookMessageContainer,
               ]}>
               <Text
                 style={[
                   styles.messageText,
-                  msg.role === 'user' ? styles.userMessageText : styles.assistantMessageText,
+                  message.isUser ? styles.userMessageText : styles.bookMessageText,
                 ]}>
-                {msg.content}
+                {message.text}
               </Text>
             </Animated.View>
           ))
@@ -207,12 +204,16 @@ export function BookChat({ bookId, bookTitle }: Props) {
             entering={FadeIn.duration(300)}
             style={[
               styles.messageContainer,
-              styles.assistantMessageContainer,
+              styles.bookMessageContainer,
               styles.typingContainer,
             ]}>
             <View style={styles.typingIndicator}>
               {[0, 1, 2].map(index => (
-                <Animated.View key={index} style={styles.typingDot} />
+                <Animated.View
+                  key={index}
+                  entering={FadeIn.delay(index * 150)}
+                  style={styles.typingDot}
+                />
               ))}
             </View>
           </Animated.View>
@@ -225,92 +226,118 @@ export function BookChat({ bookId, bookTitle }: Props) {
           style={styles.input}
           placeholder={`${bookTitle}에 대해 질문하기...`}
           placeholderTextColor={colors.gray[400]}
-          value={message}
-          onChangeText={setMessage}
+          value={inputText}
+          onChangeText={setInputText}
           multiline
           maxLength={500}
           onSubmitEditing={handleSendMessage}
           editable={!isGenerating}
         />
+
         {isGenerating ? (
           <TouchableOpacity
             style={styles.stopButton}
             onPress={handleStopGeneration}
-            activeOpacity={0.8}>
-            <Icon name="x" size={20} color={colors.white} />
+            activeOpacity={0.7}>
+            <Icon name="square" size={20} color={colors.white} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            style={[styles.sendButton, !message.trim() && styles.disabledButton]}
-            onPress={handleSendMessage}
-            disabled={!message.trim()}
-            activeOpacity={0.8}>
-            <Icon name="send" size={20} color={colors.white} />
-          </TouchableOpacity>
+          <View style={styles.buttonsRow}>
+            <TouchableOpacity
+              style={[styles.sendButton, !inputText.trim() && styles.disabledButton]}
+              onPress={handleSendMessage}
+              disabled={!inputText.trim()}
+              activeOpacity={0.7}>
+              <Icon name="send" size={20} color={colors.white} />
+            </TouchableOpacity>
+
+            {messages.length > 0 && (
+              <TouchableOpacity
+                style={styles.retryButton}
+                onPress={() => {
+                  if (messages.length >= 2) {
+                    const lastUserMessage = [...messages].reverse().find(msg => msg.isUser);
+
+                    if (lastUserMessage) {
+                      setMessages(prev => prev.slice(0, prev.length - 1));
+                      sendMessage(lastUserMessage.text);
+                    }
+                  }
+                }}>
+                <Icon name="refresh-cw" size={16} color={colors.gray[700]} />
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.gray[50],
     borderRadius: borderRadius.lg,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.gray[200],
-    overflow: 'hidden',
   },
   messagesContainer: {
     flex: 1,
+    backgroundColor: colors.gray[50],
   },
   messagesContent: {
     padding: spacing.md,
     gap: spacing.md,
   },
   emptyContainer: {
-    flex: 1,
+    padding: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.lg,
+    height: '100%',
   },
   emptyText: {
-    textAlign: 'center',
+    fontSize: 14,
     color: colors.gray[500],
-    lineHeight: 22,
+    textAlign: 'center',
+  },
+  emptySubText: {
+    fontSize: 12,
+    color: colors.gray[400],
+    textAlign: 'center',
+    marginTop: spacing.xs,
   },
   messageContainer: {
+    maxWidth: '85%',
     padding: spacing.md,
     borderRadius: borderRadius.md,
-    maxWidth: '85%',
   },
   userMessageContainer: {
     alignSelf: 'flex-end',
-    backgroundColor: colors.blue[500],
+    backgroundColor: colors.blue[100],
   },
-  assistantMessageContainer: {
+  bookMessageContainer: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.gray[100],
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
   },
   messageText: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 20,
   },
   userMessageText: {
-    color: colors.white,
+    color: colors.gray[900],
   },
-  assistantMessageText: {
-    color: colors.gray[800],
+  bookMessageText: {
+    color: colors.gray[900],
   },
   typingContainer: {
     padding: spacing.sm,
-    minHeight: 40,
-    justifyContent: 'center',
   },
   typingIndicator: {
     flexDirection: 'row',
-    alignItems: 'center',
     gap: 4,
   },
   typingDot: {
@@ -318,12 +345,13 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: colors.gray[400],
+    opacity: 0.7,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
     padding: spacing.md,
+    backgroundColor: colors.white,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
   },
@@ -331,25 +359,33 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 40,
     maxHeight: 100,
-    backgroundColor: colors.gray[100],
+    backgroundColor: colors.white,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+    marginRight: spacing.sm,
+    fontSize: 14,
     color: colors.gray[900],
-    fontSize: 15,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+  },
+  buttonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   sendButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: colors.blue[500],
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     ...Platform.select({
       ios: {
         shadowColor: colors.blue[700],
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.3,
         shadowRadius: 3,
       },
       android: {
@@ -357,18 +393,28 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  retryButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+  },
   stopButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: colors.red[500],
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     ...Platform.select({
       ios: {
         shadowColor: colors.red[700],
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.3,
         shadowRadius: 3,
       },
       android: {

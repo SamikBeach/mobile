@@ -43,6 +43,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const commentEditorRef = useRef<TextInput>(null);
+  const chatContainerRef = useRef<View>(null);
 
   // 책 ID가 변경될 때 스크롤 위치 초기화
   useEffect(() => {
@@ -142,6 +143,20 @@ export function BookDetailScreenContent({ bookId }: Props) {
 
   const handleChatToggle = () => {
     setIsChatOpen(!isChatOpen);
+
+    // 채팅이 열릴 때 스크롤 위치 조정
+    if (!isChatOpen) {
+      setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.measure((x, y, width, height, pageX, pageY) => {
+            flatListRef.current?.scrollToOffset({
+              offset: pageY - 100,
+              animated: true,
+            });
+          });
+        }
+      }, 100);
+    }
   };
 
   const renderReviewItem = ({ item }: { item: Review }) => {
@@ -172,7 +187,7 @@ export function BookDetailScreenContent({ bookId }: Props) {
         />
 
         {isChatOpen && book && (
-          <View style={styles.chatContainer}>
+          <View ref={chatContainerRef} style={styles.chatContainer}>
             <BookChat bookId={bookId} bookTitle={book.title} />
           </View>
         )}
