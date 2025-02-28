@@ -11,7 +11,7 @@ import {
 import { Text } from '@/components/common/Text';
 import { useQuery } from '@tanstack/react-query';
 import { authorApi } from '@/apis/author';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { Book } from '@/types/book';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -48,7 +48,8 @@ export function AuthorBooks({ authorId }: Props) {
     return null;
   }
 
-  const renderBookItem = (book: Book) => (
+  // 스크롤 모드용 렌더 함수
+  const renderScrollBookItem = (book: Book) => (
     <Pressable
       key={book.id}
       style={styles.bookItem}
@@ -62,6 +63,24 @@ export function AuthorBooks({ authorId }: Props) {
       </View>
       <Text style={styles.bookTitle} numberOfLines={2}>
         {book.title}
+      </Text>
+    </Pressable>
+  );
+
+  // 그리드 모드용 렌더 함수
+  const renderGridBookItem = ({ item }: { item: Book }) => (
+    <Pressable
+      style={styles.bookItem}
+      onPress={() => navigation.navigate('BookDetail', { bookId: item.id })}>
+      <View style={styles.coverContainer}>
+        <Image
+          source={{ uri: item.imageUrl || 'https://via.placeholder.com/110x165' }}
+          style={{ width: 110, height: 165, borderRadius: borderRadius.md }}
+          resizeMode="cover"
+        />
+      </View>
+      <Text style={styles.bookTitle} numberOfLines={2}>
+        {item.title}
       </Text>
     </Pressable>
   );
@@ -88,7 +107,7 @@ export function AuthorBooks({ authorId }: Props) {
           entering={FadeIn.duration(300)}>
           <FlatList
             data={books}
-            renderItem={({ item }) => renderBookItem(item)}
+            renderItem={renderGridBookItem}
             keyExtractor={item => item.id.toString()}
             numColumns={3}
             contentContainerStyle={styles.gridContent}
@@ -102,7 +121,7 @@ export function AuthorBooks({ authorId }: Props) {
           contentContainerStyle={styles.scrollContent}
           layout={Layout.duration(300)}
           entering={FadeIn.duration(300)}>
-          {books.slice(0, 6).map(book => renderBookItem(book))}
+          {books.slice(0, 6).map(renderScrollBookItem)}
         </Animated.ScrollView>
       )}
     </View>
@@ -201,7 +220,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   coverContainer: {
-    ...shadows.sm,
     borderRadius: borderRadius.md,
     overflow: 'hidden',
   },

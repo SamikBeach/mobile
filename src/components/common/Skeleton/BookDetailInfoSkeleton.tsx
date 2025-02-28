@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { Skeleton } from '@/components/common/Skeleton';
 
 export function BookDetailInfoSkeleton() {
@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
     width: 140,
     height: 200,
     borderRadius: borderRadius.md,
-    ...shadows.md,
   },
   interactionButtons: {
     flexDirection: 'row',
