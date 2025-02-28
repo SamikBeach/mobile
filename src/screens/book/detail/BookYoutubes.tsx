@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { YoutubeDialog } from '@/components/youtube/YoutubeDialog';
-import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/Feather';
 import { BookYoutubesSkeleton } from '@/components/common/Skeleton/BookYoutubesSkeleton';
 
