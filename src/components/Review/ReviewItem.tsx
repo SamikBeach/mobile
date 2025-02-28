@@ -140,6 +140,10 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
 
     const handleReplyPress = () => {
       setShowComments(prev => !prev);
+
+      if (!showComments && onCommentPress) {
+        onCommentPress(review.id);
+      }
     };
 
     const handleMorePress = () => {
