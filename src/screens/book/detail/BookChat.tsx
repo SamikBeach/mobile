@@ -96,7 +96,7 @@ export function BookChat({ bookId, bookTitle }: Props) {
             content: msg.text,
           })),
         },
-        abortControllerRef.current?.signal
+        abortControllerRef.current?.signal,
       );
 
       return response.data;
@@ -202,11 +202,7 @@ export function BookChat({ bookId, bookTitle }: Props) {
         {isGenerating && (
           <Animated.View
             entering={FadeIn.duration(300)}
-            style={[
-              styles.messageContainer,
-              styles.bookMessageContainer,
-              styles.typingContainer,
-            ]}>
+            style={[styles.messageContainer, styles.bookMessageContainer, styles.typingContainer]}>
             <View style={styles.typingIndicator}>
               {[0, 1, 2].map(index => (
                 <Animated.View

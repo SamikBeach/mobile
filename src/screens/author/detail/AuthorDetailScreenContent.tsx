@@ -112,8 +112,9 @@ export function AuthorDetailScreenContent({ authorId }: Props) {
             <TouchableOpacity style={styles.chatButton} onPress={handleChatButtonPress}>
               <Icon name="message-circle" size={20} color={colors.gray[700]} />
               <Text style={styles.chatButtonText}>
-                {author.nameInKor}
-                {getJosa(author.nameInKor)} 대화하기
+                {isChatOpen
+                  ? '채팅 닫기'
+                  : `${author.nameInKor}${getJosa(author.nameInKor)} 대화하기`}
               </Text>
             </TouchableOpacity>
 

@@ -91,11 +91,9 @@ export const authorApi = {
   // 작가와 채팅하는 함수 추가
   chatWithAuthor: (
     authorId: number,
-    params: {
-      message: string;
-      conversationHistory?: ChatMessage[];
-    },
+    data: { message: string; conversationHistory: ChatMessage[] },
+    signal?: AbortSignal,
   ) => {
-    return axios.post(`/author/${authorId}/chat`, params);
+    return axios.post<{ response: string }>(`/author/${authorId}/chat`, data, { signal });
   },
 };

@@ -137,7 +137,7 @@ export function BookDetailInfo({ bookId, onReviewPress, onChatToggle, isChatOpen
           <Pressable onPress={handleOpenAladin}>
             <BookImage imageUrl={book.imageUrl} size="xl" style={styles.bookCover} />
           </Pressable>
-          
+
           {/* 좋아요/댓글 버튼 */}
           <View style={styles.interactionButtons}>
             <LikeButton
