@@ -9,7 +9,7 @@ import type { Review } from '@/types/review';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
 import Animated, { Easing, FadeIn, FadeOut, Layout } from 'react-native-reanimated';
-import { ReviewListSkeleton } from '@/components/common/Skeleton';
+import { ReviewListSkeleton } from '@/components/common/Skeleton/ReviewListSkeleton';
 
 interface Props {
   userId: number;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Skeleton } from '@/components/common/Skeleton';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { spacing } from '@/styles/theme';
 
 export function AuthorDetailInfoSkeleton() {
   return (
@@ -21,7 +21,7 @@ export function AuthorDetailInfoSkeleton() {
           </View>
         </View>
       </View>
-      
+
       <View style={styles.descriptionSection}>
         <Skeleton style={{ width: '100%', height: 15, borderRadius: 4 }} />
         <Skeleton style={{ width: '95%', height: 15, borderRadius: 4, marginTop: 8 }} />
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
   descriptionSection: {
     gap: spacing.xs,
   },
-}); 
+});

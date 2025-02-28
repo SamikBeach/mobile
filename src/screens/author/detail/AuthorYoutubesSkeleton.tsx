@@ -16,12 +16,19 @@ export function AuthorYoutubesSkeleton() {
         </View>
         <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
       </View>
-      
+
       <View style={[styles.videoGrid, { paddingHorizontal: spacing.lg }]}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           {[1, 2, 3, 4].map(i => (
             <View key={i} style={styles.videoCard}>
-              <Skeleton style={{ width: '100%', aspectRatio: 16 / 9, borderTopLeftRadius: borderRadius.md, borderTopRightRadius: borderRadius.md }} />
+              <Skeleton
+                style={{
+                  width: '100%',
+                  aspectRatio: 16 / 9,
+                  borderTopLeftRadius: borderRadius.md,
+                  borderTopRightRadius: borderRadius.md,
+                }}
+              />
               <View style={styles.videoInfo}>
                 <Skeleton style={{ width: '90%', height: 16, borderRadius: 4 }} />
                 <Skeleton style={{ width: '60%', height: 12, borderRadius: 4, marginTop: 4 }} />
@@ -69,4 +76,4 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
     gap: spacing.xs,
   },
-}); 
+});

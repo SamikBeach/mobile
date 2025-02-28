@@ -10,6 +10,7 @@ export interface Book extends BaseEntity {
   isbn: number | null;
   isbn13: number | null;
   likeCount: number;
+  isLiked: boolean;
   reviewCount: number;
   authorBooks: {
     id: number;
