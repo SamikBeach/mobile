@@ -142,7 +142,7 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
     const handleReplyPress = () => {
       const newShowComments = !showComments;
       setShowComments(newShowComments);
-      
+
       if (onCommentPress) {
         if (newShowComments) {
           onCommentPress(review.id);
@@ -206,7 +206,7 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
               {!hideUserInfo && (
                 <View style={styles.userInfo}>
                   <UserAvatar user={review.user} size="sm" />
-                  <Text style={styles.date}>{formatDate(review.createdAt)}</Text>
+                  {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
                 </View>
               )}
             </View>
