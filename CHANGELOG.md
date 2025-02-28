@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.23.2](https://github.com/SamikBeach/mobile/compare/1.23.1...1.23.2) (2025-02-28)
+
+
+### Bug Fixes
+
+* 버그 픽스 ([a7bab9a](https://github.com/SamikBeach/mobile/commit/a7bab9ae0b1efbaf8d13ceb2e6cc0103bbeea5e3))
+
 ## [1.23.1](https://github.com/SamikBeach/mobile/compare/1.23.0...1.23.1) (2025-02-28)
 
 
