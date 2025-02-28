@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Pressable, Linking } from 'react-native';
+import React, { useState, useRef } from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+  Linking,
+  LayoutChangeEvent,
+} from 'react-native';
 import { Text } from '@/components/common/Text';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { formatAuthorLifespan } from '@/utils/date';
@@ -27,6 +34,8 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionHeight = useSharedValue(140); // 초기 높이 값
   const fadeOpacity = useSharedValue(1);
+  const fullContentHeight = useRef(0);
+  const [shouldShowButton, setShouldShowButton] = useState(false);
 
   const { data: author, isLoading } = useQuery({
     queryKey: ['author', authorId],
@@ -69,9 +78,23 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
     toggleLike();
   };
 
+  const onDescriptionLayout = (event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout;
+    if (height > 0) {
+      fullContentHeight.current = height;
+
+      // 컨텐츠 높이가 초기 높이보다 크면 더보기 버튼 표시
+      if (height > 140) {
+        setShouldShowButton(true);
+      }
+    }
+  };
+
   const toggleDescription = () => {
     setIsExpanded(!isExpanded);
-    descriptionHeight.value = withTiming(isExpanded ? 140 : 300, { duration: 300 });
+    descriptionHeight.value = withTiming(isExpanded ? 140 : fullContentHeight.current, {
+      duration: 300,
+    });
     fadeOpacity.value = withTiming(isExpanded ? 1 : 0, { duration: 200 });
   };
 
@@ -157,8 +180,19 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
         {author.description && (
           <View style={styles.descriptionContainer}>
             <Animated.View style={[styles.descriptionContent, animatedDescriptionStyle]}>
-              <Text style={styles.description}>{author.description}</Text>
-              {!isExpanded && (
+              <View style={styles.fullTextContainer}>
+                <Text style={styles.description}>{author.description}</Text>
+              </View>
+
+              {/* 측정용 숨겨진 텍스트 */}
+              <View
+                style={styles.measureContainer}
+                onLayout={onDescriptionLayout}
+                pointerEvents="none">
+                <Text style={styles.description}>{author.description}</Text>
+              </View>
+
+              {!isExpanded && shouldShowButton && (
                 <Animated.View style={[styles.fadeGradient, fadeGradientStyle]}>
                   <LinearGradient
                     colors={['rgba(249, 250, 251, 0)', 'rgba(249, 250, 251, 0.95)']}
@@ -168,7 +202,7 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
               )}
             </Animated.View>
 
-            {author.description.length > 100 && (
+            {shouldShowButton && (
               <TouchableOpacity
                 style={styles.expandButton}
                 onPress={toggleDescription}
@@ -194,6 +228,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     gap: spacing.lg,
+    alignItems: 'flex-start',
   },
   avatarContainer: {
     alignItems: 'center',
@@ -225,6 +260,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     gap: spacing.sm,
+    padding: spacing.sm,
   },
   nameSection: {
     gap: spacing.xs,
@@ -331,6 +367,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
+    width: '100%',
+  },
+  measureContainer: {
+    position: 'absolute',
+    width: '100%',
+    opacity: 0, // 보이지 않게 설정
+  },
+  fullTextContainer: {
     width: '100%',
   },
 });
