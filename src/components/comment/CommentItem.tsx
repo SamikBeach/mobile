@@ -140,15 +140,15 @@ export function CommentItem({ comment, reviewId, onReply, hideReplyButton = fals
       <View style={styles.actions}>
         <Pressable
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          style={styles.likeButton}
+          style={[styles.likeButton, comment.isLiked && styles.likedButton]}
           onPress={handleLikePress}>
           <Icon
             name="thumbs-up"
-            size={18}
-            color={comment.isLiked ? colors.gray[900] : colors.gray[500]}
+            size={16}
+            color={comment.isLiked ? colors.blue[500] : colors.gray[600]}
           />
-          <Text style={[styles.actionText, comment.isLiked && styles.activeActionText]}>
-            {comment.likeCount}
+          <Text style={[styles.actionText, comment.isLiked && styles.likedText]}>
+            {comment.likeCount > 0 ? comment.likeCount : '좋아요'}
           </Text>
         </Pressable>
         {!hideReplyButton && (
@@ -218,15 +218,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xs,
     paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.xs,
+    paddingHorizontal: spacing.sm,
     borderRadius: 20,
+  },
+  likedButton: {
+    backgroundColor: colors.blue[50],
   },
   actionText: {
     fontSize: 12,
     fontWeight: '500',
     color: colors.gray[600],
   },
-  activeActionText: {
+  likedText: {
     color: colors.blue[600],
   },
 });
