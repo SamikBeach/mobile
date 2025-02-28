@@ -1,5 +1,19 @@
 # 🚦 CHANGELOG
 
+## [1.23.1](https://github.com/SamikBeach/mobile/compare/1.23.0...1.23.1) (2025-02-28)
+
+
+### Bug Fixes
+
+* fix lint ([01e005e](https://github.com/SamikBeach/mobile/commit/01e005e89ac980d1039e2e8c49a55b2a018d3b79))
+* fix lint ([b16a755](https://github.com/SamikBeach/mobile/commit/b16a755e3597380784c65e43a4947c7d01cdc1df))
+* ReviewItem 컴포넌트에 hideDate 로직 추가 ([32512fc](https://github.com/SamikBeach/mobile/commit/32512fce11486a7cf20bcd4e0ba222e3e2b5fc73))
+* 댓 글 클릭시 에디터 활성화 ([d9ab193](https://github.com/SamikBeach/mobile/commit/d9ab193e8ab5faea7104c9f902b97edb212542a1))
+* 리뷰 에디터 토글되도록 수정 ([c93125e](https://github.com/SamikBeach/mobile/commit/c93125e456954268dc6e9554e53c44c4b2f895d1))
+* 스크롤/그리드 모드별 책 이미지 크기 최적화 ([62f31e6](https://github.com/SamikBeach/mobile/commit/62f31e6dc239d0512163fb4ed642c4d7a421455c))
+* 스타일 수정 ([bad8b2d](https://github.com/SamikBeach/mobile/commit/bad8b2dda636b3585973ba419d8b1f5688ccedd6))
+* 스타일 수정 ([18b49e5](https://github.com/SamikBeach/mobile/commit/18b49e52e3e27cf89ae48c3c3ba05aaa264998fa))
+
 # [1.23.0](https://github.com/SamikBeach/mobile/compare/1.22.0...1.23.0) (2025-02-28)
 
 
