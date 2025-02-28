@@ -1,5 +1,33 @@
 # 🚦 CHANGELOG
 
+# [1.23.0](https://github.com/SamikBeach/mobile/compare/1.22.0...1.23.0) (2025-02-28)
+
+
+### Bug Fixes
+
+* AuthorDetailInfo 채팅 버튼 상태 표시 기능 추가 ([fae06f8](https://github.com/SamikBeach/mobile/commit/fae06f80edd694abed72c850f2c4eb31eb745cfd))
+* AuthorDetailInfoSkeleton 컴포넌트 정리 ([3857fee](https://github.com/SamikBeach/mobile/commit/3857feeeb93c1eca2db7b6f3dd1bf72b03e26dcc))
+* BookDetailInfo 컴포넌트 모바일 레이아웃 수정 ([1b63cd3](https://github.com/SamikBeach/mobile/commit/1b63cd3e2080e201deb4125a532bc4b9183959b7))
+* CommentItem 아이콘 스타일 타입 에러 수정 ([10bb73d](https://github.com/SamikBeach/mobile/commit/10bb73d043fb5f9a626f1ad6c2c76269dcb9179b))
+* fix lint ([60b734e](https://github.com/SamikBeach/mobile/commit/60b734e22e04de9256318e9de4d59c8e2fd28e1f))
+* RelativeBooks 컴포넌트 전체보기/접기 기능 수정 ([29831fb](https://github.com/SamikBeach/mobile/commit/29831fbc93004167f5b7589b81617d52d55933c7))
+* 댓글 기능 타입 에러 수정 ([fad107b](https://github.com/SamikBeach/mobile/commit/fad107b0e0a508f595ffd3cfce39f29a0cb95d26))
+* 설명 더보기 버튼 표시 및 텍스트 짤림 표시 문제 해결 ([03b8578](https://github.com/SamikBeach/mobile/commit/03b857851aff927a06335c866743f6cc9002a8e4))
+* 스켈레톤 컴포넌트 레이아웃 최적화 ([db73365](https://github.com/SamikBeach/mobile/commit/db73365357a58e19d4a29768d2b99f7268ced206))
+* 스타일 수정 ([0ac6727](https://github.com/SamikBeach/mobile/commit/0ac67271e60281a14ff790723e4ca42f3720b52d))
+* 스타일 수정 ([dedfa26](https://github.com/SamikBeach/mobile/commit/dedfa26edf580b6c0de7e5694507205bd16880f4))
+* 스타일 수정 ([201bba2](https://github.com/SamikBeach/mobile/commit/201bba267481f9fb65e902d2a441331df91f79de))
+* 영향을 준 작가 스켈레톤 여백 문제 해결 ([32a45b1](https://github.com/SamikBeach/mobile/commit/32a45b11161be6ff7a923f2272d5f7b0bbf26fe1))
+* 책 상세 페이지 개선 ([62448f2](https://github.com/SamikBeach/mobile/commit/62448f22d6050c2502d8daeb21bd68e0f1f8000f))
+* 책 상세 페이지 스켈레톤 UI 개선 ([a505bfc](https://github.com/SamikBeach/mobile/commit/a505bfc7236f6373eec119487f1a1fef3e95beed))
+* 책 상세 페이지 채팅 기능 및 연관 책 전체보기 기능 개선 ([eef8a12](https://github.com/SamikBeach/mobile/commit/eef8a12945a91e052770ebd9f54cd981f6aa2d2d))
+
+
+### Features
+
+* AuthorDetailInfo 컴포넌트 UI 개선 ([c26b469](https://github.com/SamikBeach/mobile/commit/c26b4690dc02d86654cd5fd7a2f8b9980b8f74c3))
+* 전체보기/접기 버튼에 애니메이션 추가 ([73bd6c4](https://github.com/SamikBeach/mobile/commit/73bd6c4a20f40970b8ae2bf1d9663fd2c50e3213))
+
 # [1.22.0](https://github.com/SamikBeach/mobile/compare/1.21.0...1.22.0) (2025-02-27)
 
 
