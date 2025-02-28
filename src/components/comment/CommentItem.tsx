@@ -10,7 +10,7 @@ import { reviewApi } from '@/apis/review';
 import { useCommentQueryData } from '@/hooks/useCommentQueryData';
 import { CommentActions } from './CommentActions';
 import Icon from 'react-native-vector-icons/Feather';
-import { colors, spacing } from '@/styles/theme';
+import { colors, spacing, borderRadius } from '@/styles/theme';
 import { LexicalContent } from '../common/LexicalContent';
 import { CommentEditor } from './CommentEditor';
 import Toast from 'react-native-toast-message';
@@ -166,8 +166,8 @@ export function CommentItem({ comment, reviewId, onReply, hideReplyButton = fals
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 6,
-    gap: 4,
+    paddingVertical: spacing.xs,
+    gap: spacing.xs,
   },
   header: {
     flexDirection: 'row',
@@ -177,48 +177,56 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.xs,
   },
   date: {
     fontSize: 12,
     color: colors.gray[500],
+    marginLeft: spacing.xs,
   },
   content: {
     backgroundColor: colors.gray[50],
-    padding: 12,
-    borderRadius: 8,
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
   },
   editingContent: {
-    backgroundColor: 'transparent',
+    backgroundColor: colors.white,
     padding: 0,
   },
   text: {
     fontSize: 14,
     lineHeight: 20,
-    color: colors.gray[700],
+    color: colors.gray[800],
   },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    paddingHorizontal: 4,
+    paddingHorizontal: spacing.xs,
+    marginTop: spacing.xs,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    padding: 6,
+    gap: spacing.xs,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.xs,
+    borderRadius: 20,
   },
   likeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: spacing.xs,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.xs,
+    borderRadius: 20,
   },
   actionText: {
-    fontSize: 14,
-    color: colors.gray[500],
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.gray[600],
   },
   activeActionText: {
-    color: colors.gray[900],
+    color: colors.blue[600],
   },
 });
