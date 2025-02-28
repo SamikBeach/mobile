@@ -7,39 +7,13 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
-import { Skeleton } from '@/components/common/Skeleton';
 import Icon from 'react-native-vector-icons/Feather';
 import { BookImage } from '@/components/book/BookImage';
 import { Book } from '@/types/book';
+import { RelativeBooksSkeleton } from '@/components/common/Skeleton/RelativeBooksSkeleton';
 
 interface Props {
   bookId: number;
-}
-
-function RelativeBooksSkeleton() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.titleSection}>
-          <Skeleton style={{ width: 100, height: 24, borderRadius: 4 }} />
-          <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
-        </View>
-        <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
-      </View>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}>
-        {[1, 2, 3, 4].map(i => (
-          <View key={i} style={styles.bookItem}>
-            <Skeleton style={{ width: 120, height: 180, borderRadius: 8 }} />
-            <Skeleton style={{ width: 100, height: 16, borderRadius: 4, marginTop: 8 }} />
-          </View>
-        ))}
-      </ScrollView>
-    </View>
-  );
 }
 
 export function RelativeBooks({ bookId }: Props) {
