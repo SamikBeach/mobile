@@ -31,6 +31,7 @@ import Toast from 'react-native-toast-message';
 
 export interface ReviewItemHandle {
   expandComments?: () => void;
+  collapseComments?: () => void;
 }
 
 interface Props {
@@ -139,10 +140,15 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
     };
 
     const handleReplyPress = () => {
-      setShowComments(prev => !prev);
-
-      if (!showComments && onCommentPress) {
-        onCommentPress(review.id);
+      const newShowComments = !showComments;
+      setShowComments(newShowComments);
+      
+      if (onCommentPress) {
+        if (newShowComments) {
+          onCommentPress(review.id);
+        } else {
+          onCommentPress(0);
+        }
       }
     };
 
@@ -178,6 +184,9 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
     useImperativeHandle(ref, () => ({
       expandComments: () => {
         setShowComments(true);
+      },
+      collapseComments: () => {
+        setShowComments(false);
       },
     }));
 
