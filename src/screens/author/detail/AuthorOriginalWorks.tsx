@@ -10,6 +10,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '@/navigation/types';
 import { Skeleton } from '@/components/common/Skeleton';
 import Icon from 'react-native-vector-icons/Feather';
+import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 
 interface Props {
   authorId: number;
@@ -84,14 +85,29 @@ export function AuthorOriginalWorks({ authorId }: Props) {
         )}
       </View>
 
-      <FlatList
-        data={displayWorks}
-        keyExtractor={item => `work-${item.id}`}
-        renderItem={({ item }) => <OriginalWorkCard work={item} navigation={navigation} />}
-        numColumns={1}
-        scrollEnabled={false}
-        contentContainerStyle={[styles.workGrid, { paddingHorizontal: spacing.lg }]}
-      />
+      {isExpanded ? (
+        <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
+          <FlatList
+            data={displayWorks}
+            keyExtractor={item => `work-${item.id}`}
+            renderItem={({ item }) => <OriginalWorkCard work={item} navigation={navigation} />}
+            numColumns={1}
+            scrollEnabled={false}
+            contentContainerStyle={[styles.workGrid, { paddingHorizontal: spacing.lg }]}
+          />
+        </Animated.View>
+      ) : (
+        <Animated.View layout={Layout.duration(300)} entering={FadeIn.duration(300)}>
+          <FlatList
+            data={displayWorks}
+            keyExtractor={item => `work-${item.id}`}
+            renderItem={({ item }) => <OriginalWorkCard work={item} navigation={navigation} />}
+            numColumns={1}
+            scrollEnabled={false}
+            contentContainerStyle={[styles.workGrid, { paddingHorizontal: spacing.lg }]}
+          />
+        </Animated.View>
+      )}
     </View>
   );
 }

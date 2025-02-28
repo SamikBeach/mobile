@@ -9,6 +9,7 @@ import { YoutubeDialog } from '@/components/youtube/YoutubeDialog';
 import FastImage from 'react-native-fast-image';
 import Icon from 'react-native-vector-icons/Feather';
 import { Skeleton } from '@/components/common/Skeleton';
+import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 
 interface Props {
   authorId: number;
@@ -54,11 +55,31 @@ export function AuthorYoutubes({ authorId }: Props) {
         )}
       </View>
 
-      <View style={[styles.videoGrid, { paddingHorizontal: spacing.lg }]}>
-        {displayVideos.map(video => (
-          <VideoCard key={video.id} video={video} onPress={() => setSelectedVideoId(video.id)} />
-        ))}
-      </View>
+      {isExpanded ? (
+        <Animated.View
+          style={styles.videosGrid}
+          layout={Layout.duration(300)}
+          entering={FadeIn.duration(300)}>
+          <View style={[styles.videoGrid, { paddingHorizontal: spacing.lg }]}>
+            {displayVideos.map(video => (
+              <VideoCard key={video.id} video={video} onPress={() => setSelectedVideoId(video.id)} />
+            ))}
+          </View>
+        </Animated.View>
+      ) : (
+        <Animated.ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          layout={Layout.duration(300)}
+          entering={FadeIn.duration(300)}>
+          <View style={[styles.videoGrid, { paddingHorizontal: spacing.lg }]}>
+            {displayVideos.map(video => (
+              <VideoCard key={video.id} video={video} onPress={() => setSelectedVideoId(video.id)} />
+            ))}
+          </View>
+        </Animated.ScrollView>
+      )}
 
       <YoutubeDialog videoId={selectedVideoId} onClose={() => setSelectedVideoId(null)} />
     </View>
@@ -231,5 +252,15 @@ const styles = StyleSheet.create({
   channelTitle: {
     fontSize: 12,
     color: colors.gray[500],
+  },
+  videosGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
   },
 });

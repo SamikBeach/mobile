@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { BookImage } from '@/components/book/BookImage';
 import { Book } from '@/types/book';
 import { RelativeBooksSkeleton } from '@/components/common/Skeleton/RelativeBooksSkeleton';
+import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 
 interface Props {
   bookId: number;
@@ -66,17 +67,16 @@ export function RelativeBooks({ bookId }: Props) {
         {books.length > 4 && (
           <TouchableOpacity style={styles.toggleButton} onPress={() => setIsExpanded(!isExpanded)}>
             <Text style={styles.toggleButtonText}>{isExpanded ? '접기' : '전체보기'}</Text>
-            <Icon
-              name={isExpanded ? 'chevron-up' : 'chevron-right'}
-              size={16}
-              color={colors.gray[500]}
-            />
+            <Icon name={isExpanded ? 'chevron-down' : 'grid'} size={16} color={colors.gray[500]} />
           </TouchableOpacity>
         )}
       </View>
 
       {isExpanded ? (
-        <View style={styles.gridContainer}>
+        <Animated.View
+          style={styles.gridContainer}
+          layout={Layout.duration(300)}
+          entering={FadeIn.duration(300)}>
           <FlatList
             data={books}
             renderItem={({ item }) => renderBookItem(item)}
@@ -85,14 +85,16 @@ export function RelativeBooks({ bookId }: Props) {
             contentContainerStyle={styles.gridContent}
             columnWrapperStyle={styles.gridRow}
           />
-        </View>
+        </Animated.View>
       ) : (
-        <ScrollView
+        <Animated.ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}>
+          contentContainerStyle={styles.scrollContent}
+          layout={Layout.duration(300)}
+          entering={FadeIn.duration(300)}>
           {books.slice(0, 6).map(book => renderBookItem(book))}
-        </ScrollView>
+        </Animated.ScrollView>
       )}
     </View>
   );

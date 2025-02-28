@@ -13,6 +13,7 @@ import FastImage from 'react-native-fast-image';
 import { formatAuthorLifespan } from '@/utils/date';
 import { Linking } from 'react-native';
 import { InfluencedAuthorsSkeleton } from './InfluencedAuthorsSkeleton';
+import Animated, { FadeIn, Layout } from 'react-native-reanimated';
 
 interface Props {
   authorId: number;
@@ -90,13 +91,31 @@ export function AuthorInfluenced({ authorId }: Props) {
           </View>
 
           <View style={[styles.authorGrid, { paddingHorizontal: spacing.lg }]}>
-            <FlatList
-              data={displayInfluenced}
-              keyExtractor={item => `influenced-${item.id}`}
-              renderItem={({ item }) => (
-                <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
-              )}
-            />
+            {isInfluencedExpanded ? (
+              <Animated.View
+                layout={Layout.duration(300)}
+                entering={FadeIn.duration(300)}>
+                <FlatList
+                  data={influenced}
+                  keyExtractor={item => `influenced-${item.id}`}
+                  renderItem={({ item }) => (
+                    <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+                  )}
+                />
+              </Animated.View>
+            ) : (
+              <Animated.View
+                layout={Layout.duration(300)}
+                entering={FadeIn.duration(300)}>
+                <FlatList
+                  data={influenced.slice(0, 3)}
+                  keyExtractor={item => `influenced-${item.id}`}
+                  renderItem={({ item }) => (
+                    <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+                  )}
+                />
+              </Animated.View>
+            )}
           </View>
         </View>
       )}
@@ -129,15 +148,35 @@ export function AuthorInfluenced({ authorId }: Props) {
           </View>
 
           <View style={[styles.influencedByGrid, { paddingHorizontal: spacing.lg }]}>
-            <FlatList
-              data={displayInfluencedBy}
-              keyExtractor={item => `influenced-by-${item.id}`}
-              numColumns={1}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
-              )}
-            />
+            {isInfluencedByExpanded ? (
+              <Animated.View
+                layout={Layout.duration(300)}
+                entering={FadeIn.duration(300)}>
+                <FlatList
+                  data={influencedBy}
+                  keyExtractor={item => `influenced-by-${item.id}`}
+                  numColumns={1}
+                  scrollEnabled={false}
+                  renderItem={({ item }) => (
+                    <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+                  )}
+                />
+              </Animated.View>
+            ) : (
+              <Animated.View
+                layout={Layout.duration(300)}
+                entering={FadeIn.duration(300)}>
+                <FlatList
+                  data={influencedBy.slice(0, 3)}
+                  keyExtractor={item => `influenced-by-${item.id}`}
+                  numColumns={1}
+                  scrollEnabled={false}
+                  renderItem={({ item }) => (
+                    <InfluencedAuthorItem author={item} onPress={handleAuthorPress} />
+                  )}
+                />
+              </Animated.View>
+            )}
           </View>
         </View>
       )}
