@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Text } from '@/components/common/Text';
 import Icon from 'react-native-vector-icons/Feather';
-import { colors, spacing, borderRadius } from '@/styles/theme';
+import { colors, spacing, borderRadius, shadows } from '@/styles/theme';
 import type { Review } from '@/types/review';
 import { LexicalContent } from '@/components/common/LexicalContent';
 import { formatDate } from '@/utils/date';
@@ -145,6 +145,10 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
       setShowComments(prev => !prev);
     };
 
+    const handleMorePress = () => {
+      setActionSheetVisible(true);
+    };
+
     const handleEditPress = () => {
       navigation.navigate('WriteReview', {
         bookId: review.book.id,
@@ -153,80 +157,71 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
     };
 
     const handleDeletePress = () => {
-      Alert.alert('리뷰 삭제', '정말로 이 리뷰를 삭제하시겠습니까?', [
-        { text: '취소', style: 'cancel' },
-        { text: '삭제', style: 'destructive', onPress: () => deleteReview() },
+      Alert.alert('리뷰 삭제', '정말 삭제하시겠습니까?', [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => deleteReview(),
+        },
       ]);
     };
 
-    const handleMorePress = () => {
-      if (!currentUser) {
-        navigation.navigate('Login');
-        return;
-      }
-
-      setActionSheetVisible(true);
+    const handleBookPress = () => {
+      navigation.navigate('BookDetail', { bookId: review.book.id });
     };
 
     useImperativeHandle(ref, () => ({
-      expandComments: () => setShowComments(true),
+      expandComments: () => {
+        setShowComments(true);
+      },
     }));
 
     return (
       <>
         <Animated.View
-          entering={FadeIn.duration(300)}
-          exiting={FadeOut.duration(300)}
+          style={styles.container}
           layout={Layout.duration(300)}
-          style={styles.container}>
+          entering={FadeIn.duration(300)}>
           <View style={styles.header}>
             <View style={styles.headerTop}>
               {!hideUserInfo && (
-                <>
-                  <View style={styles.userInfo}>
-                    <UserAvatar user={review.user} showNickname size="sm" />
-                    {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
-                  </View>
-                  {isMyReview && (
-                    <View style={styles.headerActions}>
-                      <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
-                    </View>
-                  )}
-                </>
+                <View style={styles.userInfo}>
+                  <UserAvatar user={review.user} size="sm" />
+                  <Text style={styles.userName}>{review.user.nickname}</Text>
+                  {!hideDate && <Text style={styles.date}>{formatDate(review.createdAt)}</Text>}
+                </View>
+              )}
+              {isMyReview && (
+                <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
               )}
             </View>
 
             {showBookInfo && (
               <View style={styles.bookInfoContainer}>
-                <TouchableOpacity
-                  style={styles.bookCard}
-                  onPress={() =>
-                    navigation.navigate('BookDetail', {
-                      bookId: review.book.id,
-                    })
-                  }>
-                  <BookImage imageUrl={review.book.imageUrl} size="xs" />
+                <Pressable style={styles.bookCard} onPress={handleBookPress}>
+                  <BookImage imageUrl={review.book.imageUrl} size="xs" style={styles.bookImage} />
                   <View style={styles.bookInfo}>
                     <Text style={styles.bookTitle} numberOfLines={1}>
                       {review.book.title}
                     </Text>
                     <Text style={styles.bookAuthor} numberOfLines={1}>
-                      {review.book.authorBooks.map(author => author.author.nameInKor).join(', ')}
+                      {review.book.authorBooks
+                        .map(authorBook => authorBook.author.nameInKor)
+                        .join(', ')}
                     </Text>
                   </View>
-                </TouchableOpacity>
-                {isMyReview && hideUserInfo && (
-                  <View style={styles.headerActions}>
-                    <ReviewActions onEdit={handleEditPress} onDelete={handleDeletePress} />
-                  </View>
-                )}
+                </Pressable>
               </View>
             )}
+
+            <Text style={styles.title}>{review.title}</Text>
           </View>
-          <Text style={styles.title}>{review.title}</Text>
-          <Pressable
-            onPress={() => isTruncated && setIsExpanded(true)}
-            style={styles.contentContainer}>
+
+          <Pressable style={styles.contentContainer} onPress={() => setIsExpanded(!isExpanded)}>
             <Text
               style={styles.content}
               numberOfLines={isExpanded ? undefined : 3}
@@ -236,55 +231,47 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
             </Text>
             {isTruncated && !isExpanded && <Text style={styles.more}>더보기</Text>}
           </Pressable>
+
           <View style={styles.footer}>
             <View style={styles.actions}>
-              <Pressable
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                style={styles.actionButton}
+              <TouchableOpacity
+                style={[styles.actionButton, review.isLiked && styles.activeActionButton]}
                 onPress={handleLikePress}>
                 <Icon
                   name="thumbs-up"
-                  size={18}
-                  color={review.isLiked ? colors.gray[900] : colors.gray[400]}
+                  size={16}
+                  color={review.isLiked ? colors.primary[500] : colors.gray[600]}
                 />
                 <Text style={[styles.actionText, review.isLiked && styles.activeActionText]}>
-                  {review.likeCount}
+                  {review.likeCount > 0 ? review.likeCount : '좋아요'}
                 </Text>
-              </Pressable>
-              <Pressable
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                style={styles.actionButton}
-                disabled={review.commentCount === 0}
-                onPress={handleReplyPress}>
-                <Icon
-                  name="message-circle"
-                  size={18}
-                  color={showComments ? colors.gray[900] : colors.gray[400]}
-                />
-                <Text style={[styles.actionText, showComments && styles.activeActionText]}>
-                  {review.commentCount}
-                </Text>
-              </Pressable>
+              </TouchableOpacity>
+
               {!hideReplyButton && (
-                <Pressable
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  style={styles.actionButton}
-                  onPress={() => {
-                    onCommentPress?.(review.id);
-                  }}>
-                  <Text style={styles.replyButtonText}>답글 달기</Text>
-                </Pressable>
+                <TouchableOpacity
+                  style={[styles.actionButton, showComments && styles.activeActionButton]}
+                  onPress={handleReplyPress}>
+                  <Icon
+                    name="message-square"
+                    size={16}
+                    color={showComments ? colors.primary[500] : colors.gray[600]}
+                  />
+                  <Text style={[styles.actionText, showComments && styles.activeActionText]}>
+                    {review.commentCount > 0 ? review.commentCount : '댓글'}
+                  </Text>
+                </TouchableOpacity>
               )}
             </View>
           </View>
+
           {showComments && (
-            <View style={styles.commentSection}>
-              <CommentList
-                reviewId={review.id}
-                onReply={handleReply}
-                hideReplyButton={hideReplyButton}
-              />
-            </View>
+            <Animated.View
+              style={styles.commentsContainer}
+              entering={FadeIn.duration(300)}
+              exiting={FadeOut.duration(300)}
+              layout={Layout.duration(300)}>
+              <CommentList reviewId={review.id} onReply={handleReply} />
+            </Animated.View>
           )}
           {!isMyReview && currentUser && (
             <TouchableOpacity onPress={handleMorePress} style={styles.moreButton}>
@@ -308,14 +295,11 @@ export const ReviewItem = forwardRef<ReviewItemHandle, Props>(
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    gap: spacing.sm,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xs,
-    position: 'relative',
-    zIndex: 1,
+    marginBottom: spacing.md,
+    gap: spacing.md,
   },
   header: {
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   headerTop: {
     flexDirection: 'row',
@@ -327,60 +311,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xs,
   },
+  userName: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.gray[700],
+  },
   date: {
     fontSize: 13,
     color: colors.gray[500],
     marginLeft: spacing.sm,
   },
-  headerActions: {
-    alignItems: 'flex-end',
-  },
   bookInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    marginTop: spacing.xs,
   },
   bookCard: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     backgroundColor: colors.gray[50],
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.sm,
-    marginTop: 4,
-    maxWidth: '85%',
-    ...Platform.select({
-      android: {
-        paddingVertical: 6,
-      },
-    }),
+    borderRadius: spacing.sm,
+    padding: spacing.sm,
+    alignSelf: 'flex-start',
+  },
+  bookImage: {
+    borderRadius: spacing.xs,
   },
   bookInfo: {
     gap: 2,
-    marginRight: spacing.sm,
-    maxWidth: '85%',
   },
   bookTitle: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.gray[700],
-    ...Platform.select({
-      ios: {
-        marginTop: 6,
-      },
-    }),
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.gray[800],
   },
   bookAuthor: {
-    fontSize: 11,
-    color: colors.gray[500],
+    fontSize: 12,
+    color: colors.gray[600],
   },
   title: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.gray[900],
+    marginBottom: spacing.xs,
   },
   contentContainer: {
-    position: 'relative',
+    borderWidth: 1,
+    borderColor: colors.gray[100],
+    borderRadius: spacing.lg,
+    backgroundColor: colors.white,
+    padding: spacing.md,
   },
   content: {
     fontSize: 15,
@@ -389,41 +368,47 @@ const styles = StyleSheet.create({
   },
   more: {
     fontSize: 14,
-    color: colors.primary[500],
+    fontWeight: '500',
+    color: colors.blue[600],
+    marginTop: spacing.xs,
+    alignSelf: 'flex-end',
+  },
+  footer: {
     marginTop: spacing.xs,
   },
-  footer: {},
   actions: {
     flexDirection: 'row',
     gap: spacing.md,
     alignItems: 'center',
-    paddingHorizontal: 4,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+  },
+  activeActionButton: {
+    backgroundColor: colors.blue[50],
   },
   actionText: {
     fontSize: 14,
-    color: colors.gray[500],
+    fontWeight: '500',
+    color: colors.gray[700],
   },
   activeActionText: {
-    color: colors.gray[900],
-  },
-  commentSection: {
-    marginTop: spacing.md,
-    paddingLeft: spacing.xl,
-  },
-  replyButtonText: {
-    fontSize: 14,
-    color: colors.gray[500],
-    marginLeft: spacing.xs,
+    color: colors.primary[500],
   },
   moreButton: {
     position: 'absolute',
-    top: 14,
-    right: 10,
+    top: spacing.md,
+    right: spacing.md,
     zIndex: 2,
+  },
+  commentsContainer: {
+    marginTop: spacing.xs,
+    paddingLeft: spacing.xl,
   },
 });
