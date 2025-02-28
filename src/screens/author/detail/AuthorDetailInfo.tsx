@@ -16,6 +16,7 @@ import { LikeButton } from '@/components/common/LikeButton';
 import { CommentButton } from '@/components/common/CommentButton';
 import { AuthorAvatar } from '@/components/author/AuthorAvatar';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
   authorId: number;
@@ -157,7 +158,14 @@ export function AuthorDetailInfo({ authorId, onReviewPress }: Props) {
           <View style={styles.descriptionContainer}>
             <Animated.View style={[styles.descriptionContent, animatedDescriptionStyle]}>
               <Text style={styles.description}>{author.description}</Text>
-              {!isExpanded && <Animated.View style={[styles.fadeGradient, fadeGradientStyle]} />}
+              {!isExpanded && (
+                <Animated.View style={[styles.fadeGradient, fadeGradientStyle]}>
+                  <LinearGradient
+                    colors={['rgba(249, 250, 251, 0)', 'rgba(249, 250, 251, 0.95)']}
+                    style={styles.gradient}
+                  />
+                </Animated.View>
+              )}
             </Animated.View>
 
             {author.description.length > 100 && (
@@ -289,7 +297,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 40,
-    backgroundColor: 'rgba(249, 250, 251, 0.8)',
+  },
+  gradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 40,
   },
   expandButton: {
     alignSelf: 'stretch',
