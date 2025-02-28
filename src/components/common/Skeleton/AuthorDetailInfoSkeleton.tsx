@@ -39,10 +39,6 @@ export function AuthorDetailInfoSkeleton() {
           <Skeleton style={styles.expandButton} />
         </View>
       </View>
-      
-      <View style={styles.mobileButtonContainer}>
-        <Skeleton style={styles.mobileChatButton} />
-      </View>
     </View>
   );
 }
@@ -132,14 +128,5 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 8,
     marginTop: spacing.xs,
-  },
-  mobileButtonContainer: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
-  },
-  mobileChatButton: {
-    height: 40,
-    width: '100%',
-    borderRadius: 8,
   },
 });
