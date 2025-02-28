@@ -1,30 +1,28 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { colors, spacing, borderRadius } from '@/styles/theme';
-import { Skeleton } from './Skeleton';
+import { spacing, borderRadius } from '@/styles/theme';
+import { Skeleton } from '../Skeleton';
 
 export function RelativeBooksSkeleton() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.titleSection}>
-          <Skeleton style={styles.title} />
-          <Skeleton style={styles.badge} />
+          <Skeleton style={{ width: 100, height: 24, borderRadius: 4 }} />
+          <Skeleton style={{ width: 30, height: 20, borderRadius: 10 }} />
         </View>
-        <Skeleton style={styles.toggleButton} />
+        <Skeleton style={{ width: 80, height: 30, borderRadius: 6 }} />
       </View>
 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
-        {[1, 2, 3, 4, 5, 6].map(key => (
-          <View key={key} style={styles.bookItem}>
-            <Skeleton style={styles.bookImage} />
-            <View style={styles.bookInfo}>
-              <Skeleton style={styles.bookTitle} />
-              <Skeleton style={styles.authorName} />
-            </View>
+        {[1, 2, 3, 4].map(i => (
+          <View key={i} style={styles.bookItem}>
+            <Skeleton style={styles.bookCover} />
+            <Skeleton style={styles.bookTitle} />
+            <Skeleton style={styles.authorName} />
           </View>
         ))}
       </ScrollView>
@@ -48,47 +46,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
   },
-  title: {
-    width: 100,
-    height: 24,
-    borderRadius: borderRadius.sm,
-  },
-  badge: {
-    width: 30,
-    height: 20,
-    borderRadius: borderRadius.full,
-  },
-  toggleButton: {
-    width: 80,
-    height: 30,
-    borderRadius: borderRadius.md,
-  },
   scrollContent: {
-    gap: spacing.md,
-    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.lg,
+    gap: spacing.md,
   },
   bookItem: {
     width: 120,
-    gap: spacing.xs,
+    marginRight: spacing.md,
   },
-  bookImage: {
+  bookCover: {
     width: 120,
     height: 180,
     borderRadius: borderRadius.md,
   },
-  bookInfo: {
-    gap: 2,
+  bookTitle: {
+    width: 100,
+    height: 16,
+    borderRadius: 4,
     marginTop: spacing.xs,
   },
-  bookTitle: {
-    height: 16,
-    width: '90%',
-    borderRadius: borderRadius.sm,
-  },
   authorName: {
+    width: 80,
     height: 12,
-    width: '60%',
-    borderRadius: borderRadius.sm,
+    borderRadius: 4,
+    marginTop: 4,
   },
 });

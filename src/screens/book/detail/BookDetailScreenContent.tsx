@@ -1,20 +1,18 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Pressable, Switch, Platform, TextInput } from 'react-native';
+import { View, StyleSheet, FlatList, Switch, Platform, TextInput } from 'react-native';
 import { Text } from '@/components/common/Text';
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { bookApi } from '@/apis/book';
 import { colors, spacing, borderRadius } from '@/styles/theme';
 import { ReviewItem, type ReviewItemHandle } from '@/components/review/ReviewItem';
 import type { Review } from '@/types/review';
-import type { Comment } from '@/types/comment';
 import type { PaginatedResponse } from '@/types/common';
 import type { AxiosResponse } from 'axios';
 import { ReviewItemSkeleton } from '@/components/common/Skeleton';
 import { BookDetailInfo } from './BookDetailInfo';
 import { RelativeBooks } from './RelativeBooks';
 import { Empty } from '@/components/common/Empty';
-import Icon from 'react-native-vector-icons/Feather';
-import Animated, { Easing, Layout, SlideInDown } from 'react-native-reanimated';
+import Animated, { SlideInDown } from 'react-native-reanimated';
 import { useAtom } from 'jotai';
 import { includeOtherTranslationsAtom } from '@/atoms/book';
 import { CommentEditor } from '@/components/comment/CommentEditor';
@@ -24,7 +22,6 @@ import Toast from 'react-native-toast-message';
 import { useMutation } from '@tanstack/react-query';
 import { BookYoutubes } from './BookYoutubes';
 import { BookChat } from './BookChat';
-import { ChatButtonSkeleton } from '@/components/common/Skeleton';
 
 interface Props {
   bookId: number;
@@ -77,29 +74,45 @@ export function BookDetailScreenContent({ bookId }: Props) {
       const query = nextParam?.split('?')[1];
       if (!query) return undefined;
 
-      const urlParams = new URLSearchParams(query);
-      const page = urlParams.get('page');
-      return page ? parseInt(page, 10) : undefined;
+      const pageParam = query
+        .split('&')
+        .find(q => q.startsWith('page'))
+        ?.split('=')[1];
+
+      return pageParam;
     },
     placeholderData: keepPreviousData,
   });
 
   const reviews = data?.pages.flatMap(page => page.data.data) || [];
 
-  const handleEndReached = () => {
+  const handleLoadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   };
 
   const handleReviewPress = () => {
-    flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+    // 리뷰가 없을 때 스크롤 시도하지 않도록 체크
+    if (reviews.length === 0) {
+      return;
+    }
+
+    // 리뷰가 있을 때만 스크롤 실행
+    flatListRef.current?.scrollToIndex({
+      index: 0,
+      animated: true,
+      viewPosition: 0,
+      viewOffset: 0,
+    });
   };
 
   const handleReplyPress = (reviewId: number, user?: { nickname: string }) => {
     setActiveReviewId(reviewId);
     setReplyToUser(user || null);
     setIsReplyAnimating(true);
+
+    // 애니메이션이 끝난 후 포커스 설정
     setTimeout(() => {
       setIsReplyAnimating(false);
       commentEditorRef.current?.focus();
@@ -112,11 +125,8 @@ export function BookDetailScreenContent({ bookId }: Props) {
   };
 
   const { mutate: createComment } = useMutation({
-    mutationFn: (content: string) => {
-      if (!activeReviewId) {
-        throw new Error('No active review');
-      }
-      return reviewApi.createComment(activeReviewId, { content });
+    mutationFn: ({ reviewId, content }: { reviewId: number; content: string }) => {
+      return reviewApi.createComment(reviewId, { content });
     },
     onSuccess: response => {
       const newComment = response.data;
@@ -176,49 +186,45 @@ export function BookDetailScreenContent({ bookId }: Props) {
     );
   };
 
-  const renderListHeader = () => {
-    return (
-      <View style={styles.listHeader}>
-        <BookDetailInfo
-          bookId={bookId}
-          onReviewPress={handleReviewPress}
-          onChatToggle={handleChatToggle}
-          isChatOpen={isChatOpen}
-        />
+  const renderListHeader = () => (
+    <View style={styles.listHeader}>
+      <BookDetailInfo
+        bookId={bookId}
+        onReviewPress={handleReviewPress}
+        onChatToggle={handleChatToggle}
+        isChatOpen={isChatOpen}
+      />
 
-        {isChatOpen && book && (
-          <View ref={chatContainerRef} style={styles.chatContainer}>
-            <BookChat bookId={bookId} bookTitle={book.title} />
-          </View>
-        )}
+      {isChatOpen && (
+        <View style={styles.chatContainer} ref={chatContainerRef}>
+          {book && <BookChat bookId={bookId} bookTitle={book.title} />}
+        </View>
+      )}
 
-        <BookYoutubes bookId={bookId} />
+      <RelativeBooks bookId={bookId} />
+      <BookYoutubes bookId={bookId} />
 
-        <RelativeBooks bookId={bookId} />
-
-        <View style={styles.reviewsHeader}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-            <Text style={styles.reviewsTitle}>리뷰</Text>
+      <View style={styles.reviewsHeader}>
+        <View style={styles.titleSection}>
+          <Text style={styles.reviewsTitle}>리뷰</Text>
+          {reviews.length > 0 && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{reviews.length}</Text>
             </View>
-          </View>
-
-          <Pressable
-            style={styles.toggleContainer}
-            onPress={() => setIncludeOtherTranslations(!includeOtherTranslations)}>
-            <Text style={styles.toggleLabel}>다른 번역본 포함</Text>
-            <Switch
-              value={includeOtherTranslations}
-              onValueChange={setIncludeOtherTranslations}
-              trackColor={{ false: colors.gray[200], true: colors.blue[500] }}
-              thumbColor={colors.white}
-            />
-          </Pressable>
+          )}
+        </View>
+        <View style={styles.toggleContainer}>
+          <Text style={styles.toggleLabel}>다른 번역본 포함</Text>
+          <Switch
+            value={includeOtherTranslations}
+            onValueChange={setIncludeOtherTranslations}
+            trackColor={{ false: colors.gray[200], true: colors.blue[500] }}
+            thumbColor={colors.white}
+          />
         </View>
       </View>
-    );
-  };
+    </View>
+  );
 
   const renderListEmpty = () => {
     if (isLoading) {
@@ -231,12 +237,8 @@ export function BookDetailScreenContent({ bookId }: Props) {
     }
 
     return (
-      <View style={styles.emptyContainer}>
-        <Empty
-          icon="book-open"
-          message="아직 리뷰가 없어요"
-          description="첫 번째 리뷰를 작성해보세요!"
-        />
+      <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg }}>
+        <Empty icon="book-open" message="아직 리뷰가 없습니다" />
       </View>
     );
   };
@@ -248,20 +250,39 @@ export function BookDetailScreenContent({ bookId }: Props) {
         data={reviews}
         renderItem={renderReviewItem}
         keyExtractor={item => item.id.toString()}
-        contentContainerStyle={styles.reviewList}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
         ListHeaderComponent={renderListHeader}
         ListEmptyComponent={renderListEmpty}
+        contentContainerStyle={styles.reviewList}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={5}
+        maxToRenderPerBatch={10}
+        windowSize={10}
+        removeClippedSubviews={Platform.OS === 'android'}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View style={{ paddingVertical: spacing.lg }}>
+              <ReviewItemSkeleton />
+            </View>
+          ) : null
+        }
       />
-
       {activeReviewId && (
-        <Animated.View
-          style={styles.commentEditorContainer}
-          entering={isReplyAnimating ? SlideInDown : undefined}
-          layout={Layout.springify()}>
-          <CommentEditor onSubmit={createComment} onCancel={handleCancelReply} />
+        <Animated.View entering={SlideInDown.duration(300)} style={styles.commentEditorContainer}>
+          <CommentEditor
+            textInputRef={commentEditorRef}
+            onSubmit={content => {
+              createComment({ reviewId: activeReviewId, content });
+            }}
+            onCancel={handleCancelReply}
+            replyToUser={replyToUser}
+            autoFocus
+            isReplying={isReplyAnimating}
+          />
         </Animated.View>
       )}
     </View>
@@ -271,54 +292,13 @@ export function BookDetailScreenContent({ bookId }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  reviewsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.white,
-  },
-  reviewsTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.gray[900],
-  },
-  badge: {
-    backgroundColor: colors.gray[100],
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs / 2,
-    borderRadius: borderRadius.full,
-  },
-  badgeText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.gray[600],
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    paddingVertical: spacing.sm,
-    cursor: 'pointer',
-  },
-  toggleLabel: {
-    fontSize: 14,
-    color: colors.gray[600],
-  },
-  emptyContainer: {
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.lg,
-    padding: spacing.xl,
-    marginHorizontal: spacing.lg,
+    position: 'relative',
   },
   reviewList: {
     paddingBottom: spacing.lg,
   },
   separator: {
-    height: 1,
-    backgroundColor: colors.gray[100],
+    height: spacing.md,
   },
   listHeader: {
     gap: spacing.xl,
@@ -345,5 +325,41 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.lg,
     marginBottom: spacing.md,
     height: 400, // 채팅 컨테이너 높이 설정
+  },
+  reviewsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  titleSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  reviewsTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.gray[900],
+  },
+  badge: {
+    backgroundColor: colors.gray[100],
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    borderRadius: borderRadius.full,
+  },
+  badgeText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.gray[600],
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  toggleLabel: {
+    fontSize: 14,
+    color: colors.gray[600],
   },
 });

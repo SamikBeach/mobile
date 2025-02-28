@@ -23,7 +23,7 @@ interface Props {
   isChatOpen: boolean;
 }
 
-export function BookDetailInfo({ bookId, onReviewPress, onChatToggle }: Props) {
+export function BookDetailInfo({ bookId, onReviewPress, onChatToggle, isChatOpen }: Props) {
   const { data: book, isLoading } = useQuery({
     queryKey: ['book', bookId],
     queryFn: () => bookApi.getBookDetail(bookId),
@@ -66,12 +66,17 @@ export function BookDetailInfo({ bookId, onReviewPress, onChatToggle }: Props) {
     navigation.navigate('AuthorDetail', { authorId });
   };
 
+  const handleWriteReview = () => {
+    if (!currentUser) {
+      navigation.navigate('Login');
+      return;
+    }
+    navigation.navigate('WriteReview', { bookId });
+  };
+
   if (isLoading || !book) {
     return <BookDetailInfoSkeleton />;
   }
-
-  console.warn('book');
-  console.log({ book });
 
   const authorName = book.authorBooks?.[0]?.author?.nameInKor || '작가 미상';
 
@@ -98,27 +103,44 @@ export function BookDetailInfo({ bookId, onReviewPress, onChatToggle }: Props) {
         </View>
       </View>
 
-      <View style={styles.metaSection}>
-        <Text style={styles.meta}>
-          {book.publisher}
-          {book.publicationDate &&
-            isValid(parseISO(book.publicationDate)) &&
-            ` · ${format(parseISO(book.publicationDate), 'yyyy.MM.dd')}`}
-        </Text>
-      </View>
-
       {book.description && (
-        <View style={styles.descriptionSection}>
-          <Text style={styles.description}>{book.description}</Text>
-        </View>
+        <Text style={styles.description} numberOfLines={5}>
+          {book.description}
+        </Text>
       )}
 
-      <TouchableOpacity style={styles.chatButton} onPress={onChatToggle} activeOpacity={0.7}>
-        <View style={styles.buttonContent}>
-          <Icon name="message-circle" size={20} color={colors.gray[700]} />
-          <Text style={styles.buttonText}>{`${authorName}와(과) 대화하기`}</Text>
-        </View>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.chatButton} onPress={onChatToggle}>
+          <View style={styles.buttonContent}>
+            <Icon name="message-circle" size={16} color={colors.gray[700]} />
+            <Text style={styles.buttonText}>{isChatOpen ? '채팅 닫기' : '이 책과 채팅하기'}</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.reviewButton} onPress={handleWriteReview}>
+          <View style={styles.buttonContent}>
+            <Icon name="edit-2" size={16} color={colors.gray[700]} />
+            <Text style={styles.buttonText}>리뷰 쓰기</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {book.publisher && (
+        <Text style={styles.meta}>
+          출판: {book.publisher}
+          {book.publicationDate &&
+            isValid(parseISO(book.publicationDate)) &&
+            ` (${format(new Date(book.publicationDate), 'yyyy년 M월')})`}
+        </Text>
+      )}
+
+      {(book.isbn || book.isbn13) && (
+        <Text style={styles.meta}>
+          {book.isbn && `ISBN: ${book.isbn}`}
+          {book.isbn && book.isbn13 && ' / '}
+          {book.isbn13 && `ISBN-13: ${book.isbn13}`}
+        </Text>
+      )}
     </View>
   );
 }
@@ -127,7 +149,7 @@ const styles = StyleSheet.create({
   container: {
     padding: spacing.lg,
     backgroundColor: colors.white,
-    gap: spacing.lg,
+    gap: spacing.md,
   },
   header: {
     flexDirection: 'row',
@@ -142,37 +164,19 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.gray[900],
-    lineHeight: 24,
-  },
-  originalTitle: {
-    fontSize: 15,
-    color: colors.gray[600],
   },
   author: {
-    fontSize: 15,
+    fontSize: 16,
     color: colors.gray[700],
-    textDecorationLine: 'underline',
-  },
-  metaSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  descriptionSection: {
-    gap: spacing.xs,
   },
   description: {
     fontSize: 15,
-    color: colors.gray[700],
     lineHeight: 22,
+    color: colors.gray[700],
   },
   stats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
@@ -195,7 +199,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.gray[400],
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
   chatButton: {
+    flex: 1,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.gray[300],
@@ -215,6 +224,7 @@ const styles = StyleSheet.create({
     color: colors.gray[700],
   },
   reviewButton: {
+    flex: 1,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.gray[300],
