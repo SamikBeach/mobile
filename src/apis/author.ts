@@ -88,7 +88,13 @@ export const authorApi = {
   getAuthorOriginalWorks: (authorId: number) =>
     axios.get<OriginalWork[]>(`/author/${authorId}/original-works`),
 
-  // 작가와 채팅하는 함수 추가
+  /**
+   * 작가와 채팅을 시작합니다.
+   * @param authorId - 작가 ID
+   * @param data - 메시지와 대화 기록
+   * @param signal - 요청 취소를 위한 AbortSignal
+   * @returns 작가의 응답
+   */
   chatWithAuthor: (
     authorId: number,
     data: { message: string; conversationHistory: ChatMessage[] },
