@@ -76,8 +76,14 @@ export const userApi = {
   changePassword: (data: ChangePasswordDto) =>
     axios.post<{ message: string }>('/user/me/password', data),
 
+  /**
+   * 최근 검색 기록을 조회합니다.
+   */
   getRecentSearches: () => axios.get<UserSearch[]>('/user/me/search'),
 
+  /**
+   * 검색 기록을 저장합니다.
+   */
   saveSearch: (params: { bookId?: number; authorId?: number }) =>
     axios.post('/user/me/save-search', params),
 
@@ -96,12 +102,24 @@ export const userApi = {
    */
   deleteProfileImage: () => axios.delete<User>('/user/me/profile-image'),
 
+  /**
+   * 검색 기록을 삭제합니다.
+   */
   deleteSearch: (searchId: number) =>
     axios.delete<{ message: string }>(`/user/me/search/${searchId}`),
 
+  /**
+   * 사용자를 차단합니다.
+   */
   blockUser: (userId: number) => axios.post<void>(`/user/${userId}/block`),
 
+  /**
+   * 사용자 차단을 해제합니다.
+   */
   unblockUser: (userId: number) => axios.delete<void>(`/user/${userId}/block`),
 
+  /**
+   * 차단한 사용자 목록을 조회합니다.
+   */
   getBlockedUsers: () => axios.get<User[]>('/user/me/blocked'),
 };
