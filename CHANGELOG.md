@@ -1,5 +1,12 @@
 # 🚦 CHANGELOG
 
+## [1.23.3](https://github.com/SamikBeach/mobile/compare/1.23.2...1.23.3) (2025-08-27)
+
+
+### Bug Fixes
+
+* 주석 추가 ([f750e81](https://github.com/SamikBeach/mobile/commit/f750e81c4cc6737a51fe8a89e188654eed1326e4))
+
 ## [1.23.2](https://github.com/SamikBeach/mobile/compare/1.23.1...1.23.2) (2025-02-28)
 
 
